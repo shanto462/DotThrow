@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "uUJ4BgjzBfP2PSWFNwAgAT26swvky/eWyYjmFZreYtIvhrE63HR1URg8weALmAxWuuRrMPezNlN6c3DkTYGHwQ==",
+  "success": true,
+  "projectFilePath": "D:\\HackerRank\\DotThrow\\DotThrow\\DotThrow.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Shanto\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}

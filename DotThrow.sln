@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotThrow", "DotThrow\DotThrow.csproj", "{0E75ABFA-B258-4E4D-86B0-89E72C2D7FB8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotThrow.Demo", "DotThrow.Demo\DotThrow.Demo.csproj", "{ED24255C-E04C-474F-AD1F-583CAC5A275A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0E75ABFA-B258-4E4D-86B0-89E72C2D7FB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E75ABFA-B258-4E4D-86B0-89E72C2D7FB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E75ABFA-B258-4E4D-86B0-89E72C2D7FB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E75ABFA-B258-4E4D-86B0-89E72C2D7FB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED24255C-E04C-474F-AD1F-583CAC5A275A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED24255C-E04C-474F-AD1F-583CAC5A275A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED24255C-E04C-474F-AD1F-583CAC5A275A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED24255C-E04C-474F-AD1F-583CAC5A275A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {88ABED29-5E09-4372-A5DD-FD54E75D1121}
+	EndGlobalSection
+EndGlobal

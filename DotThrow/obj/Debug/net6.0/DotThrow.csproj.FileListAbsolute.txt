@@ -1,0 +1,12 @@
+D:\HackerRank\DotThrow\DotThrow\obj\Debug\net6.0\DotThrow.csproj.AssemblyReference.cache
+D:\HackerRank\DotThrow\DotThrow\obj\Debug\net6.0\DotThrow.GeneratedMSBuildEditorConfig.editorconfig
+D:\HackerRank\DotThrow\DotThrow\obj\Debug\net6.0\DotThrow.AssemblyInfoInputs.cache
+D:\HackerRank\DotThrow\DotThrow\obj\Debug\net6.0\DotThrow.AssemblyInfo.cs
+D:\HackerRank\DotThrow\DotThrow\obj\Debug\net6.0\DotThrow.csproj.CoreCompileInputs.cache
+D:\HackerRank\DotThrow\DotThrow\bin\Debug\net6.0\DotThrow.deps.json
+D:\HackerRank\DotThrow\DotThrow\bin\Debug\net6.0\DotThrow.dll
+D:\HackerRank\DotThrow\DotThrow\bin\Debug\net6.0\ref\DotThrow.dll
+D:\HackerRank\DotThrow\DotThrow\bin\Debug\net6.0\DotThrow.pdb
+D:\HackerRank\DotThrow\DotThrow\obj\Debug\net6.0\DotThrow.dll
+D:\HackerRank\DotThrow\DotThrow\obj\Debug\net6.0\ref\DotThrow.dll
+D:\HackerRank\DotThrow\DotThrow\obj\Debug\net6.0\DotThrow.pdb
