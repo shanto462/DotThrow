@@ -10,40 +10,41 @@ namespace DotThrow.Helpers
 {
     public static class JsonHelpers
     {
-        /// <summary>
-        /// returns if input string is in valid json format
-        /// https://stackoverflow.com/a/14977915
-        /// </summary>
-        /// <param name="strInput">Json to check</param>
-        /// <returns>If input string is in valid json format</returns>
         public static bool IsValidJson(string strInput)
         {
-            if (string.IsNullOrWhiteSpace(strInput)) { return false; }
+            if (string.IsNullOrWhiteSpace(strInput))
+                return false;
+
             strInput = strInput.Trim();
-            if ((strInput.StartsWith("{") && strInput.EndsWith("}")) || //For object
-                (strInput.StartsWith("[") && strInput.EndsWith("]"))) //For array
+
+            if (IsJsonObject(strInput) || IsJsonArray(strInput))
             {
-                try
-                {
-                    var obj = JToken.Parse(strInput);
-                    return true;
-                }
-                catch (JsonReaderException jex)
-                {
-                    //Exception in parsing json
-                    Console.WriteLine(jex.Message);
-                    return false;
-                }
-                catch (Exception ex) //some other exception
-                {
-                    Console.WriteLine(ex.ToString());
-                    return false;
-                }
+                return ThrowIfParseError(strInput);
             }
-            else
+            return false;
+        }
+
+        private static bool ThrowIfParseError(string strInput)
+        {
+            try
+            {
+                JToken.Parse(strInput);
+                return true;
+            }
+            catch
             {
                 return false;
             }
+        }
+
+        private static bool IsJsonArray(string strInput)
+        {
+            return strInput.StartsWith("[") && strInput.EndsWith("]");
+        }
+
+        private static bool IsJsonObject(string strInput)
+        {
+            return strInput.StartsWith("{") && strInput.EndsWith("}");
         }
     }
 }

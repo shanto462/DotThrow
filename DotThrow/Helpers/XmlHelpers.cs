@@ -15,10 +15,10 @@ namespace DotThrow.Helpers
                 return false;
             try
             {
-                XmlDocument xmlDoc = new XmlDocument();
+                XmlDocument xmlDoc = new();
                 xmlDoc.LoadXml(str);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }

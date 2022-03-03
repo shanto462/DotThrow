@@ -38,10 +38,10 @@ namespace DotThrow.ExceptionExtensions
             return ref thrower;
         }
 
-        public static ref readonly ExceptionThrower<string> ThrowIf(this in ExceptionThrower<string> thrower, Predicate<string> predicate, string message = null)
+        public static ref readonly ExceptionThrower<string> ThrowIf(this in ExceptionThrower<string> thrower, Predicate<string> predicate, string message = "")
         {
             if (predicate.Invoke(thrower.Value))
-                throw new Exception(message ?? "Condition matched!");
+                throw new Exception(string.IsNullOrWhiteSpace(message) ? "Condition matched!" : message);
             return ref thrower;
         }
 
