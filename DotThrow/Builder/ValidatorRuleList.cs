@@ -12,40 +12,107 @@ namespace DotThrow.Builder
     public class ValidatorRuleList<T>
     {
         private readonly ConcurrentBag<ValidatorRule<T>> _rules = new();
+        private readonly ConcurrentDictionary<string, List<ValidatorRule<T>>> _groupedRules = new();
 
-        public void AddRule(ValidatorRule<T> validationRule)
+        public void AddRule(ValidatorRule<T> validationRule, string group = "")
         {
-            _rules.Add(validationRule);
+            if (string.IsNullOrWhiteSpace(group))
+                _rules.Add(validationRule);
+            else
+            {
+                AddGroupRule(validationRule, group);
+            }
         }
 
-        public void Verify(T target)
+        private void AddGroupRule(ValidatorRule<T> validationRule, string group)
         {
-            foreach (var rule in _rules)
+            if (!_groupedRules.ContainsKey(group))
+                _groupedRules.TryAdd(group, new() { validationRule });
+            else
             {
-                if (rule.Predicate.Invoke(target))
-                {
-                    var obj = Activator.CreateInstance(rule.ExceptionType, new object[] { rule.ExceptionMessage });
+                var ruleList = _groupedRules[group];
+                lock (ruleList)
+                    ruleList.Add(validationRule);
+            }
+        }
 
-                    if (obj == null)
+        public void Verify(T target, string group = "")
+        {
+            if (string.IsNullOrWhiteSpace(group))
+                VerifyDefaultRuleList(target);
+            else
+            {
+                VerifyGroupRuleList(target, group);
+            }
+        }
+
+        private void VerifyGroupRuleList(T target, string group)
+        {
+            if (_groupedRules.ContainsKey(group))
+            {
+                var ruleList = _groupedRules[group];
+                lock (ruleList)
+                {
+                    foreach (var rule in ruleList)
                     {
-                        throw new Exception(rule.ExceptionMessage);
-                    }
-                    else
-                    {
-                        throw ObjectExtensions.CastToReflected(
-                                obj,
-                                rule.ExceptionType
-                        );
+                        ThrowIfRuleMatches(target, rule, group);
                     }
                 }
             }
         }
 
-        public IEnumerable<ValidatorReport<T>> VerifyNotThrow(T target)
+        private void VerifyDefaultRuleList(T target)
         {
             foreach (var rule in _rules)
             {
-                yield return new ValidatorReport<T>(!rule.Predicate.Invoke(target), rule);
+                ThrowIfRuleMatches(target, rule);
+            }
+        }
+
+        private static void ThrowIfRuleMatches(T target, ValidatorRule<T> rule, string group = "")
+        {
+            if (rule.Predicate.Invoke(target))
+            {
+                var message = rule.ExceptionMessage + (string.IsNullOrWhiteSpace(group) ? string.Empty : $" : Rule Group -> {group}");
+
+                var obj = Activator.CreateInstance(rule.ExceptionType, new object[] { message });
+
+                if (obj == null)
+                {
+                    throw new Exception(message);
+                }
+                else
+                {
+                    throw ObjectExtensions.CastToReflected(
+                            obj,
+                            rule.ExceptionType
+                    );
+                }
+            }
+        }
+
+        public IEnumerable<ValidatorReport<T>> VerifyNotThrow(T target, string group = "")
+        {
+            if (string.IsNullOrWhiteSpace(group))
+            {
+                foreach (var rule in _rules)
+                {
+                    yield return new ValidatorReport<T>(!rule.Predicate.Invoke(target), rule);
+                }
+            }
+            else
+            {
+                if (_groupedRules.ContainsKey(group))
+                {
+                    var ruleList = _groupedRules[group];
+                    lock (ruleList)
+                    {
+                        foreach (var rule in ruleList)
+                        {
+                            yield return new ValidatorReport<T>(!rule.Predicate.Invoke(target), rule, group);
+                        }
+                    }
+                }
             }
         }
     }

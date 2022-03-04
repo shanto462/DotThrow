@@ -1,5 +1,4 @@
-﻿
-using DotThrow.Builder;
+﻿using DotThrow.Builder;
 using DotThrow.ExceptionExtensions;
 
 string s = "aAaaa";
@@ -25,8 +24,18 @@ foreach (var report in reports)
 List<string> lala = new() { "a", "vc", "c" };
 Validator<List<string>>.AddRule(list => list.Count > 10, "List Overflow", typeof(OverflowException));
 Validator<List<string>>.AddRule(list => list.Any(str => str.Equals("a")), "List Contains a", typeof(InvalidDataException));
-Validator<List<string>>.Verify(lala);
 
 
 List<int> lalai = new() { 1, 2, 3, 4 };
-Validator<List<int>>.Verify(lalai);
+Validator<List<int>>.AddRule(list => list.Count > 3, "List contains more than 3 items", typeof(OverflowException), "List Contains Regular items", "test group 1");
+Validator<List<int>>.AddRule(list => list.Count > 5, "List contains more than 5 items", typeof(OverflowException), "List Contains Regular items", "test group 1");
+
+List<int> lalaii = new() { 1, 2, 3, 4, 5, 6 };
+
+var reportss = Validator<List<int>>.VerifyNotThrow(lalaii, "test group 1");
+
+foreach (var report in reportss)
+{
+    Console.WriteLine(report);
+}
+Console.ReadLine();

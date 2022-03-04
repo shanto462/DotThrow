@@ -11,15 +11,28 @@ namespace DotThrow.Builder.Report
         public bool IsPassed { get; }
         public ValidatorRule<T> Rule { get; }
 
-        public ValidatorReport(bool passed, ValidatorRule<T> rule)
+        public bool IsGrouped => !string.IsNullOrWhiteSpace(Group);
+
+        public string Group { get; }
+
+        public ValidatorReport(bool passed, ValidatorRule<T> rule, string group = "")
         {
             IsPassed = passed;
             Rule = rule;
+            Group = group;
         }
 
         public override string ToString()
         {
-            return IsPassed ? $"Passed: {(string.IsNullOrWhiteSpace(Rule.PassedMessage) ? "No Exception!" : Rule.PassedMessage)}" : $"Failed: {Rule.ExceptionMessage}";
+            return IsPassed ?
+                $"Passed: {(string.IsNullOrWhiteSpace(Rule.PassedMessage) ? "No Exception!" : Rule.PassedMessage)} {GetGroupString()}"
+                :
+                $"Failed: {Rule.ExceptionMessage} {GetGroupString()}";
+        }
+
+        private string GetGroupString()
+        {
+            return $"Group : {Group}";
         }
     }
 }
