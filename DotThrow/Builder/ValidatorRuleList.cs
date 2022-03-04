@@ -45,14 +45,7 @@ namespace DotThrow.Builder
         {
             foreach (var rule in _rules)
             {
-                if (rule.Predicate.Invoke(target))
-                {
-                    yield return new ValidatorReport<T>(false, rule);
-                }
-                else
-                {
-                    yield return new ValidatorReport<T>(true, rule);
-                }
+                yield return new ValidatorReport<T>(!rule.Predicate.Invoke(target), rule);
             }
         }
     }

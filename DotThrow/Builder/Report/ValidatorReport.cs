@@ -8,18 +8,18 @@ namespace DotThrow.Builder.Report
 {
     public class ValidatorReport<T>
     {
-        public bool Passed { get; }
+        public bool IsPassed { get; }
         public ValidatorRule<T> Rule { get; }
 
         public ValidatorReport(bool passed, ValidatorRule<T> rule)
         {
-            Passed = passed;
+            IsPassed = passed;
             Rule = rule;
         }
 
         public override string ToString()
         {
-            return Passed ? $"Passed: {(string.IsNullOrWhiteSpace(Rule.PassedMessage) ? "No Exception!" : Rule.PassedMessage)}" : $"Failed: {Rule.ExceptionMessage}";
+            return IsPassed ? $"Passed: {(string.IsNullOrWhiteSpace(Rule.PassedMessage) ? "No Exception!" : Rule.PassedMessage)}" : $"Failed: {Rule.ExceptionMessage}";
         }
     }
 }
