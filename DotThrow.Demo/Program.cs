@@ -1,6 +1,14 @@
 ﻿using DotThrow.Builder;
 using DotThrow.ExceptionExtensions;
 
+ICollection<int> vs = new List<int> { 1, 2 };
+vs.CreateThrower()
+    .ThrowIfEmpty()
+    .ThrowIf(x => x.Count > 1, "List has more than one element")
+    .ThrowIfCountIsGreaterThan(4)
+    .ThrowIfCountIsLessThan(2)
+    .ThrowIfCountIsEqualTo(3);
+
 string s = "aAaaa";
 string a = "324dd5a";
 

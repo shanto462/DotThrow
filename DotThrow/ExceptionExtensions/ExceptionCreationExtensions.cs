@@ -9,9 +9,9 @@ namespace DotThrow.ExceptionExtensions
 {
     public static class ExceptionCreationExtensions
     {
-        public static ExceptionThrower<T> CreateThrower<T>(this T obj)
+        public static ExceptionThrower<TValue> CreateThrower<TValue>(this TValue obj)
         {
-            return new ExceptionThrower<T>(obj);
+            return new ExceptionThrower<TValue>(obj);
         }
     }
 }

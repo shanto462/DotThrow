@@ -7,11 +7,11 @@ DotThrow is a .NET library for automatic exception catching and rule validation
 Download Source Code from [Releases](https://github.com/shanto462/DotThrow/releases).
 
 For installing from nuget, run this command from Package Manager Console
-```ps
+```powershell
 Install-Package DotThrow -Version 1.0.0
 ```
-Or
-```ps
+Or from .NET CLI
+```powershell
 dotnet add package DotThrow --version 1.0.0
 ```
 
