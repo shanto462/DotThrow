@@ -51,7 +51,7 @@ Validator<List<int>>.AddRule(list => list.Count > 5, "List contains more than 5 
 List<int> list = new() { 1, 2, 3, 4, 5, 6 };
 
 // We are passing the group name parameter in the method
-Validator<List<int>>.Verify(list);
+Validator<List<int>>.Verify(list, "test group 1");
 
 var reports = Validator<List<int>>.VerifyNotThrow(list, "test group 1");
 foreach (var report in reports)
