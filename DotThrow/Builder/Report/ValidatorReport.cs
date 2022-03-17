@@ -32,7 +32,7 @@ namespace DotThrow.Builder.Report
 
         private string GetGroupString()
         {
-            return $"Group : {Group}";
+            return string.IsNullOrWhiteSpace(Group) ? "" : $"Group : {Group}";
         }
     }
 }
