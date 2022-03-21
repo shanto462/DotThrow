@@ -4,10 +4,23 @@ using DotThrow.ExceptionExtensions;
 ICollection<int> vs = new List<int> { 1, 2 };
 vs.CreateThrower()
     .ThrowIfEmpty()
-    .ThrowIf(x => x.Count > 1, "List has more than one element")
+    .ThrowIf(x => x.Count > 10, "List has more than one element")
     .ThrowIfCountIsGreaterThan(4)
     .ThrowIfCountIsLessThan(2)
     .ThrowIfCountIsEqualTo(3);
+
+IDictionary<string, int> map = new Dictionary<string, int>
+{
+    { "x", 1 }
+};
+map.CreateThrower()
+    .ThrowIfEmpty()
+    .ThrowIf(x => x.ContainsKey("y"));
+
+HashSet<string> set = new HashSet<string> { "x" };
+set.CreateThrower()
+    .ThrowIfEmpty()
+    .ThrowIf(x => x.Contains("x"));
 
 string s = "aAaaa";
 string a = "324dd5a";
@@ -16,7 +29,18 @@ s.CreateThrower()
     .ThrowIfNullOrWhiteSpace()
     .ThrowIf(s => s.Length > 20, "Length is greater than 20!")
     .ThrowIf(s => s.Length == a.Length, "Both are equal!")
-    .ThrowIfAllLower();
+    .ThrowIfAllLower()
+    .ThrowIfNotValidJson()
+    .ThrowIfNotValidXml();
+
+int b = 10;
+b.CreateThrower()
+    .ThrowIfEqual(10)
+    .ThrowIfGreaterThanOrEqualZero()
+    .ThrowIfLessThanOrEqualZero()
+    .ThrowIfZero()
+    .ThrowIf(x => (x & 5) == 0);
+
 
 Validator<string>.AddRule(str => str.Length < 1, "String length is greater than 2", typeof(InvalidDataException), "String length is less than equal to 2");
 Validator<string>.AddRule(str => str.Length < 1, "String length is greater than 3", typeof(InvalidDataException));

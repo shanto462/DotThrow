@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,6 +12,7 @@ namespace DotThrow.ExceptionExtensions
 {
     public static class CollectionExceptionExtensions
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref readonly ExceptionThrower<TValue> ThrowIfEmpty<TValue>(this in ExceptionThrower<TValue> thrower) where TValue : IEnumerable
         {
             if (!thrower.Value.Any())
@@ -18,6 +20,7 @@ namespace DotThrow.ExceptionExtensions
             return ref thrower;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref readonly ExceptionThrower<TValue> ThrowIf<TValue>(this in ExceptionThrower<TValue> thrower, Predicate<TValue> predicate, string message = "") where TValue : IEnumerable
         {
             if (predicate.Invoke(thrower.Value))
@@ -25,6 +28,7 @@ namespace DotThrow.ExceptionExtensions
             return ref thrower;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref readonly ExceptionThrower<TValue> ThrowIfCountIsGreaterThan<TValue>(this in ExceptionThrower<TValue> thrower, int count) where TValue : IEnumerable
         {
             if (thrower.Value.Count() > count)
@@ -32,6 +36,7 @@ namespace DotThrow.ExceptionExtensions
             return ref thrower;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref readonly ExceptionThrower<TValue> ThrowIfCountIsLessThan<TValue>(this in ExceptionThrower<TValue> thrower, int count) where TValue : IEnumerable
         {
             if (thrower.Value.Count() < count)
@@ -39,6 +44,7 @@ namespace DotThrow.ExceptionExtensions
             return ref thrower;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref readonly ExceptionThrower<TValue> ThrowIfCountIsEqualTo<TValue>(this in ExceptionThrower<TValue> thrower, int count) where TValue : IEnumerable
         {
             if (thrower.Value.Count() == count)

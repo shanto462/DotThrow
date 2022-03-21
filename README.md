@@ -6,6 +6,8 @@ DotThrow is a .NET library for automatic exception catching and rule validation
 
 Download Source Code from [Releases](https://github.com/shanto462/DotThrow/releases).
 
+Nuget Download [Link](https://www.nuget.org/packages/DotThrow/)
+
 For installing from nuget, run this command from Package Manager Console
 ```powershell
 Install-Package DotThrow -Version 1.0.0
@@ -18,9 +20,9 @@ dotnet add package DotThrow --version 1.0.0
 
 ## Usage
 
-DotThrow offers three features. We can create automatic exception caching in method builder style or we can create validation rules for each type in general or grouped way.
+DotThrow offers three features. We can create automatic exception caching through method chaining or we can create validation rules for each type in general or grouped way.
 
-## Example 1 (Method Builder Style):
+## Example 1 (Method Chaining):
 
 ```csharp
 string s = "aAaaa";
@@ -29,7 +31,39 @@ s.CreateThrower()
     .ThrowIfNullOrWhiteSpace()
     .ThrowIf(s => s.Length > 20, "Length is greater than 20!")
     .ThrowIf(s => s.Length == a.Length, "Both are equal!")
+    .ThrowIfNotValidJson()
+    .ThrowIfNotValidXml()
     .ThrowIfAllLower();
+
+ICollection<int> vs = new List<int> { 1, 2 };
+vs.CreateThrower()
+    .ThrowIfEmpty()
+    .ThrowIf(x => x.Count > 1, "List has more than one element")
+    .ThrowIfCountIsGreaterThan(4)
+    .ThrowIfCountIsLessThan(2)
+    .ThrowIfCountIsEqualTo(3);
+
+IDictionary<string, int> map = new Dictionary<string, int>
+{
+    { "x", 1 }
+};
+map.CreateThrower()
+    .ThrowIfEmpty()
+    .ThrowIf(x => x.ContainsKey("x"));
+
+HashSet<string> set = new HashSet<string> { "x" };
+set.CreateThrower()
+    .ThrowIfEmpty()
+    .ThrowIf(x => x.Contains("x"));
+
+int b = 10;
+b.CreateThrower()
+    .ThrowIfEqual(10)
+    .ThrowIfGreaterThanOrEqualZero()
+    .ThrowIfLessThanOrEqualZero()
+    .ThrowIfZero()
+    .ThrowIf(x => (x & 5) == 0);
+
 ```
 ## Example 2 (Validation Rules Non Grouped):
 
@@ -72,7 +106,7 @@ foreach (var report in reports)
 Currently this project is in beta version and Method Builder is introduced only for **string** class. Though API can be **extended** by creating more extension method of **ExceptionThrower** struct.\
 \
 These are the features or improvement currently in development - 
-1. Method Builder Extensions for more type (Collections, Primitives.....)
+1. Method Chaining Extensions for more type (Collections, Primitives.....)
 2. Configuration file format for Method Builder and Validation Rule in XML and Json. So that no extra code needed and configuration is portable between projects.
 3. File or DB logging of complete stack trace.
 

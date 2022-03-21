@@ -3,6 +3,7 @@ using DotThrow.Throwble;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,6 +11,7 @@ namespace DotThrow.ExceptionExtensions
 {
     public static class StringExceptionExtensions
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref readonly ExceptionThrower<string> ThrowIfNullOrWhiteSpace(this in ExceptionThrower<string> thrower)
         {
             if (string.IsNullOrWhiteSpace(thrower.Value))
@@ -17,6 +19,7 @@ namespace DotThrow.ExceptionExtensions
             return ref thrower;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref readonly ExceptionThrower<string> ThrowIfNullOrEmpty(this in ExceptionThrower<string> thrower)
         {
             if (string.IsNullOrEmpty(thrower.Value))
@@ -24,6 +27,7 @@ namespace DotThrow.ExceptionExtensions
             return ref thrower;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref readonly ExceptionThrower<string> ThrowIfAllUpper(this in ExceptionThrower<string> thrower)
         {
             if (thrower.Value.Count(c => char.IsUpper(c)) == thrower.Value.Length)
@@ -31,6 +35,7 @@ namespace DotThrow.ExceptionExtensions
             return ref thrower;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref readonly ExceptionThrower<string> ThrowIfAllLower(this in ExceptionThrower<string> thrower)
         {
             if (thrower.Value.Count(c => char.IsLower(c)) == thrower.Value.Length)
@@ -38,6 +43,7 @@ namespace DotThrow.ExceptionExtensions
             return ref thrower;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref readonly ExceptionThrower<string> ThrowIf(this in ExceptionThrower<string> thrower, Predicate<string> predicate, string message = "")
         {
             if (predicate.Invoke(thrower.Value))
@@ -45,6 +51,7 @@ namespace DotThrow.ExceptionExtensions
             return ref thrower;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref readonly ExceptionThrower<string> ThrowIfNot(this in ExceptionThrower<string> thrower, Predicate<string> predicate)
         {
             if (!predicate.Invoke(thrower.Value))
@@ -52,6 +59,7 @@ namespace DotThrow.ExceptionExtensions
             return ref thrower;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref readonly ExceptionThrower<string> ThrowIfNotValidJson(this in ExceptionThrower<string> thrower)
         {
             if (!JsonHelpers.IsValidJson(thrower.Value))
@@ -59,6 +67,7 @@ namespace DotThrow.ExceptionExtensions
             return ref thrower;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref readonly ExceptionThrower<string> ThrowIfNotValidXml(this in ExceptionThrower<string> thrower)
         {
             if (!XmlHelpers.IsValidXml(thrower.Value))
@@ -66,6 +75,7 @@ namespace DotThrow.ExceptionExtensions
             return ref thrower;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref readonly ExceptionThrower<string> ThrowIfNotValidInteger(this in ExceptionThrower<string> thrower)
         {
             if (!int.TryParse(thrower.Value, out int _))
