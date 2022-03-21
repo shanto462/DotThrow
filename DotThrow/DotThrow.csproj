@@ -14,6 +14,7 @@
     <RepositoryUrl>https://github.com/shanto462/DotThrow</RepositoryUrl>
     <PackageId>DotThrow</PackageId>
     <Authors>shalahuddinshanto</Authors>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

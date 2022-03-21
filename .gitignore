@@ -404,3 +404,13 @@ FodyWeavers.xsd
 # Additional files built by Visual Studio
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio
+*.v2
+*.v2
+*.dll
+*.pdb
+*.cache
+*.editorconfig
+*.pdb
+DotThrow.Demo/obj/DotThrow.Demo.csproj.nuget.dgspec.json
+DotThrow/obj/project.assets.json
+DotThrow/obj/project.nuget.cache
