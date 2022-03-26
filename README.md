@@ -64,6 +64,15 @@ b.CreateThrower()
     .ThrowIfZero()
     .ThrowIf(x => (x & 5) == 0);
 
+DateTime dateTime = DateTime.ParseExact("26/03/2022", "dd/MM/yyyy", null);
+dateTime.CreateThrower()
+    .ThrowIfOlderThan(DateTime.ParseExact("11/11/2020", "dd/MM/yyyy", null))
+    .ThrowIfAfterThan(DateTime.ParseExact("11/11/2024", "dd/MM/yyyy", null))
+    .ThrowIf(x => (DateTime.Now - x).Days > 5, "Day difference is greater than 5!")
+    .ThrowIfEquals(DateTime.ParseExact("26/03/2022", "dd/MM/yyyy", null))
+    .ThrowIfAfterThanNow()
+    .ThrowIfOlderThanNow();
+
 ```
 ## Example 2 (Validation Rules Non Grouped):
 

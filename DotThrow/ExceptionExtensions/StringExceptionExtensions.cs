@@ -15,7 +15,7 @@ namespace DotThrow.ExceptionExtensions
         public static ref readonly ExceptionThrower<string> ThrowIfNullOrWhiteSpace(this in ExceptionThrower<string> thrower)
         {
             if (string.IsNullOrWhiteSpace(thrower.Value))
-                throw new ArgumentNullException(nameof(thrower.Value));
+                throw new ArgumentNullException("Value is Null or White space!");
             return ref thrower;
         }
 
@@ -23,7 +23,7 @@ namespace DotThrow.ExceptionExtensions
         public static ref readonly ExceptionThrower<string> ThrowIfNullOrEmpty(this in ExceptionThrower<string> thrower)
         {
             if (string.IsNullOrEmpty(thrower.Value))
-                throw new ArgumentNullException(nameof(thrower.Value));
+                throw new ArgumentNullException("Value is Null or Empty!");
             return ref thrower;
         }
 
