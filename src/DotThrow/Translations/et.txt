@@ -1,0 +1,146 @@
+# Estonian (et). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' ei tohi olla null.
+NotNull	'{PropertyName}' peab olema null.
+Default	'{PropertyName}' ei tohi olla vaikeväärtus.
+Empty	'{PropertyName}' ei tohi olla tühi.
+Empty.Guid	'{PropertyName}' ei tohi olla tühi GUID.
+NotEmpty	'{PropertyName}' peab olema tühi.
+EqualTo	'{PropertyName}' ei tohi olla võrdne keelatud väärtusega.
+EqualTo.Value	'{PropertyName}' ei tohi olla võrdne väärtusega {ComparisonValue}.
+NotEqualTo	'{PropertyName}' peab olema võrdne nõutud väärtusega.
+NotEqualTo.Value	'{PropertyName}' peab olema võrdne väärtusega {ComparisonValue}.
+OneOf	'{PropertyName}' ei tohi olla üks keelatud väärtustest.
+NotOneOf	'{PropertyName}' peab olema üks lubatud väärtustest.
+Condition	'{PropertyName}' ei ole kehtiv.
+Condition.If	'{PropertyName}' ei tohi vastata tingimusele: {Condition}.
+Condition.IfNot	'{PropertyName}' peab vastama tingimusele: {Condition}.
+Type	'{PropertyName}' ei tohi olla tüüpi {Type}.
+NotType	'{PropertyName}' peab olema tüüpi {Type}.
+True	'{PropertyName}' peab olema false.
+False	'{PropertyName}' peab olema true.
+Must	'{PropertyName}' ei ole kehtiv.
+Invalid	'{PropertyName}' ei ole kehtiv.
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' peab olema väiksem kui {ComparisonValue} või sellega võrdne.
+GreaterThanOrEqualTo	'{PropertyName}' peab olema väiksem kui {ComparisonValue}.
+LessThan	'{PropertyName}' peab olema suurem kui {ComparisonValue} või sellega võrdne.
+LessThanOrEqualTo	'{PropertyName}' peab olema suurem kui {ComparisonValue}.
+OutOfRange	'{PropertyName}' peab olema vahemikus {From} kuni {To}.
+OutOfRangeExclusive	'{PropertyName}' peab olema vahemikus {From} kuni {To} (otspunktid välja arvatud).
+InRange	'{PropertyName}' ei tohi olla vahemikus {From} kuni {To}.
+Negative	'{PropertyName}' ei tohi olla negatiivne.
+NegativeOrZero	'{PropertyName}' peab olema suurem kui 0.
+Positive	'{PropertyName}' ei tohi olla suurem kui 0.
+PositiveOrZero	'{PropertyName}' peab olema väiksem kui 0.
+Zero	'{PropertyName}' ei tohi olla 0.
+NaN	'{PropertyName}' peab olema arv, mitte NaN.
+Infinity	'{PropertyName}' peab olema lõplik arv.
+NotFinite	'{PropertyName}' peab olema lõplik arv.
+Odd	'{PropertyName}' peab olema paarisarv.
+Even	'{PropertyName}' peab olema paaritu arv.
+NotMultipleOf	'{PropertyName}' peab olema arvu {Divisor} kordne.
+NotPowerOfTwo	'{PropertyName}' peab olema kahe aste.
+NotInteger	'{PropertyName}' peab olema täisarv.
+PrecisionScaleExceeded	'{PropertyName}' numbrite koguarv peab olema kõige rohkem {ExpectedPrecision} ja komakohtade arv kõige rohkem {ExpectedScale}. Tegelik numbrite arv enne koma: {Digits}, komakohtade arv: {ActualScale}.
+
+# Strings
+WhiteSpace	'{PropertyName}' ei tohi olla tühi ega koosneda ainult tühimärkidest.
+LongerThan	'{PropertyName}' märkide arv peab olema kõige rohkem {MaxLength}.
+ShorterThan	'{PropertyName}' märkide arv peab olema vähemalt {MinLength}.
+LengthNotEqualTo	'{PropertyName}' märkide arv peab olema täpselt {Length}.
+LengthOutOfRange	'{PropertyName}' märkide arv peab olema vahemikus {MinLength} kuni {MaxLength}.
+Contains	'{PropertyName}' ei tohi sisaldada keelatud elementi.
+Contains.Value	'{PropertyName}' ei tohi sisaldada {Value}.
+NotContains	'{PropertyName}' peab sisaldama nõutud elementi.
+NotContains.Value	'{PropertyName}' peab sisaldama {Value}.
+StartsWith	'{PropertyName}' ei tohi alata väärtusega {Value}.
+NotStartsWith	'{PropertyName}' peab algama väärtusega {Value}.
+EndsWith	'{PropertyName}' ei tohi lõppeda väärtusega {Value}.
+NotEndsWith	'{PropertyName}' peab lõppema väärtusega {Value}.
+Matches	'{PropertyName}' ei tohi vastata mustrile {Pattern}.
+NotMatches	'{PropertyName}' peab vastama mustrile {Pattern}.
+NotEmailAddress	'{PropertyName}' peab olema kehtiv e-posti aadress.
+NotJson	'{PropertyName}' peab olema kehtiv JSON.
+NotXml	'{PropertyName}' peab olema korrektselt vormistatud XML.
+NotUri	'{PropertyName}' peab olema kehtiv URI.
+NotUri.Absolute	'{PropertyName}' peab olema kehtiv absoluutne URI.
+NotUri.Relative	'{PropertyName}' peab olema kehtiv suhteline URI.
+NotHttpUrl	'{PropertyName}' peab olema absoluutne HTTP- või HTTPS-URL.
+NotParsable	'{PropertyName}' peab olema kehtiv tüübi {Type} väärtus.
+AllUpperCase	'{PropertyName}' ei tohi koosneda ainult suurtähtedest.
+AllLowerCase	'{PropertyName}' ei tohi koosneda ainult väiketähtedest.
+NotTrimmed	'{PropertyName}' ei tohi alata ega lõppeda tühimärgiga.
+ContainsWhiteSpace	'{PropertyName}' ei tohi sisaldada tühimärke.
+ContainsControlCharacters	'{PropertyName}' ei tohi sisaldada juhtmärke.
+ContainsAny	'{PropertyName}' ei tohi sisaldada ühtegi keelatud märki.
+ContainsAnyExcept	'{PropertyName}' peab sisaldama ainult lubatud märke.
+NotAscii	'{PropertyName}' peab sisaldama ainult ASCII-märke.
+NotDigits	'{PropertyName}' peab sisaldama ainult numbreid 0 kuni 9.
+NotLettersOrDigits	'{PropertyName}' peab sisaldama ainult tähti või numbreid.
+NotHex	'{PropertyName}' peab olema kuueteistkümnendsüsteemis sõne.
+NotBase64	'{PropertyName}' peab olema kehtiv Base64-sõne.
+NotGuid	'{PropertyName}' peab olema kehtiv GUID.
+NotIPAddress	'{PropertyName}' peab olema kehtiv IP-aadress.
+NotSlug	'{PropertyName}' peab olema slug, mis koosneb väiketähtedest, numbritest ja üksikutest sidekriipsudest.
+NotVersion	'{PropertyName}' peab olema kehtiv versiooninumber.
+NotCreditCardNumber	'{PropertyName}' peab olema kehtiv krediitkaardi number.
+NotEnumName	'{PropertyName}' peab olema tüübis {Type} defineeritud nimi.
+NotFileName	'{PropertyName}' peab olema kehtiv failinimi.
+
+# Collections and dictionaries
+CountEqualTo	'{PropertyName}' ei tohi sisaldada täpselt {Count} elementi.
+CountEqualTo.One	'{PropertyName}' ei tohi sisaldada täpselt 1 elementi.
+CountNotEqualTo	'{PropertyName}' peab sisaldama täpselt {Count} elementi.
+CountNotEqualTo.One	'{PropertyName}' peab sisaldama täpselt 1 elementi.
+CountGreaterThan	'{PropertyName}' peab sisaldama kõige rohkem {MaxCount} elementi.
+CountGreaterThan.One	'{PropertyName}' peab sisaldama kõige rohkem 1 elementi.
+CountLessThan	'{PropertyName}' peab sisaldama vähemalt {MinCount} elementi.
+CountLessThan.One	'{PropertyName}' peab sisaldama vähemalt 1 elementi.
+CountOutOfRange	'{PropertyName}' elementide arv peab olema vahemikus {MinCount} kuni {MaxCount}.
+ContainsNull	'{PropertyName}' ei tohi sisaldada null-elemente.
+HasDuplicates	'{PropertyName}' ei tohi sisaldada korduvaid elemente.
+Any	'{PropertyName}' ei tohi sisaldada ühtegi elementi, mis vastab tingimusele.
+None	'{PropertyName}' peab sisaldama vähemalt üht elementi, mis vastab tingimusele.
+ContainsKey	'{PropertyName}' ei tohi sisaldada keelatud võtit.
+ContainsKey.Value	'{PropertyName}' ei tohi sisaldada võtit {Key}.
+NotContainsKey	'{PropertyName}' peab sisaldama nõutud võtit.
+NotContainsKey.Value	'{PropertyName}' peab sisaldama võtit {Key}.
+
+# Enums
+NotDefined	'{PropertyName}' peab olema tüübis {Type} defineeritud väärtus.
+HasFlag	'{PropertyName}' ei tohi sisaldada lippu {Flag}.
+NotHasFlag	'{PropertyName}' peab sisaldama lippu {Flag}.
+
+# Dates and times
+Before	'{PropertyName}' ei tohi olla varasem kui {ComparisonValue}.
+After	'{PropertyName}' ei tohi olla hilisem kui {ComparisonValue}.
+InPast	'{PropertyName}' ei tohi olla minevikus.
+InFuture	'{PropertyName}' ei tohi olla tulevikus.
+NotUtc	'{PropertyName}' peab olema UTC-ajas.
+Weekend	'{PropertyName}' peab olema tööpäev (esmaspäevast reedeni).
+Weekday	'{PropertyName}' peab olema nädalavahetuse päev.
+HasTimeOfDay	'{PropertyName}' ei tohi sisaldada kellaaega.
+OlderThan	'{PropertyName}' ei tohi olla rohkem kui {MaxAge} minevikus.
+NewerThan	'{PropertyName}' peab olema vähemalt {MinAge} minevikus.
+
+# Uri and IPAddress
+Relative	'{PropertyName}' peab olema absoluutne URI.
+NotHttps	'{PropertyName}' peab olema absoluutne HTTPS-URL.
+NotHttpOrHttps	'{PropertyName}' peab olema absoluutne HTTP- või HTTPS-URL.
+NotScheme	'{PropertyName}' peab kasutama üht neist URI-skeemidest: {Schemes}.
+Loopback	'{PropertyName}' ei tohi olla loopback-aadress.
+Private	'{PropertyName}' ei tohi olla privaatne ega link-local-aadress.
+NotIPv4	'{PropertyName}' peab olema IPv4-aadress.
+NotIPv6	'{PropertyName}' peab olema IPv6-aadress.
+
+# Streams and types
+NotReadable	'{PropertyName}' peab toetama lugemist.
+NotWritable	'{PropertyName}' peab toetama kirjutamist.
+NotSeekable	'{PropertyName}' peab toetama positsiooni muutmist.
+NotAssignableTo	'{PropertyName}' peab olema omistatav tüübile {Type}.
+Abstract	'{PropertyName}' ei tohi olla abstraktne tüüp.
+Interface	'{PropertyName}' ei tohi olla liides.

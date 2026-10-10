@@ -1,0 +1,146 @@
+# Tamil (ta). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' null ஆக இருக்கக்கூடாது.
+NotNull	'{PropertyName}' null ஆக இருக்க வேண்டும்.
+Default	'{PropertyName}' இயல்புநிலை மதிப்பாக இருக்கக்கூடாது.
+Empty	'{PropertyName}' காலியாக இருக்கக்கூடாது.
+Empty.Guid	'{PropertyName}' காலியான GUID ஆக இருக்கக்கூடாது.
+NotEmpty	'{PropertyName}' காலியாக இருக்க வேண்டும்.
+EqualTo	'{PropertyName}' நிராகரிக்கப்பட்ட மதிப்புக்குச் சமமாக இருக்கக்கூடாது.
+EqualTo.Value	'{PropertyName}' {ComparisonValue}-க்குச் சமமாக இருக்கக்கூடாது.
+NotEqualTo	'{PropertyName}' தேவையான மதிப்புக்குச் சமமாக இருக்க வேண்டும்.
+NotEqualTo.Value	'{PropertyName}' {ComparisonValue}-க்குச் சமமாக இருக்க வேண்டும்.
+OneOf	'{PropertyName}' நிராகரிக்கப்பட்ட மதிப்புகளில் ஒன்றாக இருக்கக்கூடாது.
+NotOneOf	'{PropertyName}' அனுமதிக்கப்பட்ட மதிப்புகளில் ஒன்றாக இருக்க வேண்டும்.
+Condition	'{PropertyName}' செல்லுபடியானது அல்ல.
+Condition.If	'{PropertyName}' இந்த நிபந்தனையைப் பூர்த்தி செய்யக்கூடாது: {Condition}.
+Condition.IfNot	'{PropertyName}' இந்த நிபந்தனையைப் பூர்த்தி செய்ய வேண்டும்: {Condition}.
+Type	'{PropertyName}' {Type} வகையாக இருக்கக்கூடாது.
+NotType	'{PropertyName}' {Type} வகையாக இருக்க வேண்டும்.
+True	'{PropertyName}' false ஆக இருக்க வேண்டும்.
+False	'{PropertyName}' true ஆக இருக்க வேண்டும்.
+Must	'{PropertyName}' செல்லுபடியானது அல்ல.
+Invalid	'{PropertyName}' செல்லுபடியானது அல்ல.
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' {ComparisonValue}-ஐ விடக் குறைவாக அல்லது சமமாக இருக்க வேண்டும்.
+GreaterThanOrEqualTo	'{PropertyName}' {ComparisonValue}-ஐ விடக் குறைவாக இருக்க வேண்டும்.
+LessThan	'{PropertyName}' {ComparisonValue}-ஐ விட அதிகமாக அல்லது சமமாக இருக்க வேண்டும்.
+LessThanOrEqualTo	'{PropertyName}' {ComparisonValue}-ஐ விட அதிகமாக இருக்க வேண்டும்.
+OutOfRange	'{PropertyName}' {From} மற்றும் {To}-க்கு இடையில் இருக்க வேண்டும்.
+OutOfRangeExclusive	'{PropertyName}' {From} மற்றும் {To}-க்கு இடையில் இருக்க வேண்டும் (எல்லை மதிப்புகள் தவிர).
+InRange	'{PropertyName}' {From} மற்றும் {To}-க்கு இடையில் இருக்கக்கூடாது.
+Negative	'{PropertyName}' எதிர்மறையாக இருக்கக்கூடாது.
+NegativeOrZero	'{PropertyName}' 0-ஐ விட அதிகமாக இருக்க வேண்டும்.
+Positive	'{PropertyName}' 0-ஐ விட அதிகமாக இருக்கக்கூடாது.
+PositiveOrZero	'{PropertyName}' 0-ஐ விடக் குறைவாக இருக்க வேண்டும்.
+Zero	'{PropertyName}' 0 ஆக இருக்கக்கூடாது.
+NaN	'{PropertyName}' ஒரு எண்ணாக இருக்க வேண்டும், NaN ஆக அல்ல.
+Infinity	'{PropertyName}' ஒரு முடிவுறு எண்ணாக இருக்க வேண்டும்.
+NotFinite	'{PropertyName}' ஒரு முடிவுறு எண்ணாக இருக்க வேண்டும்.
+Odd	'{PropertyName}' ஒரு இரட்டைப்படை எண்ணாக இருக்க வேண்டும்.
+Even	'{PropertyName}' ஒரு ஒற்றைப்படை எண்ணாக இருக்க வேண்டும்.
+NotMultipleOf	'{PropertyName}' {Divisor}-இன் மடங்காக இருக்க வேண்டும்.
+NotPowerOfTwo	'{PropertyName}' 2-இன் அடுக்காக இருக்க வேண்டும்.
+NotInteger	'{PropertyName}' ஒரு முழு எண்ணாக இருக்க வேண்டும்.
+PrecisionScaleExceeded	'{PropertyName}'-இல் மொத்த இலக்கங்களின் எண்ணிக்கை அதிகபட்சம் {ExpectedPrecision} ஆகவும், தசமப் புள்ளிக்குப் பின் உள்ள இலக்கங்களின் எண்ணிக்கை அதிகபட்சம் {ExpectedScale} ஆகவும் இருக்க வேண்டும். கண்டறியப்பட்ட இலக்கங்கள்: தசமப் புள்ளிக்கு முன் {Digits}, பின் {ActualScale}.
+
+# Strings
+WhiteSpace	'{PropertyName}' காலியாகவோ வெற்றிடங்களை மட்டும் கொண்டதாகவோ இருக்கக்கூடாது.
+LongerThan	'{PropertyName}'-இன் எழுத்துக்குறி எண்ணிக்கை அதிகபட்சம் {MaxLength} ஆக இருக்க வேண்டும்.
+ShorterThan	'{PropertyName}'-இன் எழுத்துக்குறி எண்ணிக்கை குறைந்தது {MinLength} ஆக இருக்க வேண்டும்.
+LengthNotEqualTo	'{PropertyName}'-இன் எழுத்துக்குறி எண்ணிக்கை சரியாக {Length} ஆக இருக்க வேண்டும்.
+LengthOutOfRange	'{PropertyName}'-இன் எழுத்துக்குறி எண்ணிக்கை {MinLength} மற்றும் {MaxLength}-க்கு இடையில் இருக்க வேண்டும்.
+Contains	'{PropertyName}'-இல் நிராகரிக்கப்பட்ட உருப்படி இருக்கக்கூடாது.
+Contains.Value	'{PropertyName}'-இல் {Value} இருக்கக்கூடாது.
+NotContains	'{PropertyName}'-இல் தேவையான உருப்படி இருக்க வேண்டும்.
+NotContains.Value	'{PropertyName}'-இல் {Value} இருக்க வேண்டும்.
+StartsWith	'{PropertyName}' {Value}-இல் தொடங்கக்கூடாது.
+NotStartsWith	'{PropertyName}' {Value}-இல் தொடங்க வேண்டும்.
+EndsWith	'{PropertyName}' {Value}-இல் முடியக்கூடாது.
+NotEndsWith	'{PropertyName}' {Value}-இல் முடிய வேண்டும்.
+Matches	'{PropertyName}' {Pattern} என்ற பேட்டர்னுடன் பொருந்தக்கூடாது.
+NotMatches	'{PropertyName}' {Pattern} என்ற பேட்டர்னுடன் பொருந்த வேண்டும்.
+NotEmailAddress	'{PropertyName}' ஒரு செல்லுபடியான மின்னஞ்சல் முகவரியாக இருக்க வேண்டும்.
+NotJson	'{PropertyName}' செல்லுபடியான JSON ஆக இருக்க வேண்டும்.
+NotXml	'{PropertyName}' சரியாக அமைக்கப்பட்ட XML ஆக இருக்க வேண்டும்.
+NotUri	'{PropertyName}' ஒரு செல்லுபடியான URI ஆக இருக்க வேண்டும்.
+NotUri.Absolute	'{PropertyName}' ஒரு செல்லுபடியான முழுமையான URI ஆக இருக்க வேண்டும்.
+NotUri.Relative	'{PropertyName}' ஒரு செல்லுபடியான சார்பு URI ஆக இருக்க வேண்டும்.
+NotHttpUrl	'{PropertyName}' ஒரு முழுமையான HTTP அல்லது HTTPS URL ஆக இருக்க வேண்டும்.
+NotParsable	'{PropertyName}' {Type} வகையின் செல்லுபடியான மதிப்பாக இருக்க வேண்டும்.
+AllUpperCase	'{PropertyName}' முழுவதும் பேரெழுத்துகளாக இருக்கக்கூடாது.
+AllLowerCase	'{PropertyName}' முழுவதும் சிற்றெழுத்துகளாக இருக்கக்கூடாது.
+NotTrimmed	'{PropertyName}'-இன் தொடக்கத்திலோ முடிவிலோ வெற்றிடம் இருக்கக்கூடாது.
+ContainsWhiteSpace	'{PropertyName}'-இல் வெற்றிடம் இருக்கக்கூடாது.
+ContainsControlCharacters	'{PropertyName}'-இல் கட்டுப்பாட்டு எழுத்துக்குறிகள் இருக்கக்கூடாது.
+ContainsAny	'{PropertyName}'-இல் நிராகரிக்கப்பட்ட எழுத்துக்குறிகளில் எதுவும் இருக்கக்கூடாது.
+ContainsAnyExcept	'{PropertyName}'-இல் அனுமதிக்கப்பட்ட எழுத்துக்குறிகள் மட்டுமே இருக்க வேண்டும்.
+NotAscii	'{PropertyName}'-இல் ASCII எழுத்துக்குறிகள் மட்டுமே இருக்க வேண்டும்.
+NotDigits	'{PropertyName}'-இல் 0 முதல் 9 வரையிலான இலக்கங்கள் மட்டுமே இருக்க வேண்டும்.
+NotLettersOrDigits	'{PropertyName}'-இல் எழுத்துகள் அல்லது இலக்கங்கள் மட்டுமே இருக்க வேண்டும்.
+NotHex	'{PropertyName}' ஒரு ஹெக்ஸாடெசிமல் சரமாக இருக்க வேண்டும்.
+NotBase64	'{PropertyName}' ஒரு செல்லுபடியான Base64 சரமாக இருக்க வேண்டும்.
+NotGuid	'{PropertyName}' ஒரு செல்லுபடியான GUID ஆக இருக்க வேண்டும்.
+NotIPAddress	'{PropertyName}' ஒரு செல்லுபடியான IP முகவரியாக இருக்க வேண்டும்.
+NotSlug	'{PropertyName}' சிற்றெழுத்துகள், இலக்கங்கள், ஒற்றை ஹைபன்கள் ஆகியவற்றால் ஆன ஒரு ஸ்லக் ஆக இருக்க வேண்டும்.
+NotVersion	'{PropertyName}' ஒரு செல்லுபடியான பதிப்பு எண்ணாக இருக்க வேண்டும்.
+NotCreditCardNumber	'{PropertyName}' ஒரு செல்லுபடியான கிரெடிட் கார்டு எண்ணாக இருக்க வேண்டும்.
+NotEnumName	'{PropertyName}' {Type}-இல் வரையறுக்கப்பட்ட ஒரு பெயராக இருக்க வேண்டும்.
+NotFileName	'{PropertyName}' ஒரு செல்லுபடியான கோப்புப் பெயராக இருக்க வேண்டும்.
+
+# Collections and dictionaries
+CountEqualTo	'{PropertyName}'-இல் சரியாக {Count} உருப்படிகள் இருக்கக்கூடாது.
+CountEqualTo.One	'{PropertyName}'-இல் சரியாக 1 உருப்படி இருக்கக்கூடாது.
+CountNotEqualTo	'{PropertyName}'-இல் சரியாக {Count} உருப்படிகள் இருக்க வேண்டும்.
+CountNotEqualTo.One	'{PropertyName}'-இல் சரியாக 1 உருப்படி இருக்க வேண்டும்.
+CountGreaterThan	'{PropertyName}'-இல் அதிகபட்சம் {MaxCount} உருப்படிகள் இருக்க வேண்டும்.
+CountGreaterThan.One	'{PropertyName}'-இல் அதிகபட்சம் 1 உருப்படி இருக்க வேண்டும்.
+CountLessThan	'{PropertyName}'-இல் குறைந்தது {MinCount} உருப்படிகள் இருக்க வேண்டும்.
+CountLessThan.One	'{PropertyName}'-இல் குறைந்தது 1 உருப்படி இருக்க வேண்டும்.
+CountOutOfRange	'{PropertyName}'-இன் உருப்படி எண்ணிக்கை {MinCount} மற்றும் {MaxCount}-க்கு இடையில் இருக்க வேண்டும்.
+ContainsNull	'{PropertyName}'-இல் null உருப்படிகள் இருக்கக்கூடாது.
+HasDuplicates	'{PropertyName}'-இல் நகல் உருப்படிகள் இருக்கக்கூடாது.
+Any	'{PropertyName}'-இல் நிபந்தனையைப் பூர்த்தி செய்யும் எந்த உருப்படியும் இருக்கக்கூடாது.
+None	'{PropertyName}'-இல் நிபந்தனையைப் பூர்த்தி செய்யும் குறைந்தது ஒரு உருப்படி இருக்க வேண்டும்.
+ContainsKey	'{PropertyName}'-இல் நிராகரிக்கப்பட்ட விசை இருக்கக்கூடாது.
+ContainsKey.Value	'{PropertyName}'-இல் {Key} என்ற விசை இருக்கக்கூடாது.
+NotContainsKey	'{PropertyName}'-இல் தேவையான விசை இருக்க வேண்டும்.
+NotContainsKey.Value	'{PropertyName}'-இல் {Key} என்ற விசை இருக்க வேண்டும்.
+
+# Enums
+NotDefined	'{PropertyName}' {Type}-இல் வரையறுக்கப்பட்ட ஒரு மதிப்பாக இருக்க வேண்டும்.
+HasFlag	'{PropertyName}'-இல் {Flag} என்ற ஃபிளாக் அமைக்கப்பட்டிருக்கக்கூடாது.
+NotHasFlag	'{PropertyName}'-இல் {Flag} என்ற ஃபிளாக் அமைக்கப்பட்டிருக்க வேண்டும்.
+
+# Dates and times
+Before	'{PropertyName}' {ComparisonValue}-க்கு முன் இருக்கக்கூடாது.
+After	'{PropertyName}' {ComparisonValue}-க்குப் பின் இருக்கக்கூடாது.
+InPast	'{PropertyName}' கடந்த காலத்தில் இருக்கக்கூடாது.
+InFuture	'{PropertyName}' எதிர்காலத்தில் இருக்கக்கூடாது.
+NotUtc	'{PropertyName}' UTC-இல் இருக்க வேண்டும்.
+Weekend	'{PropertyName}' ஒரு வேலை நாளாக (திங்கள் முதல் வெள்ளி வரை) இருக்க வேண்டும்.
+Weekday	'{PropertyName}' ஒரு வார இறுதி நாளாக (சனி அல்லது ஞாயிறு) இருக்க வேண்டும்.
+HasTimeOfDay	'{PropertyName}'-இல் நேரப் பகுதி இருக்கக்கூடாது.
+OlderThan	'{PropertyName}' {MaxAge}-க்கு மேல் பழையதாக இருக்கக்கூடாது.
+NewerThan	'{PropertyName}' குறைந்தது {MinAge} பழையதாக இருக்க வேண்டும்.
+
+# Uri and IPAddress
+Relative	'{PropertyName}' ஒரு முழுமையான URI ஆக இருக்க வேண்டும்.
+NotHttps	'{PropertyName}' ஒரு முழுமையான HTTPS URL ஆக இருக்க வேண்டும்.
+NotHttpOrHttps	'{PropertyName}' ஒரு முழுமையான HTTP அல்லது HTTPS URL ஆக இருக்க வேண்டும்.
+NotScheme	'{PropertyName}' இந்த URI ஸ்கீம்களில் ஒன்றைப் பயன்படுத்த வேண்டும்: {Schemes}.
+Loopback	'{PropertyName}' ஒரு லூப்பேக் முகவரியாக இருக்கக்கூடாது.
+Private	'{PropertyName}' ஒரு தனிப்பட்ட அல்லது லிங்க்-லோக்கல் முகவரியாக இருக்கக்கூடாது.
+NotIPv4	'{PropertyName}' ஒரு IPv4 முகவரியாக இருக்க வேண்டும்.
+NotIPv6	'{PropertyName}' ஒரு IPv6 முகவரியாக இருக்க வேண்டும்.
+
+# Streams and types
+NotReadable	'{PropertyName}' படிக்கக்கூடியதாக இருக்க வேண்டும்.
+NotWritable	'{PropertyName}' எழுதக்கூடியதாக இருக்க வேண்டும்.
+NotSeekable	'{PropertyName}' சீக் செய்யக்கூடியதாக இருக்க வேண்டும்.
+NotAssignableTo	'{PropertyName}' {Type} வகைக்கு ஒதுக்கக்கூடியதாக இருக்க வேண்டும்.
+Abstract	'{PropertyName}' ஒரு அப்ஸ்ட்ராக்ட் வகையாக இருக்கக்கூடாது.
+Interface	'{PropertyName}' ஒரு இடைமுகமாக இருக்கக்கூடாது.

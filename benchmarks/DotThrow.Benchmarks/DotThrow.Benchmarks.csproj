@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>DotThrow.Benchmarks</RootNamespace>
+    <!-- BenchmarkDotNet refuses to measure Debug builds. -->
+    <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+    <!--
+      The repository pins Roslyn 4.8 for the analyzers. BenchmarkDotNet needs a newer Roslyn
+      at run time, so this project does not pin transitive packages.
+    -->
+    <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" />
+    <!-- The libraries DotThrow is compared with. -->
+    <PackageReference Include="Ardalis.GuardClauses" />
+    <PackageReference Include="CommunityToolkit.Diagnostics" />
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="Throw" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\DotThrow\DotThrow.csproj" />
+  </ItemGroup>
+
+</Project>

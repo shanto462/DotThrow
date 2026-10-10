@@ -1,0 +1,146 @@
+# Latvian (lv). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' vērtība nedrīkst būt null.
+NotNull	'{PropertyName}' vērtībai ir jābūt null.
+Default	'{PropertyName}' vērtība nedrīkst būt noklusējuma vērtība.
+Empty	'{PropertyName}' vērtība nedrīkst būt tukša.
+Empty.Guid	'{PropertyName}' vērtība nedrīkst būt tukšs GUID.
+NotEmpty	'{PropertyName}' vērtībai ir jābūt tukšai.
+EqualTo	'{PropertyName}' vērtība nedrīkst būt vienāda ar noraidīto vērtību.
+EqualTo.Value	'{PropertyName}' vērtība nedrīkst būt vienāda ar {ComparisonValue}.
+NotEqualTo	'{PropertyName}' vērtībai ir jābūt vienādai ar nepieciešamo vērtību.
+NotEqualTo.Value	'{PropertyName}' vērtībai ir jābūt vienādai ar {ComparisonValue}.
+OneOf	'{PropertyName}' vērtība nedrīkst būt viena no noraidītajām vērtībām.
+NotOneOf	'{PropertyName}' vērtībai ir jābūt vienai no atļautajām vērtībām.
+Condition	'{PropertyName}' vērtība nav derīga.
+Condition.If	'{PropertyName}' vērtība nedrīkst atbilst nosacījumam: {Condition}.
+Condition.IfNot	'{PropertyName}' vērtībai ir jāatbilst nosacījumam: {Condition}.
+Type	'{PropertyName}' vērtība nedrīkst būt {Type} tipa.
+NotType	'{PropertyName}' vērtībai ir jābūt {Type} tipa.
+True	'{PropertyName}' vērtībai ir jābūt false.
+False	'{PropertyName}' vērtībai ir jābūt true.
+Must	'{PropertyName}' vērtība nav derīga.
+Invalid	'{PropertyName}' vērtība nav derīga.
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' vērtībai ir jābūt mazākai vai vienādai ar {ComparisonValue}.
+GreaterThanOrEqualTo	'{PropertyName}' vērtībai ir jābūt mazākai par {ComparisonValue}.
+LessThan	'{PropertyName}' vērtībai ir jābūt lielākai vai vienādai ar {ComparisonValue}.
+LessThanOrEqualTo	'{PropertyName}' vērtībai ir jābūt lielākai par {ComparisonValue}.
+OutOfRange	'{PropertyName}' vērtībai ir jābūt robežās no {From} līdz {To}.
+OutOfRangeExclusive	'{PropertyName}' vērtībai ir jābūt robežās no {From} līdz {To} (neieskaitot robežvērtības).
+InRange	'{PropertyName}' vērtība nedrīkst būt robežās no {From} līdz {To}.
+Negative	'{PropertyName}' vērtība nedrīkst būt negatīva.
+NegativeOrZero	'{PropertyName}' vērtībai ir jābūt lielākai par 0.
+Positive	'{PropertyName}' vērtība nedrīkst būt lielāka par 0.
+PositiveOrZero	'{PropertyName}' vērtībai ir jābūt mazākai par 0.
+Zero	'{PropertyName}' vērtība nedrīkst būt 0.
+NaN	'{PropertyName}' vērtībai ir jābūt skaitlim, nevis NaN.
+Infinity	'{PropertyName}' vērtībai ir jābūt galīgam skaitlim.
+NotFinite	'{PropertyName}' vērtībai ir jābūt galīgam skaitlim.
+Odd	'{PropertyName}' vērtībai ir jābūt pāra skaitlim.
+Even	'{PropertyName}' vērtībai ir jābūt nepāra skaitlim.
+NotMultipleOf	'{PropertyName}' vērtībai ir jābūt skaitļa {Divisor} daudzkārtnim.
+NotPowerOfTwo	'{PropertyName}' vērtībai ir jābūt divnieka pakāpei.
+NotInteger	'{PropertyName}' vērtībai ir jābūt veselam skaitlim.
+PrecisionScaleExceeded	'{PropertyName}' vērtības kopējam ciparu skaitam ir jābūt ne lielākam par {ExpectedPrecision}, no tiem aiz komata ne vairāk kā {ExpectedScale}. Faktiskais ciparu skaits pirms komata: {Digits}, aiz komata: {ActualScale}.
+
+# Strings
+WhiteSpace	'{PropertyName}' vērtība nedrīkst būt tukša vai sastāvēt tikai no atstarpēm.
+LongerThan	'{PropertyName}' simbolu skaitam ir jābūt ne lielākam par {MaxLength}.
+ShorterThan	'{PropertyName}' simbolu skaitam ir jābūt ne mazākam par {MinLength}.
+LengthNotEqualTo	'{PropertyName}' simbolu skaitam ir jābūt tieši {Length}.
+LengthOutOfRange	'{PropertyName}' simbolu skaitam ir jābūt robežās no {MinLength} līdz {MaxLength}.
+Contains	'{PropertyName}' vērtība nedrīkst saturēt noraidīto elementu.
+Contains.Value	'{PropertyName}' vērtība nedrīkst saturēt {Value}.
+NotContains	'{PropertyName}' vērtībai ir jāsatur nepieciešamais elements.
+NotContains.Value	'{PropertyName}' vērtībai ir jāsatur {Value}.
+StartsWith	'{PropertyName}' vērtība nedrīkst sākties ar {Value}.
+NotStartsWith	'{PropertyName}' vērtībai ir jāsākas ar {Value}.
+EndsWith	'{PropertyName}' vērtība nedrīkst beigties ar {Value}.
+NotEndsWith	'{PropertyName}' vērtībai ir jābeidzas ar {Value}.
+Matches	'{PropertyName}' vērtība nedrīkst atbilst šablonam {Pattern}.
+NotMatches	'{PropertyName}' vērtībai ir jāatbilst šablonam {Pattern}.
+NotEmailAddress	'{PropertyName}' vērtībai ir jābūt derīgai e-pasta adresei.
+NotJson	'{PropertyName}' vērtībai ir jābūt derīgam JSON.
+NotXml	'{PropertyName}' vērtībai ir jābūt pareizi veidotam XML.
+NotUri	'{PropertyName}' vērtībai ir jābūt derīgam URI.
+NotUri.Absolute	'{PropertyName}' vērtībai ir jābūt derīgam absolūtam URI.
+NotUri.Relative	'{PropertyName}' vērtībai ir jābūt derīgam relatīvam URI.
+NotHttpUrl	'{PropertyName}' vērtībai ir jābūt absolūtai HTTP vai HTTPS URL adresei.
+NotParsable	'{PropertyName}' vērtībai ir jābūt derīgai {Type} tipa vērtībai.
+AllUpperCase	'{PropertyName}' vērtība nedrīkst sastāvēt tikai no lielajiem burtiem.
+AllLowerCase	'{PropertyName}' vērtība nedrīkst sastāvēt tikai no mazajiem burtiem.
+NotTrimmed	'{PropertyName}' vērtība nedrīkst sākties vai beigties ar atstarpi.
+ContainsWhiteSpace	'{PropertyName}' vērtība nedrīkst saturēt atstarpes.
+ContainsControlCharacters	'{PropertyName}' vērtība nedrīkst saturēt vadības simbolus.
+ContainsAny	'{PropertyName}' vērtība nedrīkst saturēt nevienu no noraidītajiem simboliem.
+ContainsAnyExcept	'{PropertyName}' vērtībai ir jāsatur tikai atļautie simboli.
+NotAscii	'{PropertyName}' vērtībai ir jāsatur tikai ASCII simboli.
+NotDigits	'{PropertyName}' vērtībai ir jāsatur tikai cipari no 0 līdz 9.
+NotLettersOrDigits	'{PropertyName}' vērtībai ir jāsatur tikai burti vai cipari.
+NotHex	'{PropertyName}' vērtībai ir jābūt heksadecimālai virknei.
+NotBase64	'{PropertyName}' vērtībai ir jābūt derīgai Base64 virknei.
+NotGuid	'{PropertyName}' vērtībai ir jābūt derīgam GUID.
+NotIPAddress	'{PropertyName}' vērtībai ir jābūt derīgai IP adresei.
+NotSlug	'{PropertyName}' vērtībai ir jābūt slug virknei no mazajiem burtiem, cipariem un atsevišķām defisēm.
+NotVersion	'{PropertyName}' vērtībai ir jābūt derīgam versijas numuram.
+NotCreditCardNumber	'{PropertyName}' vērtībai ir jābūt derīgam kredītkartes numuram.
+NotEnumName	'{PropertyName}' vērtībai ir jābūt tipā {Type} definētam nosaukumam.
+NotFileName	'{PropertyName}' vērtībai ir jābūt derīgam faila nosaukumam.
+
+# Collections and dictionaries
+CountEqualTo	'{PropertyName}' elementu skaits nedrīkst būt tieši {Count}.
+CountEqualTo.One	'{PropertyName}' vērtība nedrīkst saturēt tieši 1 elementu.
+CountNotEqualTo	'{PropertyName}' elementu skaitam ir jābūt tieši {Count}.
+CountNotEqualTo.One	'{PropertyName}' vērtībai ir jāsatur tieši 1 elements.
+CountGreaterThan	'{PropertyName}' elementu skaitam ir jābūt ne lielākam par {MaxCount}.
+CountGreaterThan.One	'{PropertyName}' vērtībai ir jāsatur ne vairāk kā 1 elements.
+CountLessThan	'{PropertyName}' elementu skaitam ir jābūt ne mazākam par {MinCount}.
+CountLessThan.One	'{PropertyName}' vērtībai ir jāsatur vismaz 1 elements.
+CountOutOfRange	'{PropertyName}' elementu skaitam ir jābūt robežās no {MinCount} līdz {MaxCount}.
+ContainsNull	'{PropertyName}' vērtība nedrīkst saturēt null elementus.
+HasDuplicates	'{PropertyName}' vērtība nedrīkst saturēt dublētus elementus.
+Any	'{PropertyName}' vērtība nedrīkst saturēt nevienu elementu, kas atbilst nosacījumam.
+None	'{PropertyName}' vērtībai ir jāsatur vismaz viens elements, kas atbilst nosacījumam.
+ContainsKey	'{PropertyName}' vērtība nedrīkst saturēt noraidīto atslēgu.
+ContainsKey.Value	'{PropertyName}' vērtība nedrīkst saturēt atslēgu {Key}.
+NotContainsKey	'{PropertyName}' vērtībai ir jāsatur nepieciešamā atslēga.
+NotContainsKey.Value	'{PropertyName}' vērtībai ir jāsatur atslēga {Key}.
+
+# Enums
+NotDefined	'{PropertyName}' vērtībai ir jābūt tipā {Type} definētai vērtībai.
+HasFlag	'{PropertyName}' vērtība nedrīkst saturēt karodziņu {Flag}.
+NotHasFlag	'{PropertyName}' vērtībai ir jāsatur karodziņš {Flag}.
+
+# Dates and times
+Before	'{PropertyName}' vērtība nedrīkst būt agrāka par {ComparisonValue}.
+After	'{PropertyName}' vērtība nedrīkst būt vēlāka par {ComparisonValue}.
+InPast	'{PropertyName}' vērtība nedrīkst būt pagātnē.
+InFuture	'{PropertyName}' vērtība nedrīkst būt nākotnē.
+NotUtc	'{PropertyName}' vērtībai ir jābūt UTC laikā.
+Weekend	'{PropertyName}' vērtībai ir jābūt darbdienai (no pirmdienas līdz piektdienai).
+Weekday	'{PropertyName}' vērtībai ir jābūt nedēļas nogales dienai.
+HasTimeOfDay	'{PropertyName}' vērtība nedrīkst saturēt laika daļu.
+OlderThan	'{PropertyName}' vērtība nedrīkst būt vairāk nekā {MaxAge} pagātnē.
+NewerThan	'{PropertyName}' vērtībai ir jābūt vismaz {MinAge} pagātnē.
+
+# Uri and IPAddress
+Relative	'{PropertyName}' vērtībai ir jābūt absolūtam URI.
+NotHttps	'{PropertyName}' vērtībai ir jābūt absolūtai HTTPS URL adresei.
+NotHttpOrHttps	'{PropertyName}' vērtībai ir jābūt absolūtai HTTP vai HTTPS URL adresei.
+NotScheme	'{PropertyName}' vērtībai ir jāizmanto viena no šīm URI shēmām: {Schemes}.
+Loopback	'{PropertyName}' vērtība nedrīkst būt loopback adrese.
+Private	'{PropertyName}' vērtība nedrīkst būt privāta vai link-local adrese.
+NotIPv4	'{PropertyName}' vērtībai ir jābūt IPv4 adresei.
+NotIPv6	'{PropertyName}' vērtībai ir jābūt IPv6 adresei.
+
+# Streams and types
+NotReadable	'{PropertyName}' vērtībai ir jāatbalsta lasīšana.
+NotWritable	'{PropertyName}' vērtībai ir jāatbalsta rakstīšana.
+NotSeekable	'{PropertyName}' vērtībai ir jāatbalsta pozīcijas maiņa.
+NotAssignableTo	'{PropertyName}' vērtībai ir jābūt piešķiramai tipam {Type}.
+Abstract	'{PropertyName}' vērtība nedrīkst būt abstrakts tips.
+Interface	'{PropertyName}' vērtība nedrīkst būt interfeiss.

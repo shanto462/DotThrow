@@ -1,0 +1,146 @@
+# Macedonian (mk). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	Вредноста на '{PropertyName}' не смее да биде null.
+NotNull	Вредноста на '{PropertyName}' мора да биде null.
+Default	Вредноста на '{PropertyName}' не смее да биде стандардната вредност.
+Empty	Вредноста на '{PropertyName}' не смее да биде празна.
+Empty.Guid	Вредноста на '{PropertyName}' не смее да биде празен GUID.
+NotEmpty	Вредноста на '{PropertyName}' мора да биде празна.
+EqualTo	Вредноста на '{PropertyName}' не смее да биде еднаква на забранетата вредност.
+EqualTo.Value	Вредноста на '{PropertyName}' не смее да биде еднаква на {ComparisonValue}.
+NotEqualTo	Вредноста на '{PropertyName}' мора да биде еднаква на потребната вредност.
+NotEqualTo.Value	Вредноста на '{PropertyName}' мора да биде еднаква на {ComparisonValue}.
+OneOf	Вредноста на '{PropertyName}' не смее да биде една од забранетите вредности.
+NotOneOf	Вредноста на '{PropertyName}' мора да биде една од дозволените вредности.
+Condition	Вредноста на '{PropertyName}' не е валидна.
+Condition.If	Вредноста на '{PropertyName}' не смее да го исполнува условот: {Condition}.
+Condition.IfNot	Вредноста на '{PropertyName}' мора да го исполнува условот: {Condition}.
+Type	Вредноста на '{PropertyName}' не смее да биде од тип {Type}.
+NotType	Вредноста на '{PropertyName}' мора да биде од тип {Type}.
+True	Вредноста на '{PropertyName}' мора да биде false.
+False	Вредноста на '{PropertyName}' мора да биде true.
+Must	Вредноста на '{PropertyName}' не е валидна.
+Invalid	Вредноста на '{PropertyName}' не е валидна.
+
+# Comparisons and numbers
+GreaterThan	Вредноста на '{PropertyName}' мора да биде помала или еднаква на {ComparisonValue}.
+GreaterThanOrEqualTo	Вредноста на '{PropertyName}' мора да биде помала од {ComparisonValue}.
+LessThan	Вредноста на '{PropertyName}' мора да биде поголема или еднаква на {ComparisonValue}.
+LessThanOrEqualTo	Вредноста на '{PropertyName}' мора да биде поголема од {ComparisonValue}.
+OutOfRange	Вредноста на '{PropertyName}' мора да биде помеѓу {From} и {To}.
+OutOfRangeExclusive	Вредноста на '{PropertyName}' мора да биде помеѓу {From} и {To} (без граничните вредности).
+InRange	Вредноста на '{PropertyName}' не смее да биде помеѓу {From} и {To}.
+Negative	Вредноста на '{PropertyName}' не смее да биде негативна.
+NegativeOrZero	Вредноста на '{PropertyName}' мора да биде поголема од 0.
+Positive	Вредноста на '{PropertyName}' не смее да биде поголема од 0.
+PositiveOrZero	Вредноста на '{PropertyName}' мора да биде помала од 0.
+Zero	Вредноста на '{PropertyName}' не смее да биде 0.
+NaN	Вредноста на '{PropertyName}' мора да биде број, а не NaN.
+Infinity	Вредноста на '{PropertyName}' мора да биде конечен број.
+NotFinite	Вредноста на '{PropertyName}' мора да биде конечен број.
+Odd	Вредноста на '{PropertyName}' мора да биде парен број.
+Even	Вредноста на '{PropertyName}' мора да биде непарен број.
+NotMultipleOf	Вредноста на '{PropertyName}' мора да биде содржател на {Divisor}.
+NotPowerOfTwo	Вредноста на '{PropertyName}' мора да биде степен на бројот 2.
+NotInteger	Вредноста на '{PropertyName}' мора да биде цел број.
+PrecisionScaleExceeded	Вкупниот број цифри во '{PropertyName}' мора да биде најмногу {ExpectedPrecision}, од кои најмногу {ExpectedScale} по децималната запирка. Пронајдени цифри пред децималната запирка: {Digits}, по неа: {ActualScale}.
+
+# Strings
+WhiteSpace	Вредноста на '{PropertyName}' не смее да биде празна или да содржи само празни знаци.
+LongerThan	Бројот на знаци во '{PropertyName}' мора да биде најмногу {MaxLength}.
+ShorterThan	Бројот на знаци во '{PropertyName}' мора да биде најмалку {MinLength}.
+LengthNotEqualTo	Бројот на знаци во '{PropertyName}' мора да биде точно {Length}.
+LengthOutOfRange	Бројот на знаци во '{PropertyName}' мора да биде помеѓу {MinLength} и {MaxLength}.
+Contains	Вредноста на '{PropertyName}' не смее да го содржи забранетиот елемент.
+Contains.Value	Вредноста на '{PropertyName}' не смее да содржи {Value}.
+NotContains	Вредноста на '{PropertyName}' мора да го содржи потребниот елемент.
+NotContains.Value	Вредноста на '{PropertyName}' мора да содржи {Value}.
+StartsWith	Вредноста на '{PropertyName}' не смее да започнува со {Value}.
+NotStartsWith	Вредноста на '{PropertyName}' мора да започнува со {Value}.
+EndsWith	Вредноста на '{PropertyName}' не смее да завршува со {Value}.
+NotEndsWith	Вредноста на '{PropertyName}' мора да завршува со {Value}.
+Matches	Вредноста на '{PropertyName}' не смее да одговара на шаблонот {Pattern}.
+NotMatches	Вредноста на '{PropertyName}' мора да одговара на шаблонот {Pattern}.
+NotEmailAddress	Вредноста на '{PropertyName}' мора да биде валидна адреса на е-пошта.
+NotJson	Вредноста на '{PropertyName}' мора да биде валиден JSON.
+NotXml	Вредноста на '{PropertyName}' мора да биде правилно формиран XML.
+NotUri	Вредноста на '{PropertyName}' мора да биде валиден URI.
+NotUri.Absolute	Вредноста на '{PropertyName}' мора да биде валиден апсолутен URI.
+NotUri.Relative	Вредноста на '{PropertyName}' мора да биде валиден релативен URI.
+NotHttpUrl	Вредноста на '{PropertyName}' мора да биде апсолутен URL со шема HTTP или HTTPS.
+NotParsable	Вредноста на '{PropertyName}' мора да биде валидна вредност од тип {Type}.
+AllUpperCase	Вредноста на '{PropertyName}' не смее да се состои само од големи букви.
+AllLowerCase	Вредноста на '{PropertyName}' не смее да се состои само од мали букви.
+NotTrimmed	Вредноста на '{PropertyName}' не смее да започнува или завршува со празни знаци.
+ContainsWhiteSpace	Вредноста на '{PropertyName}' не смее да содржи празни знаци.
+ContainsControlCharacters	Вредноста на '{PropertyName}' не смее да содржи контролни знаци.
+ContainsAny	Вредноста на '{PropertyName}' не смее да содржи ниту еден од забранетите знаци.
+ContainsAnyExcept	Вредноста на '{PropertyName}' мора да содржи само дозволени знаци.
+NotAscii	Вредноста на '{PropertyName}' мора да содржи само ASCII знаци.
+NotDigits	Вредноста на '{PropertyName}' мора да содржи само цифри од 0 до 9.
+NotLettersOrDigits	Вредноста на '{PropertyName}' мора да содржи само букви или цифри.
+NotHex	Вредноста на '{PropertyName}' мора да биде хексадецимална низа.
+NotBase64	Вредноста на '{PropertyName}' мора да биде валидна Base64 низа.
+NotGuid	Вредноста на '{PropertyName}' мора да биде валиден GUID.
+NotIPAddress	Вредноста на '{PropertyName}' мора да биде валидна IP адреса.
+NotSlug	Вредноста на '{PropertyName}' мора да биде slug од мали букви, цифри и единечни цртички.
+NotVersion	Вредноста на '{PropertyName}' мора да биде валиден број на верзија.
+NotCreditCardNumber	Вредноста на '{PropertyName}' мора да биде валиден број на кредитна картичка.
+NotEnumName	Вредноста на '{PropertyName}' мора да биде дефинирано име од енумерацијата {Type}.
+NotFileName	Вредноста на '{PropertyName}' мора да биде валидно име на датотека.
+
+# Collections and dictionaries
+CountEqualTo	Бројот на елементи во '{PropertyName}' не смее да биде точно {Count}.
+CountEqualTo.One	Вредноста на '{PropertyName}' не смее да содржи точно 1 елемент.
+CountNotEqualTo	Бројот на елементи во '{PropertyName}' мора да биде точно {Count}.
+CountNotEqualTo.One	Вредноста на '{PropertyName}' мора да содржи точно 1 елемент.
+CountGreaterThan	Бројот на елементи во '{PropertyName}' мора да биде најмногу {MaxCount}.
+CountGreaterThan.One	Вредноста на '{PropertyName}' мора да содржи најмногу 1 елемент.
+CountLessThan	Бројот на елементи во '{PropertyName}' мора да биде најмалку {MinCount}.
+CountLessThan.One	Вредноста на '{PropertyName}' мора да содржи најмалку 1 елемент.
+CountOutOfRange	Бројот на елементи во '{PropertyName}' мора да биде помеѓу {MinCount} и {MaxCount}.
+ContainsNull	Вредноста на '{PropertyName}' не смее да содржи елементи со вредност null.
+HasDuplicates	Вредноста на '{PropertyName}' не смее да содржи повторени елементи.
+Any	Вредноста на '{PropertyName}' не смее да содржи ниту еден елемент што го исполнува условот.
+None	Вредноста на '{PropertyName}' мора да содржи барем еден елемент што го исполнува условот.
+ContainsKey	Вредноста на '{PropertyName}' не смее да го содржи забранетиот клуч.
+ContainsKey.Value	Вредноста на '{PropertyName}' не смее да го содржи клучот {Key}.
+NotContainsKey	Вредноста на '{PropertyName}' мора да го содржи потребниот клуч.
+NotContainsKey.Value	Вредноста на '{PropertyName}' мора да го содржи клучот {Key}.
+
+# Enums
+NotDefined	Вредноста на '{PropertyName}' мора да биде дефинирана вредност од енумерацијата {Type}.
+HasFlag	Вредноста на '{PropertyName}' не смее да го има флагот {Flag}.
+NotHasFlag	Вредноста на '{PropertyName}' мора да го има флагот {Flag}.
+
+# Dates and times
+Before	Вредноста на '{PropertyName}' не смее да биде пред {ComparisonValue}.
+After	Вредноста на '{PropertyName}' не смее да биде после {ComparisonValue}.
+InPast	Вредноста на '{PropertyName}' не смее да биде во минатото.
+InFuture	Вредноста на '{PropertyName}' не смее да биде во иднината.
+NotUtc	Вредноста на '{PropertyName}' мора да биде во UTC.
+Weekend	Вредноста на '{PropertyName}' мора да биде работен ден (од понеделник до петок).
+Weekday	Вредноста на '{PropertyName}' мора да биде ден од викендот (сабота или недела).
+HasTimeOfDay	Вредноста на '{PropertyName}' не смее да содржи време од денот.
+OlderThan	Вредноста на '{PropertyName}' не смее да биде повеќе од {MaxAge} во минатото.
+NewerThan	Вредноста на '{PropertyName}' мора да биде најмалку {MinAge} во минатото.
+
+# Uri and IPAddress
+Relative	Вредноста на '{PropertyName}' мора да биде апсолутен URI.
+NotHttps	Вредноста на '{PropertyName}' мора да биде апсолутен URL со шема HTTPS.
+NotHttpOrHttps	Вредноста на '{PropertyName}' мора да биде апсолутен URL со шема HTTP или HTTPS.
+NotScheme	Вредноста на '{PropertyName}' мора да користи една од следните URI шеми: {Schemes}.
+Loopback	Вредноста на '{PropertyName}' не смее да биде loopback адреса.
+Private	Вредноста на '{PropertyName}' не смее да биде приватна или link-local адреса.
+NotIPv4	Вредноста на '{PropertyName}' мора да биде IPv4 адреса.
+NotIPv6	Вредноста на '{PropertyName}' мора да биде IPv6 адреса.
+
+# Streams and types
+NotReadable	Вредноста на '{PropertyName}' мора да поддржува читање.
+NotWritable	Вредноста на '{PropertyName}' мора да поддржува запишување.
+NotSeekable	Вредноста на '{PropertyName}' мора да поддржува позиционирање.
+NotAssignableTo	Вредноста на '{PropertyName}' мора да може да се додели на типот {Type}.
+Abstract	Вредноста на '{PropertyName}' не смее да биде апстрактен тип.
+Interface	Вредноста на '{PropertyName}' не смее да биде интерфејс.

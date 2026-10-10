@@ -1,0 +1,13 @@
+# Normalize all text files to LF in the repository and working tree.
+* text=auto eol=lf
+
+# Visual Studio needs CRLF in solution files.
+*.sln text eol=crlf
+
+# Binary files: never touch line endings or show text diffs.
+*.png binary
+*.jpg binary
+*.ico binary
+*.snk binary
+*.nupkg binary
+*.snupkg binary

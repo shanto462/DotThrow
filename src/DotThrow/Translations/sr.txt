@@ -1,0 +1,146 @@
+# Serbian, Cyrillic script (sr). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' не сме бити null.
+NotNull	'{PropertyName}' мора бити null.
+Default	'{PropertyName}' не сме бити подразумевана вредност.
+Empty	'{PropertyName}' не сме бити празно.
+Empty.Guid	'{PropertyName}' не сме бити празан GUID.
+NotEmpty	'{PropertyName}' мора бити празно.
+EqualTo	'{PropertyName}' не сме бити једнако забрањеној вредности.
+EqualTo.Value	'{PropertyName}' не сме бити једнако {ComparisonValue}.
+NotEqualTo	'{PropertyName}' мора бити једнако захтеваној вредности.
+NotEqualTo.Value	'{PropertyName}' мора бити једнако {ComparisonValue}.
+OneOf	'{PropertyName}' не сме бити једна од забрањених вредности.
+NotOneOf	'{PropertyName}' мора бити једна од дозвољених вредности.
+Condition	'{PropertyName}' није валидно.
+Condition.If	'{PropertyName}' не сме задовољавати услов: {Condition}.
+Condition.IfNot	'{PropertyName}' мора задовољавати услов: {Condition}.
+Type	'{PropertyName}' не сме бити типа {Type}.
+NotType	'{PropertyName}' мора бити типа {Type}.
+True	'{PropertyName}' мора бити false.
+False	'{PropertyName}' мора бити true.
+Must	'{PropertyName}' није валидно.
+Invalid	'{PropertyName}' није валидно.
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' мора бити мање или једнако {ComparisonValue}.
+GreaterThanOrEqualTo	'{PropertyName}' мора бити мање од {ComparisonValue}.
+LessThan	'{PropertyName}' мора бити веће или једнако {ComparisonValue}.
+LessThanOrEqualTo	'{PropertyName}' мора бити веће од {ComparisonValue}.
+OutOfRange	'{PropertyName}' мора бити између {From} и {To}.
+OutOfRangeExclusive	'{PropertyName}' мора бити између {From} и {To} (не укључујући граничне вредности).
+InRange	'{PropertyName}' не сме бити између {From} и {To}.
+Negative	'{PropertyName}' не сме бити негативно.
+NegativeOrZero	'{PropertyName}' мора бити веће од 0.
+Positive	'{PropertyName}' не сме бити веће од 0.
+PositiveOrZero	'{PropertyName}' мора бити мање од 0.
+Zero	'{PropertyName}' не сме бити 0.
+NaN	'{PropertyName}' мора бити број, а не NaN.
+Infinity	'{PropertyName}' мора бити коначан број.
+NotFinite	'{PropertyName}' мора бити коначан број.
+Odd	'{PropertyName}' мора бити паран број.
+Even	'{PropertyName}' мора бити непаран број.
+NotMultipleOf	'{PropertyName}' мора бити дељиво са {Divisor}.
+NotPowerOfTwo	'{PropertyName}' мора бити степен двојке.
+NotInteger	'{PropertyName}' мора бити цео број.
+PrecisionScaleExceeded	Укупан број цифара у '{PropertyName}' мора бити највише {ExpectedPrecision}, од чега највише {ExpectedScale} иза децималног зареза. Пронађено цифара испред децималног зареза: {Digits}, иза њега: {ActualScale}.
+
+# Strings
+WhiteSpace	'{PropertyName}' не сме бити празно нити се састојати само од белина.
+LongerThan	Број карактера у '{PropertyName}' мора бити највише {MaxLength}.
+ShorterThan	Број карактера у '{PropertyName}' мора бити најмање {MinLength}.
+LengthNotEqualTo	Број карактера у '{PropertyName}' мора бити тачно {Length}.
+LengthOutOfRange	Број карактера у '{PropertyName}' мора бити између {MinLength} и {MaxLength}.
+Contains	'{PropertyName}' не сме садржати забрањени елемент.
+Contains.Value	'{PropertyName}' не сме садржати {Value}.
+NotContains	'{PropertyName}' мора садржати захтевани елемент.
+NotContains.Value	'{PropertyName}' мора садржати {Value}.
+StartsWith	'{PropertyName}' не сме почињати са {Value}.
+NotStartsWith	'{PropertyName}' мора почињати са {Value}.
+EndsWith	'{PropertyName}' не сме се завршавати са {Value}.
+NotEndsWith	'{PropertyName}' мора се завршавати са {Value}.
+Matches	'{PropertyName}' не сме одговарати шаблону {Pattern}.
+NotMatches	'{PropertyName}' мора одговарати шаблону {Pattern}.
+NotEmailAddress	'{PropertyName}' мора бити валидна адреса е-поште.
+NotJson	'{PropertyName}' мора бити валидан JSON.
+NotXml	'{PropertyName}' мора бити исправно формиран XML.
+NotUri	'{PropertyName}' мора бити валидан URI.
+NotUri.Absolute	'{PropertyName}' мора бити валидан апсолутни URI.
+NotUri.Relative	'{PropertyName}' мора бити валидан релативни URI.
+NotHttpUrl	'{PropertyName}' мора бити апсолутни URL са шемом HTTP или HTTPS.
+NotParsable	'{PropertyName}' мора бити валидна вредност типа {Type}.
+AllUpperCase	'{PropertyName}' не сме се састојати само од великих слова.
+AllLowerCase	'{PropertyName}' не сме се састојати само од малих слова.
+NotTrimmed	'{PropertyName}' не сме имати белине на почетку или на крају.
+ContainsWhiteSpace	'{PropertyName}' не сме садржати белине.
+ContainsControlCharacters	'{PropertyName}' не сме садржати контролне карактере.
+ContainsAny	'{PropertyName}' не сме садржати ниједан од забрањених карактера.
+ContainsAnyExcept	'{PropertyName}' мора садржати само дозвољене карактере.
+NotAscii	'{PropertyName}' мора садржати само ASCII карактере.
+NotDigits	'{PropertyName}' мора садржати само цифре од 0 до 9.
+NotLettersOrDigits	'{PropertyName}' мора садржати само слова или цифре.
+NotHex	'{PropertyName}' мора бити хексадецимални стринг.
+NotBase64	'{PropertyName}' мора бити валидан Base64 стринг.
+NotGuid	'{PropertyName}' мора бити валидан GUID.
+NotIPAddress	'{PropertyName}' мора бити валидна IP адреса.
+NotSlug	'{PropertyName}' мора бити slug од малих слова, цифара и појединачних цртица.
+NotVersion	'{PropertyName}' мора бити валидан број верзије.
+NotCreditCardNumber	'{PropertyName}' мора бити валидан број кредитне картице.
+NotEnumName	'{PropertyName}' мора бити дефинисано име у енумерацији {Type}.
+NotFileName	'{PropertyName}' мора бити валидно име датотеке.
+
+# Collections and dictionaries
+CountEqualTo	Број елемената у '{PropertyName}' не сме бити тачно {Count}.
+CountEqualTo.One	'{PropertyName}' не сме садржати тачно 1 елемент.
+CountNotEqualTo	Број елемената у '{PropertyName}' мора бити тачно {Count}.
+CountNotEqualTo.One	'{PropertyName}' мора садржати тачно 1 елемент.
+CountGreaterThan	Број елемената у '{PropertyName}' мора бити највише {MaxCount}.
+CountGreaterThan.One	'{PropertyName}' мора садржати највише 1 елемент.
+CountLessThan	Број елемената у '{PropertyName}' мора бити најмање {MinCount}.
+CountLessThan.One	'{PropertyName}' мора садржати најмање 1 елемент.
+CountOutOfRange	Број елемената у '{PropertyName}' мора бити између {MinCount} и {MaxCount}.
+ContainsNull	'{PropertyName}' не сме садржати елементе са вредношћу null.
+HasDuplicates	'{PropertyName}' не сме садржати дуплиране елементе.
+Any	'{PropertyName}' не сме садржати ниједан елемент који задовољава услов.
+None	'{PropertyName}' мора садржати бар један елемент који задовољава услов.
+ContainsKey	'{PropertyName}' не сме садржати забрањени кључ.
+ContainsKey.Value	'{PropertyName}' не сме садржати кључ {Key}.
+NotContainsKey	'{PropertyName}' мора садржати захтевани кључ.
+NotContainsKey.Value	'{PropertyName}' мора садржати кључ {Key}.
+
+# Enums
+NotDefined	'{PropertyName}' мора бити дефинисана вредност у енумерацији {Type}.
+HasFlag	'{PropertyName}' не сме имати заставицу {Flag}.
+NotHasFlag	'{PropertyName}' мора имати заставицу {Flag}.
+
+# Dates and times
+Before	'{PropertyName}' не сме бити пре {ComparisonValue}.
+After	'{PropertyName}' не сме бити после {ComparisonValue}.
+InPast	'{PropertyName}' не сме бити у прошлости.
+InFuture	'{PropertyName}' не сме бити у будућности.
+NotUtc	'{PropertyName}' мора бити у UTC.
+Weekend	'{PropertyName}' мора бити радни дан (од понедељка до петка).
+Weekday	'{PropertyName}' мора бити дан викенда (субота или недеља).
+HasTimeOfDay	'{PropertyName}' не сме садржати време у току дана.
+OlderThan	'{PropertyName}' не сме бити више од {MaxAge} у прошлости.
+NewerThan	'{PropertyName}' мора бити најмање {MinAge} у прошлости.
+
+# Uri and IPAddress
+Relative	'{PropertyName}' мора бити апсолутни URI.
+NotHttps	'{PropertyName}' мора бити апсолутни URL са шемом HTTPS.
+NotHttpOrHttps	'{PropertyName}' мора бити апсолутни URL са шемом HTTP или HTTPS.
+NotScheme	'{PropertyName}' мора користити једну од следећих URI шема: {Schemes}.
+Loopback	'{PropertyName}' не сме бити loopback адреса.
+Private	'{PropertyName}' не сме бити приватна или link-local адреса.
+NotIPv4	'{PropertyName}' мора бити IPv4 адреса.
+NotIPv6	'{PropertyName}' мора бити IPv6 адреса.
+
+# Streams and types
+NotReadable	'{PropertyName}' мора подржавати читање.
+NotWritable	'{PropertyName}' мора подржавати упис.
+NotSeekable	'{PropertyName}' мора подржавати позиционирање.
+NotAssignableTo	'{PropertyName}' мора бити компатибилно са типом {Type} при додели.
+Abstract	'{PropertyName}' не сме бити апстрактни тип.
+Interface	'{PropertyName}' не сме бити интерфејс.

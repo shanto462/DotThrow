@@ -1,0 +1,5 @@
+# The only image in this repository (eng/docker/test.Dockerfile) copies nothing from
+# the build context, so send an empty context. eng/test-matrix.sh mounts the
+# repository at run time instead. If a future Dockerfile needs files from the
+# repository, add "!path" lines below.
+*

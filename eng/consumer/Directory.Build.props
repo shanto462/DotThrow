@@ -1,0 +1,4 @@
+<Project>
+  <!-- Stops the repository's Directory.Build.props from applying: this project must build
+       like a user's project, with only the packages. -->
+</Project>

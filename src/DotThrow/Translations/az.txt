@@ -1,0 +1,146 @@
+# Azerbaijani (az), Latin script. Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' null olmamalıdır.
+NotNull	'{PropertyName}' null olmalıdır.
+Default	'{PropertyName}' standart dəyər olmamalıdır.
+Empty	'{PropertyName}' boş olmamalıdır.
+Empty.Guid	'{PropertyName}' boş GUID olmamalıdır.
+NotEmpty	'{PropertyName}' boş olmalıdır.
+EqualTo	'{PropertyName}' rədd edilən dəyərə bərabər olmamalıdır.
+EqualTo.Value	'{PropertyName}' {ComparisonValue} dəyərinə bərabər olmamalıdır.
+NotEqualTo	'{PropertyName}' tələb olunan dəyərə bərabər olmalıdır.
+NotEqualTo.Value	'{PropertyName}' {ComparisonValue} dəyərinə bərabər olmalıdır.
+OneOf	'{PropertyName}' rədd edilən dəyərlərdən biri olmamalıdır.
+NotOneOf	'{PropertyName}' icazə verilən dəyərlərdən biri olmalıdır.
+Condition	'{PropertyName}' etibarlı deyil.
+Condition.If	'{PropertyName}' bu şərti ödəməməlidir: {Condition}.
+Condition.IfNot	'{PropertyName}' bu şərti ödəməlidir: {Condition}.
+Type	'{PropertyName}' {Type} tipində olmamalıdır.
+NotType	'{PropertyName}' {Type} tipində olmalıdır.
+True	'{PropertyName}' false olmalıdır.
+False	'{PropertyName}' true olmalıdır.
+Must	'{PropertyName}' etibarlı deyil.
+Invalid	'{PropertyName}' etibarlı deyil.
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' {ComparisonValue} dəyərindən kiçik və ya ona bərabər olmalıdır.
+GreaterThanOrEqualTo	'{PropertyName}' {ComparisonValue} dəyərindən kiçik olmalıdır.
+LessThan	'{PropertyName}' {ComparisonValue} dəyərindən böyük və ya ona bərabər olmalıdır.
+LessThanOrEqualTo	'{PropertyName}' {ComparisonValue} dəyərindən böyük olmalıdır.
+OutOfRange	'{PropertyName}' {From} ilə {To} arasında olmalıdır.
+OutOfRangeExclusive	'{PropertyName}' {From} ilə {To} arasında olmalıdır (sərhəd dəyərləri daxil deyil).
+InRange	'{PropertyName}' {From} ilə {To} arasında olmamalıdır.
+Negative	'{PropertyName}' mənfi olmamalıdır.
+NegativeOrZero	'{PropertyName}' 0-dan böyük olmalıdır.
+Positive	'{PropertyName}' 0-dan böyük olmamalıdır.
+PositiveOrZero	'{PropertyName}' 0-dan kiçik olmalıdır.
+Zero	'{PropertyName}' 0 olmamalıdır.
+NaN	'{PropertyName}' NaN deyil, ədəd olmalıdır.
+Infinity	'{PropertyName}' sonlu ədəd olmalıdır.
+NotFinite	'{PropertyName}' sonlu ədəd olmalıdır.
+Odd	'{PropertyName}' cüt ədəd olmalıdır.
+Even	'{PropertyName}' tək ədəd olmalıdır.
+NotMultipleOf	'{PropertyName}' {Divisor} ədədinə qalıqsız bölünməlidir.
+NotPowerOfTwo	'{PropertyName}' 2-nin qüvvəti olmalıdır.
+NotInteger	'{PropertyName}' tam ədəd olmalıdır.
+PrecisionScaleExceeded	'{PropertyName}' cəmi ən çox {ExpectedPrecision} rəqəmdən ibarət olmalı, kəsr hissəsində isə ən çox {ExpectedScale} rəqəm olmalıdır. Tam hissədə {Digits} rəqəm, kəsr hissəsində {ActualScale} rəqəm tapıldı.
+
+# Strings
+WhiteSpace	'{PropertyName}' boş olmamalı və yalnız boşluqlardan ibarət olmamalıdır.
+LongerThan	'{PropertyName}' ən çox {MaxLength} simvol uzunluğunda olmalıdır.
+ShorterThan	'{PropertyName}' ən azı {MinLength} simvol uzunluğunda olmalıdır.
+LengthNotEqualTo	'{PropertyName}' dəqiq {Length} simvol uzunluğunda olmalıdır.
+LengthOutOfRange	'{PropertyName}' {MinLength} ilə {MaxLength} simvol arasında uzunluqda olmalıdır.
+Contains	'{PropertyName}' rədd edilən elementi ehtiva etməməlidir.
+Contains.Value	'{PropertyName}' {Value} dəyərini ehtiva etməməlidir.
+NotContains	'{PropertyName}' tələb olunan elementi ehtiva etməlidir.
+NotContains.Value	'{PropertyName}' {Value} dəyərini ehtiva etməlidir.
+StartsWith	'{PropertyName}' {Value} ilə başlamamalıdır.
+NotStartsWith	'{PropertyName}' {Value} ilə başlamalıdır.
+EndsWith	'{PropertyName}' {Value} ilə bitməməlidir.
+NotEndsWith	'{PropertyName}' {Value} ilə bitməlidir.
+Matches	'{PropertyName}' {Pattern} şablonuna uyğun gəlməməlidir.
+NotMatches	'{PropertyName}' {Pattern} şablonuna uyğun gəlməlidir.
+NotEmailAddress	'{PropertyName}' etibarlı e-poçt ünvanı olmalıdır.
+NotJson	'{PropertyName}' etibarlı JSON olmalıdır.
+NotXml	'{PropertyName}' düzgün formatlı XML olmalıdır.
+NotUri	'{PropertyName}' etibarlı URI olmalıdır.
+NotUri.Absolute	'{PropertyName}' etibarlı mütləq URI olmalıdır.
+NotUri.Relative	'{PropertyName}' etibarlı nisbi URI olmalıdır.
+NotHttpUrl	'{PropertyName}' mütləq HTTP və ya HTTPS URL ünvanı olmalıdır.
+NotParsable	'{PropertyName}' {Type} tipində etibarlı dəyər olmalıdır.
+AllUpperCase	'{PropertyName}' tamamilə böyük hərflərdən ibarət olmamalıdır.
+AllLowerCase	'{PropertyName}' tamamilə kiçik hərflərdən ibarət olmamalıdır.
+NotTrimmed	'{PropertyName}' boşluqla başlamamalı və boşluqla bitməməlidir.
+ContainsWhiteSpace	'{PropertyName}' boşluq ehtiva etməməlidir.
+ContainsControlCharacters	'{PropertyName}' idarəetmə simvolları ehtiva etməməlidir.
+ContainsAny	'{PropertyName}' rədd edilən simvollardan heç birini ehtiva etməməlidir.
+ContainsAnyExcept	'{PropertyName}' yalnız icazə verilən simvollardan ibarət olmalıdır.
+NotAscii	'{PropertyName}' yalnız ASCII simvollarından ibarət olmalıdır.
+NotDigits	'{PropertyName}' yalnız 0-dan 9-a qədər rəqəmlərdən ibarət olmalıdır.
+NotLettersOrDigits	'{PropertyName}' yalnız hərflərdən və ya rəqəmlərdən ibarət olmalıdır.
+NotHex	'{PropertyName}' onaltılıq sətir olmalıdır.
+NotBase64	'{PropertyName}' etibarlı Base64 sətri olmalıdır.
+NotGuid	'{PropertyName}' etibarlı GUID olmalıdır.
+NotIPAddress	'{PropertyName}' etibarlı IP ünvanı olmalıdır.
+NotSlug	'{PropertyName}' kiçik hərflərdən, rəqəmlərdən və tək defislərdən ibarət slug olmalıdır.
+NotVersion	'{PropertyName}' etibarlı versiya nömrəsi olmalıdır.
+NotCreditCardNumber	'{PropertyName}' etibarlı kredit kartı nömrəsi olmalıdır.
+NotEnumName	'{PropertyName}' {Type} enum tipində təyin edilmiş ad olmalıdır.
+NotFileName	'{PropertyName}' etibarlı fayl adı olmalıdır.
+
+# Collections and dictionaries
+CountEqualTo	'{PropertyName}' dəqiq {Count} element ehtiva etməməlidir.
+CountEqualTo.One	'{PropertyName}' dəqiq 1 element ehtiva etməməlidir.
+CountNotEqualTo	'{PropertyName}' dəqiq {Count} element ehtiva etməlidir.
+CountNotEqualTo.One	'{PropertyName}' dəqiq 1 element ehtiva etməlidir.
+CountGreaterThan	'{PropertyName}' ən çox {MaxCount} element ehtiva etməlidir.
+CountGreaterThan.One	'{PropertyName}' ən çox 1 element ehtiva etməlidir.
+CountLessThan	'{PropertyName}' ən azı {MinCount} element ehtiva etməlidir.
+CountLessThan.One	'{PropertyName}' ən azı 1 element ehtiva etməlidir.
+CountOutOfRange	'{PropertyName}' {MinCount} ilə {MaxCount} arasında element ehtiva etməlidir.
+ContainsNull	'{PropertyName}' null elementlər ehtiva etməməlidir.
+HasDuplicates	'{PropertyName}' təkrarlanan elementlər ehtiva etməməlidir.
+Any	'{PropertyName}' şərti ödəyən heç bir element ehtiva etməməlidir.
+None	'{PropertyName}' şərti ödəyən ən azı bir element ehtiva etməlidir.
+ContainsKey	'{PropertyName}' rədd edilən açarı ehtiva etməməlidir.
+ContainsKey.Value	'{PropertyName}' {Key} açarını ehtiva etməməlidir.
+NotContainsKey	'{PropertyName}' tələb olunan açarı ehtiva etməlidir.
+NotContainsKey.Value	'{PropertyName}' {Key} açarını ehtiva etməlidir.
+
+# Enums
+NotDefined	'{PropertyName}' {Type} tipində təyin edilmiş dəyər olmalıdır.
+HasFlag	'{PropertyName}' {Flag} bayrağına malik olmamalıdır.
+NotHasFlag	'{PropertyName}' {Flag} bayrağına malik olmalıdır.
+
+# Dates and times
+Before	'{PropertyName}' {ComparisonValue} tarixindən əvvəl olmamalıdır.
+After	'{PropertyName}' {ComparisonValue} tarixindən sonra olmamalıdır.
+InPast	'{PropertyName}' keçmişdə olmamalıdır.
+InFuture	'{PropertyName}' gələcəkdə olmamalıdır.
+NotUtc	'{PropertyName}' UTC vaxtında olmalıdır.
+Weekend	'{PropertyName}' həftə içi gün (bazar ertəsindən cüməyə qədər) olmalıdır.
+Weekday	'{PropertyName}' həftə sonu günü (şənbə və ya bazar) olmalıdır.
+HasTimeOfDay	'{PropertyName}' vaxt hissəsi ehtiva etməməlidir.
+OlderThan	'{PropertyName}' {MaxAge} müddətindən daha köhnə olmamalıdır.
+NewerThan	'{PropertyName}' ən azı {MinAge} müddəti qədər köhnə olmalıdır.
+
+# Uri and IPAddress
+Relative	'{PropertyName}' mütləq URI olmalıdır.
+NotHttps	'{PropertyName}' mütləq HTTPS URL ünvanı olmalıdır.
+NotHttpOrHttps	'{PropertyName}' mütləq HTTP və ya HTTPS URL ünvanı olmalıdır.
+NotScheme	'{PropertyName}' bu URI sxemlərindən birini istifadə etməlidir: {Schemes}.
+Loopback	'{PropertyName}' loopback ünvanı olmamalıdır.
+Private	'{PropertyName}' özəl və ya link-local ünvan olmamalıdır.
+NotIPv4	'{PropertyName}' IPv4 ünvanı olmalıdır.
+NotIPv6	'{PropertyName}' IPv6 ünvanı olmalıdır.
+
+# Streams and types
+NotReadable	'{PropertyName}' oxumanı dəstəkləməlidir.
+NotWritable	'{PropertyName}' yazmanı dəstəkləməlidir.
+NotSeekable	'{PropertyName}' mövqe dəyişdirməni (seek) dəstəkləməlidir.
+NotAssignableTo	'{PropertyName}' {Type} tipinə mənimsədilə bilən olmalıdır.
+Abstract	'{PropertyName}' abstrakt tip olmamalıdır.
+Interface	'{PropertyName}' interfeys olmamalıdır.

@@ -1,0 +1,146 @@
+# Lithuanian (lt). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' negali būti null.
+NotNull	'{PropertyName}' turi būti null.
+Default	'{PropertyName}' negali būti numatytoji reikšmė.
+Empty	'{PropertyName}' negali būti tuščias.
+Empty.Guid	'{PropertyName}' negali būti tuščias GUID.
+NotEmpty	'{PropertyName}' turi būti tuščias.
+EqualTo	'{PropertyName}' negali būti lygus atmestai reikšmei.
+EqualTo.Value	'{PropertyName}' negali būti lygus {ComparisonValue}.
+NotEqualTo	'{PropertyName}' turi būti lygus reikalaujamai reikšmei.
+NotEqualTo.Value	'{PropertyName}' turi būti lygus {ComparisonValue}.
+OneOf	'{PropertyName}' negali būti viena iš atmestų reikšmių.
+NotOneOf	'{PropertyName}' turi būti viena iš leidžiamų reikšmių.
+Condition	'{PropertyName}' nėra tinkamas.
+Condition.If	'{PropertyName}' negali tenkinti sąlygos: {Condition}.
+Condition.IfNot	'{PropertyName}' turi tenkinti sąlygą: {Condition}.
+Type	'{PropertyName}' negali būti {Type} tipo.
+NotType	'{PropertyName}' turi būti {Type} tipo.
+True	'{PropertyName}' turi būti false.
+False	'{PropertyName}' turi būti true.
+Must	'{PropertyName}' nėra tinkamas.
+Invalid	'{PropertyName}' nėra tinkamas.
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' turi būti mažesnis arba lygus {ComparisonValue}.
+GreaterThanOrEqualTo	'{PropertyName}' turi būti mažesnis už {ComparisonValue}.
+LessThan	'{PropertyName}' turi būti didesnis arba lygus {ComparisonValue}.
+LessThanOrEqualTo	'{PropertyName}' turi būti didesnis už {ComparisonValue}.
+OutOfRange	'{PropertyName}' turi būti tarp {From} ir {To}.
+OutOfRangeExclusive	'{PropertyName}' turi būti tarp {From} ir {To} (neįskaitant ribų).
+InRange	'{PropertyName}' negali būti tarp {From} ir {To}.
+Negative	'{PropertyName}' negali būti neigiamas.
+NegativeOrZero	'{PropertyName}' turi būti didesnis už 0.
+Positive	'{PropertyName}' negali būti didesnis už 0.
+PositiveOrZero	'{PropertyName}' turi būti mažesnis už 0.
+Zero	'{PropertyName}' negali būti lygus 0.
+NaN	'{PropertyName}' turi būti skaičius, o ne NaN.
+Infinity	'{PropertyName}' turi būti baigtinis skaičius.
+NotFinite	'{PropertyName}' turi būti baigtinis skaičius.
+Odd	'{PropertyName}' turi būti lyginis skaičius.
+Even	'{PropertyName}' turi būti nelyginis skaičius.
+NotMultipleOf	'{PropertyName}' turi būti skaičiaus {Divisor} kartotinis.
+NotPowerOfTwo	'{PropertyName}' turi būti dvejeto laipsnis.
+NotInteger	'{PropertyName}' turi būti sveikasis skaičius.
+PrecisionScaleExceeded	'{PropertyName}' bendras skaitmenų skaičius turi būti ne didesnis kaip {ExpectedPrecision}, iš jų po kablelio ne daugiau kaip {ExpectedScale}. Rasta skaitmenų prieš kablelį: {Digits}, po kablelio: {ActualScale}.
+
+# Strings
+WhiteSpace	'{PropertyName}' negali būti tuščias arba sudarytas tik iš tarpo simbolių.
+LongerThan	'{PropertyName}' simbolių skaičius turi būti ne didesnis kaip {MaxLength}.
+ShorterThan	'{PropertyName}' simbolių skaičius turi būti ne mažesnis kaip {MinLength}.
+LengthNotEqualTo	'{PropertyName}' simbolių skaičius turi būti lygus {Length}.
+LengthOutOfRange	'{PropertyName}' simbolių skaičius turi būti tarp {MinLength} ir {MaxLength}.
+Contains	'{PropertyName}' negali turėti atmesto elemento.
+Contains.Value	'{PropertyName}' negali turėti {Value}.
+NotContains	'{PropertyName}' turi turėti reikalaujamą elementą.
+NotContains.Value	'{PropertyName}' turi turėti {Value}.
+StartsWith	'{PropertyName}' negali prasidėti {Value}.
+NotStartsWith	'{PropertyName}' turi prasidėti {Value}.
+EndsWith	'{PropertyName}' negali baigtis {Value}.
+NotEndsWith	'{PropertyName}' turi baigtis {Value}.
+Matches	'{PropertyName}' negali atitikti šablono {Pattern}.
+NotMatches	'{PropertyName}' turi atitikti šabloną {Pattern}.
+NotEmailAddress	'{PropertyName}' turi būti tinkamas el. pašto adresas.
+NotJson	'{PropertyName}' turi būti tinkamas JSON.
+NotXml	'{PropertyName}' turi būti taisyklingai suformuotas XML.
+NotUri	'{PropertyName}' turi būti tinkamas URI.
+NotUri.Absolute	'{PropertyName}' turi būti tinkamas absoliutus URI.
+NotUri.Relative	'{PropertyName}' turi būti tinkamas santykinis URI.
+NotHttpUrl	'{PropertyName}' turi būti absoliutus HTTP arba HTTPS URL.
+NotParsable	'{PropertyName}' turi būti tinkama {Type} tipo reikšmė.
+AllUpperCase	'{PropertyName}' negali būti sudarytas tik iš didžiųjų raidžių.
+AllLowerCase	'{PropertyName}' negali būti sudarytas tik iš mažųjų raidžių.
+NotTrimmed	'{PropertyName}' negali prasidėti arba baigtis tarpo simboliu.
+ContainsWhiteSpace	'{PropertyName}' negali turėti tarpo simbolių.
+ContainsControlCharacters	'{PropertyName}' negali turėti valdymo simbolių.
+ContainsAny	'{PropertyName}' negali turėti nė vieno iš atmestų simbolių.
+ContainsAnyExcept	'{PropertyName}' turi būti sudarytas tik iš leidžiamų simbolių.
+NotAscii	'{PropertyName}' turi būti sudarytas tik iš ASCII simbolių.
+NotDigits	'{PropertyName}' turi būti sudarytas tik iš skaitmenų nuo 0 iki 9.
+NotLettersOrDigits	'{PropertyName}' turi būti sudarytas tik iš raidžių arba skaitmenų.
+NotHex	'{PropertyName}' turi būti šešioliktainė eilutė.
+NotBase64	'{PropertyName}' turi būti tinkama Base64 eilutė.
+NotGuid	'{PropertyName}' turi būti tinkamas GUID.
+NotIPAddress	'{PropertyName}' turi būti tinkamas IP adresas.
+NotSlug	'{PropertyName}' turi būti slug, sudarytas iš mažųjų raidžių, skaitmenų ir pavienių brūkšnelių.
+NotVersion	'{PropertyName}' turi būti tinkamas versijos numeris.
+NotCreditCardNumber	'{PropertyName}' turi būti tinkamas kredito kortelės numeris.
+NotEnumName	'{PropertyName}' turi būti tipe {Type} apibrėžtas pavadinimas.
+NotFileName	'{PropertyName}' turi būti tinkamas failo pavadinimas.
+
+# Collections and dictionaries
+CountEqualTo	'{PropertyName}' elementų skaičius negali būti lygus {Count}.
+CountEqualTo.One	'{PropertyName}' negali turėti lygiai 1 elemento.
+CountNotEqualTo	'{PropertyName}' elementų skaičius turi būti lygus {Count}.
+CountNotEqualTo.One	'{PropertyName}' turi turėti lygiai 1 elementą.
+CountGreaterThan	'{PropertyName}' elementų skaičius turi būti ne didesnis kaip {MaxCount}.
+CountGreaterThan.One	'{PropertyName}' turi turėti ne daugiau kaip 1 elementą.
+CountLessThan	'{PropertyName}' elementų skaičius turi būti ne mažesnis kaip {MinCount}.
+CountLessThan.One	'{PropertyName}' turi turėti bent 1 elementą.
+CountOutOfRange	'{PropertyName}' elementų skaičius turi būti tarp {MinCount} ir {MaxCount}.
+ContainsNull	'{PropertyName}' negali turėti null elementų.
+HasDuplicates	'{PropertyName}' negali turėti pasikartojančių elementų.
+Any	'{PropertyName}' negali turėti nė vieno elemento, atitinkančio sąlygą.
+None	'{PropertyName}' turi turėti bent vieną elementą, atitinkantį sąlygą.
+ContainsKey	'{PropertyName}' negali turėti atmesto rakto.
+ContainsKey.Value	'{PropertyName}' negali turėti rakto {Key}.
+NotContainsKey	'{PropertyName}' turi turėti reikalaujamą raktą.
+NotContainsKey.Value	'{PropertyName}' turi turėti raktą {Key}.
+
+# Enums
+NotDefined	'{PropertyName}' turi būti tipe {Type} apibrėžta reikšmė.
+HasFlag	'{PropertyName}' negali turėti vėliavėlės {Flag}.
+NotHasFlag	'{PropertyName}' turi turėti vėliavėlę {Flag}.
+
+# Dates and times
+Before	'{PropertyName}' negali būti ankstesnis nei {ComparisonValue}.
+After	'{PropertyName}' negali būti vėlesnis nei {ComparisonValue}.
+InPast	'{PropertyName}' negali būti praeityje.
+InFuture	'{PropertyName}' negali būti ateityje.
+NotUtc	'{PropertyName}' turi būti nurodytas UTC laiku.
+Weekend	'{PropertyName}' turi būti darbo diena (nuo pirmadienio iki penktadienio).
+Weekday	'{PropertyName}' turi būti savaitgalio diena.
+HasTimeOfDay	'{PropertyName}' negali turėti laiko dalies.
+OlderThan	'{PropertyName}' negali būti daugiau kaip {MaxAge} praeityje.
+NewerThan	'{PropertyName}' turi būti bent {MinAge} praeityje.
+
+# Uri and IPAddress
+Relative	'{PropertyName}' turi būti absoliutus URI.
+NotHttps	'{PropertyName}' turi būti absoliutus HTTPS URL.
+NotHttpOrHttps	'{PropertyName}' turi būti absoliutus HTTP arba HTTPS URL.
+NotScheme	'{PropertyName}' turi naudoti vieną iš šių URI schemų: {Schemes}.
+Loopback	'{PropertyName}' negali būti loopback adresas.
+Private	'{PropertyName}' negali būti privatus arba link-local adresas.
+NotIPv4	'{PropertyName}' turi būti IPv4 adresas.
+NotIPv6	'{PropertyName}' turi būti IPv6 adresas.
+
+# Streams and types
+NotReadable	'{PropertyName}' turi palaikyti skaitymą.
+NotWritable	'{PropertyName}' turi palaikyti rašymą.
+NotSeekable	'{PropertyName}' turi palaikyti pozicijos keitimą.
+NotAssignableTo	'{PropertyName}' turi būti priskiriamas tipui {Type}.
+Abstract	'{PropertyName}' negali būti abstraktus tipas.
+Interface	'{PropertyName}' negali būti sąsaja.

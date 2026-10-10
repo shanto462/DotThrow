@@ -1,0 +1,146 @@
+# Uzbek (uz-Cyrl), Cyrillic script. Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' null бўлмаслиги керак.
+NotNull	'{PropertyName}' null бўлиши керак.
+Default	'{PropertyName}' стандарт қиймат бўлмаслиги керак.
+Empty	'{PropertyName}' бўш бўлмаслиги керак.
+Empty.Guid	'{PropertyName}' бўш GUID бўлмаслиги керак.
+NotEmpty	'{PropertyName}' бўш бўлиши керак.
+EqualTo	'{PropertyName}' рад этилган қийматга тенг бўлмаслиги керак.
+EqualTo.Value	'{PropertyName}' {ComparisonValue} қийматига тенг бўлмаслиги керак.
+NotEqualTo	'{PropertyName}' талаб қилинган қийматга тенг бўлиши керак.
+NotEqualTo.Value	'{PropertyName}' {ComparisonValue} қийматига тенг бўлиши керак.
+OneOf	'{PropertyName}' рад этилган қийматлардан бири бўлмаслиги керак.
+NotOneOf	'{PropertyName}' рухсат этилган қийматлардан бири бўлиши керак.
+Condition	'{PropertyName}' яроқли эмас.
+Condition.If	'{PropertyName}' қуйидаги шартни қаноатлантирмаслиги керак: {Condition}.
+Condition.IfNot	'{PropertyName}' қуйидаги шартни қаноатлантириши керак: {Condition}.
+Type	'{PropertyName}' {Type} турида бўлмаслиги керак.
+NotType	'{PropertyName}' {Type} турида бўлиши керак.
+True	'{PropertyName}' false бўлиши керак.
+False	'{PropertyName}' true бўлиши керак.
+Must	'{PropertyName}' яроқли эмас.
+Invalid	'{PropertyName}' яроқли эмас.
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' {ComparisonValue} қийматидан кичик ёки унга тенг бўлиши керак.
+GreaterThanOrEqualTo	'{PropertyName}' {ComparisonValue} қийматидан кичик бўлиши керак.
+LessThan	'{PropertyName}' {ComparisonValue} қийматидан катта ёки унга тенг бўлиши керак.
+LessThanOrEqualTo	'{PropertyName}' {ComparisonValue} қийматидан катта бўлиши керак.
+OutOfRange	'{PropertyName}' {From} ва {To} оралиғида бўлиши керак.
+OutOfRangeExclusive	'{PropertyName}' {From} ва {To} оралиғида бўлиши керак (чегара қийматлари кирмайди).
+InRange	'{PropertyName}' {From} ва {To} оралиғида бўлмаслиги керак.
+Negative	'{PropertyName}' манфий бўлмаслиги керак.
+NegativeOrZero	'{PropertyName}' 0 дан катта бўлиши керак.
+Positive	'{PropertyName}' 0 дан катта бўлмаслиги керак.
+PositiveOrZero	'{PropertyName}' 0 дан кичик бўлиши керак.
+Zero	'{PropertyName}' 0 бўлмаслиги керак.
+NaN	'{PropertyName}' NaN эмас, сон бўлиши керак.
+Infinity	'{PropertyName}' чекли сон бўлиши керак.
+NotFinite	'{PropertyName}' чекли сон бўлиши керак.
+Odd	'{PropertyName}' жуфт сон бўлиши керак.
+Even	'{PropertyName}' тоқ сон бўлиши керак.
+NotMultipleOf	'{PropertyName}' {Divisor} сонига каррали бўлиши керак.
+NotPowerOfTwo	'{PropertyName}' 2 сонининг даражаси бўлиши керак.
+NotInteger	'{PropertyName}' бутун сон бўлиши керак.
+PrecisionScaleExceeded	'{PropertyName}' жами кўпи билан {ExpectedPrecision} та рақамдан иборат бўлиши керак, улардан кўпи билан {ExpectedScale} таси каср қисмида. Бутун қисмда {Digits} та рақам, каср қисмида {ActualScale} та рақам топилди.
+
+# Strings
+WhiteSpace	'{PropertyName}' бўш ёки фақат бўш жойлардан иборат бўлмаслиги керак.
+LongerThan	'{PropertyName}' кўпи билан {MaxLength} та белгидан иборат бўлиши керак.
+ShorterThan	'{PropertyName}' камида {MinLength} та белгидан иборат бўлиши керак.
+LengthNotEqualTo	'{PropertyName}' айнан {Length} та белгидан иборат бўлиши керак.
+LengthOutOfRange	'{PropertyName}' {MinLength} тадан {MaxLength} тагача белгидан иборат бўлиши керак.
+Contains	'{PropertyName}' рад этилган элементни ўз ичига олмаслиги керак.
+Contains.Value	'{PropertyName}' {Value} қийматини ўз ичига олмаслиги керак.
+NotContains	'{PropertyName}' талаб қилинган элементни ўз ичига олиши керак.
+NotContains.Value	'{PropertyName}' {Value} қийматини ўз ичига олиши керак.
+StartsWith	'{PropertyName}' {Value} қиймати билан бошланмаслиги керак.
+NotStartsWith	'{PropertyName}' {Value} қиймати билан бошланиши керак.
+EndsWith	'{PropertyName}' {Value} қиймати билан тугамаслиги керак.
+NotEndsWith	'{PropertyName}' {Value} қиймати билан тугаши керак.
+Matches	'{PropertyName}' {Pattern} шаблонига мос келмаслиги керак.
+NotMatches	'{PropertyName}' {Pattern} шаблонига мос келиши керак.
+NotEmailAddress	'{PropertyName}' яроқли электрон почта манзили бўлиши керак.
+NotJson	'{PropertyName}' яроқли JSON бўлиши керак.
+NotXml	'{PropertyName}' тўғри тузилган XML бўлиши керак.
+NotUri	'{PropertyName}' яроқли URI бўлиши керак.
+NotUri.Absolute	'{PropertyName}' яроқли мутлақ URI бўлиши керак.
+NotUri.Relative	'{PropertyName}' яроқли нисбий URI бўлиши керак.
+NotHttpUrl	'{PropertyName}' мутлақ HTTP ёки HTTPS URL манзили бўлиши керак.
+NotParsable	'{PropertyName}' {Type} туридаги яроқли қиймат бўлиши керак.
+AllUpperCase	'{PropertyName}' фақат бош ҳарфлардан иборат бўлмаслиги керак.
+AllLowerCase	'{PropertyName}' фақат кичик ҳарфлардан иборат бўлмаслиги керак.
+NotTrimmed	'{PropertyName}' бўш жой билан бошланмаслиги ва тугамаслиги керак.
+ContainsWhiteSpace	'{PropertyName}' бўш жойларни ўз ичига олмаслиги керак.
+ContainsControlCharacters	'{PropertyName}' бошқарув белгиларини ўз ичига олмаслиги керак.
+ContainsAny	'{PropertyName}' рад этилган белгиларнинг ҳеч бирини ўз ичига олмаслиги керак.
+ContainsAnyExcept	'{PropertyName}' фақат рухсат этилган белгилардан иборат бўлиши керак.
+NotAscii	'{PropertyName}' фақат ASCII белгиларидан иборат бўлиши керак.
+NotDigits	'{PropertyName}' фақат 0 дан 9 гача бўлган рақамлардан иборат бўлиши керак.
+NotLettersOrDigits	'{PropertyName}' фақат ҳарфлар ёки рақамлардан иборат бўлиши керак.
+NotHex	'{PropertyName}' ўн олтилик сатр бўлиши керак.
+NotBase64	'{PropertyName}' яроқли Base64 сатри бўлиши керак.
+NotGuid	'{PropertyName}' яроқли GUID бўлиши керак.
+NotIPAddress	'{PropertyName}' яроқли IP манзили бўлиши керак.
+NotSlug	'{PropertyName}' кичик ҳарфлар, рақамлар ва якка дефислардан иборат slug бўлиши керак.
+NotVersion	'{PropertyName}' яроқли версия рақами бўлиши керак.
+NotCreditCardNumber	'{PropertyName}' яроқли кредит карта рақами бўлиши керак.
+NotEnumName	'{PropertyName}' {Type} enum турида аниқланган ном бўлиши керак.
+NotFileName	'{PropertyName}' яроқли файл номи бўлиши керак.
+
+# Collections and dictionaries
+CountEqualTo	'{PropertyName}' айнан {Count} та элементдан иборат бўлмаслиги керак.
+CountEqualTo.One	'{PropertyName}' айнан 1 та элементдан иборат бўлмаслиги керак.
+CountNotEqualTo	'{PropertyName}' айнан {Count} та элементдан иборат бўлиши керак.
+CountNotEqualTo.One	'{PropertyName}' айнан 1 та элементдан иборат бўлиши керак.
+CountGreaterThan	'{PropertyName}' кўпи билан {MaxCount} та элементдан иборат бўлиши керак.
+CountGreaterThan.One	'{PropertyName}' кўпи билан 1 та элементдан иборат бўлиши керак.
+CountLessThan	'{PropertyName}' камида {MinCount} та элементдан иборат бўлиши керак.
+CountLessThan.One	'{PropertyName}' камида 1 та элементдан иборат бўлиши керак.
+CountOutOfRange	'{PropertyName}' {MinCount} тадан {MaxCount} тагача элементдан иборат бўлиши керак.
+ContainsNull	'{PropertyName}' null элементларни ўз ичига олмаслиги керак.
+HasDuplicates	'{PropertyName}' такрорланувчи элементларни ўз ичига олмаслиги керак.
+Any	'{PropertyName}' шартни қаноатлантирувчи ҳеч қандай элементни ўз ичига олмаслиги керак.
+None	'{PropertyName}' шартни қаноатлантирувчи камида битта элементни ўз ичига олиши керак.
+ContainsKey	'{PropertyName}' рад этилган калитни ўз ичига олмаслиги керак.
+ContainsKey.Value	'{PropertyName}' {Key} калитини ўз ичига олмаслиги керак.
+NotContainsKey	'{PropertyName}' талаб қилинган калитни ўз ичига олиши керак.
+NotContainsKey.Value	'{PropertyName}' {Key} калитини ўз ичига олиши керак.
+
+# Enums
+NotDefined	'{PropertyName}' {Type} турида аниқланган қиймат бўлиши керак.
+HasFlag	'{PropertyName}' {Flag} байроғига эга бўлмаслиги керак.
+NotHasFlag	'{PropertyName}' {Flag} байроғига эга бўлиши керак.
+
+# Dates and times
+Before	'{PropertyName}' {ComparisonValue} санасидан олдин бўлмаслиги керак.
+After	'{PropertyName}' {ComparisonValue} санасидан кейин бўлмаслиги керак.
+InPast	'{PropertyName}' ўтмишда бўлмаслиги керак.
+InFuture	'{PropertyName}' келажакда бўлмаслиги керак.
+NotUtc	'{PropertyName}' UTC вақтида бўлиши керак.
+Weekend	'{PropertyName}' иш куни (душанбадан жумагача) бўлиши керак.
+Weekday	'{PropertyName}' дам олиш куни (шанба ёки якшанба) бўлиши керак.
+HasTimeOfDay	'{PropertyName}' вақт қисмини ўз ичига олмаслиги керак.
+OlderThan	'{PropertyName}' {MaxAge} муддатдан эски бўлмаслиги керак.
+NewerThan	'{PropertyName}' камида {MinAge} муддат олдин бўлиши керак.
+
+# Uri and IPAddress
+Relative	'{PropertyName}' мутлақ URI бўлиши керак.
+NotHttps	'{PropertyName}' мутлақ HTTPS URL манзили бўлиши керак.
+NotHttpOrHttps	'{PropertyName}' мутлақ HTTP ёки HTTPS URL манзили бўлиши керак.
+NotScheme	'{PropertyName}' қуйидаги URI схемаларидан бирини ишлатиши керак: {Schemes}.
+Loopback	'{PropertyName}' loopback манзили бўлмаслиги керак.
+Private	'{PropertyName}' хусусий ёки link-local манзил бўлмаслиги керак.
+NotIPv4	'{PropertyName}' IPv4 манзили бўлиши керак.
+NotIPv6	'{PropertyName}' IPv6 манзили бўлиши керак.
+
+# Streams and types
+NotReadable	'{PropertyName}' ўқишни қўллаб-қувватлаши керак.
+NotWritable	'{PropertyName}' ёзишни қўллаб-қувватлаши керак.
+NotSeekable	'{PropertyName}' жойлашувни ўзгартиришни (seek) қўллаб-қувватлаши керак.
+NotAssignableTo	'{PropertyName}' {Type} турига ўзлаштириладиган бўлиши керак.
+Abstract	'{PropertyName}' абстракт тур бўлмаслиги керак.
+Interface	'{PropertyName}' интерфейс бўлмаслиги керак.

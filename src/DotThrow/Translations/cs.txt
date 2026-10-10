@@ -1,0 +1,146 @@
+# Czech (cs). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	Pole '{PropertyName}' nesmí být null.
+NotNull	Pole '{PropertyName}' musí být null.
+Default	Pole '{PropertyName}' nesmí mít výchozí hodnotu.
+Empty	Pole '{PropertyName}' nesmí být prázdné.
+Empty.Guid	Pole '{PropertyName}' nesmí být prázdný GUID.
+NotEmpty	Pole '{PropertyName}' musí být prázdné.
+EqualTo	Pole '{PropertyName}' nesmí mít zakázanou hodnotu.
+EqualTo.Value	Pole '{PropertyName}' nesmí být rovno {ComparisonValue}.
+NotEqualTo	Pole '{PropertyName}' musí mít požadovanou hodnotu.
+NotEqualTo.Value	Pole '{PropertyName}' musí být rovno {ComparisonValue}.
+OneOf	Pole '{PropertyName}' nesmí mít žádnou ze zakázaných hodnot.
+NotOneOf	Pole '{PropertyName}' musí mít jednu z povolených hodnot.
+Condition	Pole '{PropertyName}' není platné.
+Condition.If	Pole '{PropertyName}' nesmí splňovat podmínku: {Condition}.
+Condition.IfNot	Pole '{PropertyName}' musí splňovat podmínku: {Condition}.
+Type	Pole '{PropertyName}' nesmí být typu {Type}.
+NotType	Pole '{PropertyName}' musí být typu {Type}.
+True	Pole '{PropertyName}' musí být false.
+False	Pole '{PropertyName}' musí být true.
+Must	Pole '{PropertyName}' není platné.
+Invalid	Pole '{PropertyName}' není platné.
+
+# Comparisons and numbers
+GreaterThan	Pole '{PropertyName}' musí být menší nebo rovno {ComparisonValue}.
+GreaterThanOrEqualTo	Pole '{PropertyName}' musí být menší než {ComparisonValue}.
+LessThan	Pole '{PropertyName}' musí být větší nebo rovno {ComparisonValue}.
+LessThanOrEqualTo	Pole '{PropertyName}' musí být větší než {ComparisonValue}.
+OutOfRange	Pole '{PropertyName}' musí být mezi {From} a {To}.
+OutOfRangeExclusive	Pole '{PropertyName}' musí být mezi {From} a {To} (bez krajních hodnot).
+InRange	Pole '{PropertyName}' nesmí být mezi {From} a {To}.
+Negative	Pole '{PropertyName}' nesmí být záporné.
+NegativeOrZero	Pole '{PropertyName}' musí být větší než 0.
+Positive	Pole '{PropertyName}' nesmí být větší než 0.
+PositiveOrZero	Pole '{PropertyName}' musí být menší než 0.
+Zero	Pole '{PropertyName}' nesmí být rovno 0.
+NaN	Pole '{PropertyName}' musí být číslo, nikoli NaN.
+Infinity	Pole '{PropertyName}' musí být konečné číslo.
+NotFinite	Pole '{PropertyName}' musí být konečné číslo.
+Odd	Pole '{PropertyName}' musí být sudé číslo.
+Even	Pole '{PropertyName}' musí být liché číslo.
+NotMultipleOf	Pole '{PropertyName}' musí být násobkem {Divisor}.
+NotPowerOfTwo	Pole '{PropertyName}' musí být mocninou dvou.
+NotInteger	Pole '{PropertyName}' musí být celé číslo.
+PrecisionScaleExceeded	Celkový počet číslic v poli '{PropertyName}' musí být nejvýše {ExpectedPrecision}, z toho nejvýše {ExpectedScale} za desetinnou čárkou. Počet číslic před desetinnou čárkou: {Digits}, za desetinnou čárkou: {ActualScale}.
+
+# Strings
+WhiteSpace	Pole '{PropertyName}' nesmí být prázdné ani tvořené pouze bílými znaky.
+LongerThan	Počet znaků v poli '{PropertyName}' musí být nejvýše {MaxLength}.
+ShorterThan	Počet znaků v poli '{PropertyName}' musí být alespoň {MinLength}.
+LengthNotEqualTo	Počet znaků v poli '{PropertyName}' musí být přesně {Length}.
+LengthOutOfRange	Počet znaků v poli '{PropertyName}' musí být mezi {MinLength} a {MaxLength}.
+Contains	Pole '{PropertyName}' nesmí obsahovat zakázanou položku.
+Contains.Value	Pole '{PropertyName}' nesmí obsahovat {Value}.
+NotContains	Pole '{PropertyName}' musí obsahovat požadovanou položku.
+NotContains.Value	Pole '{PropertyName}' musí obsahovat {Value}.
+StartsWith	Pole '{PropertyName}' nesmí začínat na {Value}.
+NotStartsWith	Pole '{PropertyName}' musí začínat na {Value}.
+EndsWith	Pole '{PropertyName}' nesmí končit na {Value}.
+NotEndsWith	Pole '{PropertyName}' musí končit na {Value}.
+Matches	Pole '{PropertyName}' nesmí odpovídat vzoru {Pattern}.
+NotMatches	Pole '{PropertyName}' musí odpovídat vzoru {Pattern}.
+NotEmailAddress	Pole '{PropertyName}' musí být platná e-mailová adresa.
+NotJson	Pole '{PropertyName}' musí být platný JSON.
+NotXml	Pole '{PropertyName}' musí být správně formátovaný XML.
+NotUri	Pole '{PropertyName}' musí být platný identifikátor URI.
+NotUri.Absolute	Pole '{PropertyName}' musí být platný absolutní identifikátor URI.
+NotUri.Relative	Pole '{PropertyName}' musí být platný relativní identifikátor URI.
+NotHttpUrl	Pole '{PropertyName}' musí být absolutní HTTP nebo HTTPS URL adresa.
+NotParsable	Pole '{PropertyName}' musí být platná hodnota typu {Type}.
+AllUpperCase	Pole '{PropertyName}' nesmí být psáno pouze velkými písmeny.
+AllLowerCase	Pole '{PropertyName}' nesmí být psáno pouze malými písmeny.
+NotTrimmed	Pole '{PropertyName}' nesmí začínat ani končit bílým znakem.
+ContainsWhiteSpace	Pole '{PropertyName}' nesmí obsahovat bílé znaky.
+ContainsControlCharacters	Pole '{PropertyName}' nesmí obsahovat řídicí znaky.
+ContainsAny	Pole '{PropertyName}' nesmí obsahovat žádný ze zakázaných znaků.
+ContainsAnyExcept	Pole '{PropertyName}' musí obsahovat pouze povolené znaky.
+NotAscii	Pole '{PropertyName}' musí obsahovat pouze znaky ASCII.
+NotDigits	Pole '{PropertyName}' musí obsahovat pouze číslice 0 až 9.
+NotLettersOrDigits	Pole '{PropertyName}' musí obsahovat pouze písmena nebo číslice.
+NotHex	Pole '{PropertyName}' musí být hexadecimální řetězec.
+NotBase64	Pole '{PropertyName}' musí být platný řetězec Base64.
+NotGuid	Pole '{PropertyName}' musí být platný GUID.
+NotIPAddress	Pole '{PropertyName}' musí být platná IP adresa.
+NotSlug	Pole '{PropertyName}' musí být slug z malých písmen, číslic a jednotlivých pomlček.
+NotVersion	Pole '{PropertyName}' musí být platné číslo verze.
+NotCreditCardNumber	Pole '{PropertyName}' musí být platné číslo kreditní karty.
+NotEnumName	Pole '{PropertyName}' musí být název definovaný v {Type}.
+NotFileName	Pole '{PropertyName}' musí být platný název souboru.
+
+# Collections and dictionaries
+CountEqualTo	Počet položek v poli '{PropertyName}' nesmí být přesně {Count}.
+CountEqualTo.One	Pole '{PropertyName}' nesmí obsahovat přesně 1 položku.
+CountNotEqualTo	Počet položek v poli '{PropertyName}' musí být přesně {Count}.
+CountNotEqualTo.One	Pole '{PropertyName}' musí obsahovat přesně 1 položku.
+CountGreaterThan	Počet položek v poli '{PropertyName}' musí být nejvýše {MaxCount}.
+CountGreaterThan.One	Pole '{PropertyName}' musí obsahovat nejvýše 1 položku.
+CountLessThan	Počet položek v poli '{PropertyName}' musí být alespoň {MinCount}.
+CountLessThan.One	Pole '{PropertyName}' musí obsahovat alespoň 1 položku.
+CountOutOfRange	Počet položek v poli '{PropertyName}' musí být mezi {MinCount} a {MaxCount}.
+ContainsNull	Pole '{PropertyName}' nesmí obsahovat položky s hodnotou null.
+HasDuplicates	Pole '{PropertyName}' nesmí obsahovat duplicitní položky.
+Any	Pole '{PropertyName}' nesmí obsahovat žádnou položku, která splňuje podmínku.
+None	Pole '{PropertyName}' musí obsahovat alespoň jednu položku, která splňuje podmínku.
+ContainsKey	Pole '{PropertyName}' nesmí obsahovat zakázaný klíč.
+ContainsKey.Value	Pole '{PropertyName}' nesmí obsahovat klíč {Key}.
+NotContainsKey	Pole '{PropertyName}' musí obsahovat požadovaný klíč.
+NotContainsKey.Value	Pole '{PropertyName}' musí obsahovat klíč {Key}.
+
+# Enums
+NotDefined	Pole '{PropertyName}' musí být hodnota definovaná v {Type}.
+HasFlag	Pole '{PropertyName}' nesmí mít nastavený příznak {Flag}.
+NotHasFlag	Pole '{PropertyName}' musí mít nastavený příznak {Flag}.
+
+# Dates and times
+Before	Pole '{PropertyName}' nesmí být před {ComparisonValue}.
+After	Pole '{PropertyName}' nesmí být po {ComparisonValue}.
+InPast	Pole '{PropertyName}' nesmí být v minulosti.
+InFuture	Pole '{PropertyName}' nesmí být v budoucnosti.
+NotUtc	Pole '{PropertyName}' musí být v UTC.
+Weekend	Pole '{PropertyName}' musí být pracovní den (pondělí až pátek).
+Weekday	Pole '{PropertyName}' musí být den víkendu (sobota nebo neděle).
+HasTimeOfDay	Pole '{PropertyName}' nesmí obsahovat časový údaj.
+OlderThan	Pole '{PropertyName}' nesmí být více než {MaxAge} v minulosti.
+NewerThan	Pole '{PropertyName}' musí být alespoň {MinAge} v minulosti.
+
+# Uri and IPAddress
+Relative	Pole '{PropertyName}' musí být absolutní identifikátor URI.
+NotHttps	Pole '{PropertyName}' musí být absolutní HTTPS URL adresa.
+NotHttpOrHttps	Pole '{PropertyName}' musí být absolutní HTTP nebo HTTPS URL adresa.
+NotScheme	Pole '{PropertyName}' musí používat jedno z těchto schémat URI: {Schemes}.
+Loopback	Pole '{PropertyName}' nesmí být loopback adresa.
+Private	Pole '{PropertyName}' nesmí být privátní ani link-local adresa.
+NotIPv4	Pole '{PropertyName}' musí být IPv4 adresa.
+NotIPv6	Pole '{PropertyName}' musí být IPv6 adresa.
+
+# Streams and types
+NotReadable	Pole '{PropertyName}' musí podporovat čtení.
+NotWritable	Pole '{PropertyName}' musí podporovat zápis.
+NotSeekable	Pole '{PropertyName}' musí podporovat změnu pozice.
+NotAssignableTo	Pole '{PropertyName}' musí být přiřaditelné k typu {Type}.
+Abstract	Pole '{PropertyName}' nesmí být abstraktní typ.
+Interface	Pole '{PropertyName}' nesmí být rozhraní.

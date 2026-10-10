@@ -1,0 +1,146 @@
+# Indonesian (id). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' tidak boleh null.
+NotNull	'{PropertyName}' harus null.
+Default	'{PropertyName}' tidak boleh berupa nilai default.
+Empty	'{PropertyName}' tidak boleh kosong.
+Empty.Guid	'{PropertyName}' tidak boleh berupa GUID kosong.
+NotEmpty	'{PropertyName}' harus kosong.
+EqualTo	'{PropertyName}' tidak boleh sama dengan nilai yang ditolak.
+EqualTo.Value	'{PropertyName}' tidak boleh sama dengan {ComparisonValue}.
+NotEqualTo	'{PropertyName}' harus sama dengan nilai yang diwajibkan.
+NotEqualTo.Value	'{PropertyName}' harus sama dengan {ComparisonValue}.
+OneOf	'{PropertyName}' tidak boleh berupa salah satu nilai yang ditolak.
+NotOneOf	'{PropertyName}' harus berupa salah satu nilai yang diizinkan.
+Condition	'{PropertyName}' tidak valid.
+Condition.If	'{PropertyName}' tidak boleh memenuhi kondisi: {Condition}.
+Condition.IfNot	'{PropertyName}' harus memenuhi kondisi: {Condition}.
+Type	'{PropertyName}' tidak boleh bertipe {Type}.
+NotType	'{PropertyName}' harus bertipe {Type}.
+True	'{PropertyName}' harus bernilai false.
+False	'{PropertyName}' harus bernilai true.
+Must	'{PropertyName}' tidak valid.
+Invalid	'{PropertyName}' tidak valid.
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' harus kurang dari atau sama dengan {ComparisonValue}.
+GreaterThanOrEqualTo	'{PropertyName}' harus kurang dari {ComparisonValue}.
+LessThan	'{PropertyName}' harus lebih besar dari atau sama dengan {ComparisonValue}.
+LessThanOrEqualTo	'{PropertyName}' harus lebih besar dari {ComparisonValue}.
+OutOfRange	'{PropertyName}' harus berada di antara {From} dan {To}.
+OutOfRangeExclusive	'{PropertyName}' harus berada di antara {From} dan {To} (tidak termasuk kedua batas).
+InRange	'{PropertyName}' tidak boleh berada di antara {From} dan {To}.
+Negative	'{PropertyName}' tidak boleh negatif.
+NegativeOrZero	'{PropertyName}' harus lebih besar dari 0.
+Positive	'{PropertyName}' tidak boleh lebih besar dari 0.
+PositiveOrZero	'{PropertyName}' harus kurang dari 0.
+Zero	'{PropertyName}' tidak boleh bernilai 0.
+NaN	'{PropertyName}' harus berupa bilangan, bukan NaN.
+Infinity	'{PropertyName}' harus berupa bilangan berhingga.
+NotFinite	'{PropertyName}' harus berupa bilangan berhingga.
+Odd	'{PropertyName}' harus berupa bilangan genap.
+Even	'{PropertyName}' harus berupa bilangan ganjil.
+NotMultipleOf	'{PropertyName}' harus berupa kelipatan {Divisor}.
+NotPowerOfTwo	'{PropertyName}' harus berupa pangkat dari 2.
+NotInteger	'{PropertyName}' harus berupa bilangan bulat.
+PrecisionScaleExceeded	'{PropertyName}' harus memiliki total paling banyak {ExpectedPrecision} digit, dengan paling banyak {ExpectedScale} desimal. Ditemukan {Digits} digit sebelum tanda desimal dan {ActualScale} desimal.
+
+# Strings
+WhiteSpace	'{PropertyName}' tidak boleh kosong atau hanya berisi spasi.
+LongerThan	'{PropertyName}' harus memiliki panjang paling banyak {MaxLength} karakter.
+ShorterThan	'{PropertyName}' harus memiliki panjang paling sedikit {MinLength} karakter.
+LengthNotEqualTo	'{PropertyName}' harus memiliki panjang tepat {Length} karakter.
+LengthOutOfRange	'{PropertyName}' harus memiliki panjang antara {MinLength} dan {MaxLength} karakter.
+Contains	'{PropertyName}' tidak boleh berisi item yang ditolak.
+Contains.Value	'{PropertyName}' tidak boleh berisi {Value}.
+NotContains	'{PropertyName}' harus berisi item yang diwajibkan.
+NotContains.Value	'{PropertyName}' harus berisi {Value}.
+StartsWith	'{PropertyName}' tidak boleh diawali dengan {Value}.
+NotStartsWith	'{PropertyName}' harus diawali dengan {Value}.
+EndsWith	'{PropertyName}' tidak boleh diakhiri dengan {Value}.
+NotEndsWith	'{PropertyName}' harus diakhiri dengan {Value}.
+Matches	'{PropertyName}' tidak boleh cocok dengan pola {Pattern}.
+NotMatches	'{PropertyName}' harus cocok dengan pola {Pattern}.
+NotEmailAddress	'{PropertyName}' harus berupa alamat email yang valid.
+NotJson	'{PropertyName}' harus berupa JSON yang valid.
+NotXml	'{PropertyName}' harus berupa XML dengan format yang benar.
+NotUri	'{PropertyName}' harus berupa URI yang valid.
+NotUri.Absolute	'{PropertyName}' harus berupa URI absolut yang valid.
+NotUri.Relative	'{PropertyName}' harus berupa URI relatif yang valid.
+NotHttpUrl	'{PropertyName}' harus berupa URL HTTP atau HTTPS absolut.
+NotParsable	'{PropertyName}' harus berupa nilai bertipe {Type} yang valid.
+AllUpperCase	'{PropertyName}' tidak boleh seluruhnya huruf besar.
+AllLowerCase	'{PropertyName}' tidak boleh seluruhnya huruf kecil.
+NotTrimmed	'{PropertyName}' tidak boleh diawali atau diakhiri dengan spasi.
+ContainsWhiteSpace	'{PropertyName}' tidak boleh berisi spasi.
+ContainsControlCharacters	'{PropertyName}' tidak boleh berisi karakter kontrol.
+ContainsAny	'{PropertyName}' tidak boleh berisi satu pun karakter yang ditolak.
+ContainsAnyExcept	'{PropertyName}' hanya boleh berisi karakter yang diizinkan.
+NotAscii	'{PropertyName}' hanya boleh berisi karakter ASCII.
+NotDigits	'{PropertyName}' hanya boleh berisi digit 0 sampai 9.
+NotLettersOrDigits	'{PropertyName}' hanya boleh berisi huruf atau digit.
+NotHex	'{PropertyName}' harus berupa string heksadesimal.
+NotBase64	'{PropertyName}' harus berupa string Base64 yang valid.
+NotGuid	'{PropertyName}' harus berupa GUID yang valid.
+NotIPAddress	'{PropertyName}' harus berupa alamat IP yang valid.
+NotSlug	'{PropertyName}' harus berupa slug yang terdiri dari huruf kecil, digit, dan tanda hubung tunggal.
+NotVersion	'{PropertyName}' harus berupa nomor versi yang valid.
+NotCreditCardNumber	'{PropertyName}' harus berupa nomor kartu kredit yang valid.
+NotEnumName	'{PropertyName}' harus berupa nama yang didefinisikan di enum {Type}.
+NotFileName	'{PropertyName}' harus berupa nama file yang valid.
+
+# Collections and dictionaries
+CountEqualTo	'{PropertyName}' tidak boleh memiliki tepat {Count} item.
+CountEqualTo.One	'{PropertyName}' tidak boleh memiliki tepat 1 item.
+CountNotEqualTo	'{PropertyName}' harus memiliki tepat {Count} item.
+CountNotEqualTo.One	'{PropertyName}' harus memiliki tepat 1 item.
+CountGreaterThan	'{PropertyName}' harus memiliki paling banyak {MaxCount} item.
+CountGreaterThan.One	'{PropertyName}' harus memiliki paling banyak 1 item.
+CountLessThan	'{PropertyName}' harus memiliki paling sedikit {MinCount} item.
+CountLessThan.One	'{PropertyName}' harus memiliki paling sedikit 1 item.
+CountOutOfRange	'{PropertyName}' harus memiliki antara {MinCount} dan {MaxCount} item.
+ContainsNull	'{PropertyName}' tidak boleh berisi item null.
+HasDuplicates	'{PropertyName}' tidak boleh berisi item duplikat.
+Any	'{PropertyName}' tidak boleh berisi satu pun item yang memenuhi kondisi.
+None	'{PropertyName}' harus berisi paling sedikit satu item yang memenuhi kondisi.
+ContainsKey	'{PropertyName}' tidak boleh berisi kunci yang ditolak.
+ContainsKey.Value	'{PropertyName}' tidak boleh berisi kunci {Key}.
+NotContainsKey	'{PropertyName}' harus berisi kunci yang diwajibkan.
+NotContainsKey.Value	'{PropertyName}' harus berisi kunci {Key}.
+
+# Enums
+NotDefined	'{PropertyName}' harus berupa nilai yang didefinisikan di {Type}.
+HasFlag	'{PropertyName}' tidak boleh memiliki flag {Flag}.
+NotHasFlag	'{PropertyName}' harus memiliki flag {Flag}.
+
+# Dates and times
+Before	'{PropertyName}' tidak boleh berada sebelum {ComparisonValue}.
+After	'{PropertyName}' tidak boleh berada setelah {ComparisonValue}.
+InPast	'{PropertyName}' tidak boleh berada di masa lalu.
+InFuture	'{PropertyName}' tidak boleh berada di masa depan.
+NotUtc	'{PropertyName}' harus dalam UTC.
+Weekend	'{PropertyName}' harus berupa hari kerja (Senin sampai Jumat).
+Weekday	'{PropertyName}' harus berupa hari akhir pekan (Sabtu atau Minggu).
+HasTimeOfDay	'{PropertyName}' tidak boleh memiliki bagian waktu.
+OlderThan	'{PropertyName}' tidak boleh lebih dari {MaxAge} yang lalu.
+NewerThan	'{PropertyName}' harus paling sedikit {MinAge} yang lalu.
+
+# Uri and IPAddress
+Relative	'{PropertyName}' harus berupa URI absolut.
+NotHttps	'{PropertyName}' harus berupa URL HTTPS absolut.
+NotHttpOrHttps	'{PropertyName}' harus berupa URL HTTP atau HTTPS absolut.
+NotScheme	'{PropertyName}' harus menggunakan salah satu skema URI berikut: {Schemes}.
+Loopback	'{PropertyName}' tidak boleh berupa alamat loopback.
+Private	'{PropertyName}' tidak boleh berupa alamat privat atau link-local.
+NotIPv4	'{PropertyName}' harus berupa alamat IPv4.
+NotIPv6	'{PropertyName}' harus berupa alamat IPv6.
+
+# Streams and types
+NotReadable	'{PropertyName}' harus dapat dibaca.
+NotWritable	'{PropertyName}' harus dapat ditulis.
+NotSeekable	'{PropertyName}' harus mendukung seek.
+NotAssignableTo	'{PropertyName}' harus dapat di-assign ke tipe {Type}.
+Abstract	'{PropertyName}' tidak boleh berupa tipe abstrak.
+Interface	'{PropertyName}' tidak boleh berupa interface.

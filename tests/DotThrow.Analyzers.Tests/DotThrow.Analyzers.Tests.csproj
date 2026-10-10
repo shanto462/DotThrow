@@ -1,0 +1,56 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Tests for the analyzers and code fixes. Analyzers run inside the compiler, so the host
+    framework does not matter; the test code compiles against the real DotThrow assembly:
+    the net10.0 build with the reference assemblies of the running .NET, and the
+    netstandard2.0 build with the NETStandard.Library reference assemblies. Nothing is
+    downloaded while the tests run.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>DotThrow.Analyzers.Tests</RootNamespace>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <IsTestingPlatformApplication>false</IsTestingPlatformApplication>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeFix.Testing" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\DotThrow.Analyzers\DotThrow.Analyzers.csproj" />
+    <ProjectReference Include="..\..\src\DotThrow.Analyzers.CodeFixes\DotThrow.Analyzers.CodeFixes.csproj" />
+    <!-- The library itself: its net10.0 build is the metadata reference of the test code. -->
+    <ProjectReference Include="..\..\src\DotThrow\DotThrow.csproj" />
+    <!-- Its netstandard2.0 build, copied to netstandard2.0/DotThrow.dll for the tests of older targets. -->
+    <ProjectReference Include="..\..\src\DotThrow\DotThrow.csproj"
+                      SetTargetFramework="TargetFramework=netstandard2.0"
+                      ReferenceOutputAssembly="false"
+                      OutputItemType="DotThrowNetStandard20" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Where the tests find the netstandard2.0 reference assemblies and the samples. -->
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>NuGetPackageRoot</_Parameter1>
+      <_Parameter2>$(NuGetPackageRoot)</_Parameter2>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>RepositoryRoot</_Parameter1>
+      <_Parameter2>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)../../'))</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <Target Name="CopyDotThrowNetStandard20" AfterTargets="CopyFilesToOutputDirectory">
+    <Copy SourceFiles="@(DotThrowNetStandard20)" DestinationFolder="$(OutDir)netstandard2.0" SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>

@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!--
+    A minimal API that uses DotThrow.AspNetCore and DotThrow.DependencyInjection. The CI job
+    "Native AOT" publishes it with Native AOT, fails on any trim or AOT warning, and sends it
+    valid and invalid requests (eng/aot-smoke/smoke.sh). It is not shipped.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>DotThrow.AotSmoke</RootNamespace>
+    <!-- In the project file, not on the command line: a global PublishAot would also reach
+         the netstandard and .NET Framework builds of the libraries and fail. -->
+    <PublishAot>true</PublishAot>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\DotThrow.AspNetCore\DotThrow.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\DotThrow.DependencyInjection\DotThrow.DependencyInjection.csproj" />
+  </ItemGroup>
+
+</Project>

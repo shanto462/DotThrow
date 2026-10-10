@@ -1,0 +1,146 @@
+# Hebrew (he). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' לא יכול להיות null.
+NotNull	'{PropertyName}' חייב להיות null.
+Default	'{PropertyName}' לא יכול להיות ערך ברירת המחדל.
+Empty	'{PropertyName}' לא יכול להיות ריק.
+Empty.Guid	'{PropertyName}' לא יכול להיות GUID ריק.
+NotEmpty	'{PropertyName}' חייב להיות ריק.
+EqualTo	'{PropertyName}' לא יכול להיות שווה לערך האסור.
+EqualTo.Value	'{PropertyName}' לא יכול להיות שווה ל-{ComparisonValue}.
+NotEqualTo	'{PropertyName}' חייב להיות שווה לערך הנדרש.
+NotEqualTo.Value	'{PropertyName}' חייב להיות שווה ל-{ComparisonValue}.
+OneOf	'{PropertyName}' לא יכול להיות אחד מהערכים האסורים.
+NotOneOf	'{PropertyName}' חייב להיות אחד מהערכים המותרים.
+Condition	'{PropertyName}' אינו חוקי.
+Condition.If	'{PropertyName}' לא יכול לקיים את התנאי: {Condition}.
+Condition.IfNot	'{PropertyName}' חייב לקיים את התנאי: {Condition}.
+Type	'{PropertyName}' לא יכול להיות מסוג {Type}.
+NotType	'{PropertyName}' חייב להיות מסוג {Type}.
+True	'{PropertyName}' חייב להיות false.
+False	'{PropertyName}' חייב להיות true.
+Must	'{PropertyName}' אינו חוקי.
+Invalid	'{PropertyName}' אינו חוקי.
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' חייב להיות קטן או שווה ל-{ComparisonValue}.
+GreaterThanOrEqualTo	'{PropertyName}' חייב להיות קטן מ-{ComparisonValue}.
+LessThan	'{PropertyName}' חייב להיות גדול או שווה ל-{ComparisonValue}.
+LessThanOrEqualTo	'{PropertyName}' חייב להיות גדול מ-{ComparisonValue}.
+OutOfRange	'{PropertyName}' חייב להיות בין {From} לבין {To}.
+OutOfRangeExclusive	'{PropertyName}' חייב להיות בין {From} לבין {To} (לא כולל הקצוות).
+InRange	'{PropertyName}' לא יכול להיות בין {From} לבין {To}.
+Negative	'{PropertyName}' לא יכול להיות שלילי.
+NegativeOrZero	'{PropertyName}' חייב להיות גדול מ-0.
+Positive	'{PropertyName}' לא יכול להיות גדול מ-0.
+PositiveOrZero	'{PropertyName}' חייב להיות קטן מ-0.
+Zero	'{PropertyName}' לא יכול להיות 0.
+NaN	'{PropertyName}' חייב להיות מספר, ולא NaN.
+Infinity	'{PropertyName}' חייב להיות מספר סופי.
+NotFinite	'{PropertyName}' חייב להיות מספר סופי.
+Odd	'{PropertyName}' חייב להיות מספר זוגי.
+Even	'{PropertyName}' חייב להיות מספר אי-זוגי.
+NotMultipleOf	'{PropertyName}' חייב להיות כפולה של {Divisor}.
+NotPowerOfTwo	'{PropertyName}' חייב להיות חזקה של 2.
+NotInteger	'{PropertyName}' חייב להיות מספר שלם.
+PrecisionScaleExceeded	מספר הספרות הכולל ב-'{PropertyName}' חייב להיות לכל היותר {ExpectedPrecision}, ומספר הספרות העשרוניות לכל היותר {ExpectedScale}. מספר הספרות שנמצאו: {Digits} לפני הנקודה העשרונית ו-{ActualScale} אחריה.
+
+# Strings
+WhiteSpace	'{PropertyName}' לא יכול להיות ריק או להכיל רווחים בלבד.
+LongerThan	מספר התווים ב-'{PropertyName}' חייב להיות לכל היותר {MaxLength}.
+ShorterThan	מספר התווים ב-'{PropertyName}' חייב להיות לפחות {MinLength}.
+LengthNotEqualTo	מספר התווים ב-'{PropertyName}' חייב להיות בדיוק {Length}.
+LengthOutOfRange	מספר התווים ב-'{PropertyName}' חייב להיות בין {MinLength} לבין {MaxLength}.
+Contains	'{PropertyName}' לא יכול להכיל את הפריט האסור.
+Contains.Value	'{PropertyName}' לא יכול להכיל את {Value}.
+NotContains	'{PropertyName}' חייב להכיל את הפריט הנדרש.
+NotContains.Value	'{PropertyName}' חייב להכיל את {Value}.
+StartsWith	'{PropertyName}' לא יכול להתחיל ב-{Value}.
+NotStartsWith	'{PropertyName}' חייב להתחיל ב-{Value}.
+EndsWith	'{PropertyName}' לא יכול להסתיים ב-{Value}.
+NotEndsWith	'{PropertyName}' חייב להסתיים ב-{Value}.
+Matches	'{PropertyName}' לא יכול להתאים לתבנית {Pattern}.
+NotMatches	'{PropertyName}' חייב להתאים לתבנית {Pattern}.
+NotEmailAddress	'{PropertyName}' חייב להיות כתובת דוא"ל חוקית.
+NotJson	'{PropertyName}' חייב להיות JSON חוקי.
+NotXml	'{PropertyName}' חייב להיות XML בנוי היטב.
+NotUri	'{PropertyName}' חייב להיות URI חוקי.
+NotUri.Absolute	'{PropertyName}' חייב להיות URI מוחלט חוקי.
+NotUri.Relative	'{PropertyName}' חייב להיות URI יחסי חוקי.
+NotHttpUrl	'{PropertyName}' חייב להיות כתובת URL מוחלטת עם HTTP או HTTPS.
+NotParsable	'{PropertyName}' חייב להיות ערך חוקי מסוג {Type}.
+AllUpperCase	'{PropertyName}' לא יכול להיות כולו באותיות גדולות.
+AllLowerCase	'{PropertyName}' לא יכול להיות כולו באותיות קטנות.
+NotTrimmed	'{PropertyName}' לא יכול להתחיל או להסתיים ברווח.
+ContainsWhiteSpace	'{PropertyName}' לא יכול להכיל רווחים.
+ContainsControlCharacters	'{PropertyName}' לא יכול להכיל תווי בקרה.
+ContainsAny	'{PropertyName}' לא יכול להכיל אף אחד מהתווים האסורים.
+ContainsAnyExcept	'{PropertyName}' חייב להכיל רק את התווים המותרים.
+NotAscii	'{PropertyName}' חייב להכיל רק תווי ASCII.
+NotDigits	'{PropertyName}' חייב להכיל רק את הספרות 0 עד 9.
+NotLettersOrDigits	'{PropertyName}' חייב להכיל רק אותיות או ספרות.
+NotHex	'{PropertyName}' חייב להיות מחרוזת הקסדצימלית.
+NotBase64	'{PropertyName}' חייב להיות מחרוזת Base64 חוקית.
+NotGuid	'{PropertyName}' חייב להיות GUID חוקי.
+NotIPAddress	'{PropertyName}' חייב להיות כתובת IP חוקית.
+NotSlug	'{PropertyName}' חייב להיות slug המורכב מאותיות קטנות, ספרות ומקפים בודדים.
+NotVersion	'{PropertyName}' חייב להיות מספר גרסה חוקי.
+NotCreditCardNumber	'{PropertyName}' חייב להיות מספר כרטיס אשראי חוקי.
+NotEnumName	'{PropertyName}' חייב להיות שם מוגדר של {Type}.
+NotFileName	'{PropertyName}' חייב להיות שם קובץ חוקי.
+
+# Collections and dictionaries
+CountEqualTo	מספר הפריטים ב-'{PropertyName}' לא יכול להיות בדיוק {Count}.
+CountEqualTo.One	מספר הפריטים ב-'{PropertyName}' לא יכול להיות בדיוק 1.
+CountNotEqualTo	מספר הפריטים ב-'{PropertyName}' חייב להיות בדיוק {Count}.
+CountNotEqualTo.One	מספר הפריטים ב-'{PropertyName}' חייב להיות בדיוק 1.
+CountGreaterThan	מספר הפריטים ב-'{PropertyName}' חייב להיות לכל היותר {MaxCount}.
+CountGreaterThan.One	מספר הפריטים ב-'{PropertyName}' חייב להיות לכל היותר 1.
+CountLessThan	מספר הפריטים ב-'{PropertyName}' חייב להיות לפחות {MinCount}.
+CountLessThan.One	מספר הפריטים ב-'{PropertyName}' חייב להיות לפחות 1.
+CountOutOfRange	מספר הפריטים ב-'{PropertyName}' חייב להיות בין {MinCount} לבין {MaxCount}.
+ContainsNull	'{PropertyName}' לא יכול להכיל פריטים שערכם null.
+HasDuplicates	'{PropertyName}' לא יכול להכיל פריטים כפולים.
+Any	'{PropertyName}' לא יכול להכיל אף פריט שמקיים את התנאי.
+None	'{PropertyName}' חייב להכיל לפחות פריט אחד שמקיים את התנאי.
+ContainsKey	'{PropertyName}' לא יכול להכיל את המפתח האסור.
+ContainsKey.Value	'{PropertyName}' לא יכול להכיל את המפתח {Key}.
+NotContainsKey	'{PropertyName}' חייב להכיל את המפתח הנדרש.
+NotContainsKey.Value	'{PropertyName}' חייב להכיל את המפתח {Key}.
+
+# Enums
+NotDefined	'{PropertyName}' חייב להיות ערך מוגדר של {Type}.
+HasFlag	'{PropertyName}' לא יכול לכלול את הדגל {Flag}.
+NotHasFlag	'{PropertyName}' חייב לכלול את הדגל {Flag}.
+
+# Dates and times
+Before	'{PropertyName}' לא יכול להיות לפני {ComparisonValue}.
+After	'{PropertyName}' לא יכול להיות אחרי {ComparisonValue}.
+InPast	'{PropertyName}' לא יכול להיות בעבר.
+InFuture	'{PropertyName}' לא יכול להיות בעתיד.
+NotUtc	'{PropertyName}' חייב להיות ב-UTC.
+Weekend	'{PropertyName}' חייב להיות יום בין שני לשישי.
+Weekday	'{PropertyName}' חייב להיות שבת או יום ראשון.
+HasTimeOfDay	'{PropertyName}' לא יכול לכלול שעה.
+OlderThan	'{PropertyName}' לא יכול להיות יותר מ-{MaxAge} בעבר.
+NewerThan	'{PropertyName}' חייב להיות לפחות {MinAge} בעבר.
+
+# Uri and IPAddress
+Relative	'{PropertyName}' חייב להיות URI מוחלט.
+NotHttps	'{PropertyName}' חייב להיות כתובת URL מוחלטת עם HTTPS.
+NotHttpOrHttps	'{PropertyName}' חייב להיות כתובת URL מוחלטת עם HTTP או HTTPS.
+NotScheme	'{PropertyName}' חייב להשתמש באחת מסכמות ה-URI הבאות: {Schemes}.
+Loopback	'{PropertyName}' לא יכול להיות כתובת loopback.
+Private	'{PropertyName}' לא יכול להיות כתובת פרטית או כתובת link-local.
+NotIPv4	'{PropertyName}' חייב להיות כתובת IPv4.
+NotIPv6	'{PropertyName}' חייב להיות כתובת IPv6.
+
+# Streams and types
+NotReadable	'{PropertyName}' חייב לתמוך בקריאה.
+NotWritable	'{PropertyName}' חייב לתמוך בכתיבה.
+NotSeekable	'{PropertyName}' חייב לתמוך בשינוי מיקום (seek).
+NotAssignableTo	'{PropertyName}' חייב להיות ניתן להשמה לסוג {Type}.
+Abstract	'{PropertyName}' לא יכול להיות סוג מופשט.
+Interface	'{PropertyName}' לא יכול להיות ממשק.

@@ -1,0 +1,146 @@
+# Kazakh (kk), Cyrillic script. Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' null болмауы керек.
+NotNull	'{PropertyName}' null болуы керек.
+Default	'{PropertyName}' әдепкі мән болмауы керек.
+Empty	'{PropertyName}' бос болмауы керек.
+Empty.Guid	'{PropertyName}' бос GUID болмауы керек.
+NotEmpty	'{PropertyName}' бос болуы керек.
+EqualTo	'{PropertyName}' рұқсат етілмеген мәнге тең болмауы керек.
+EqualTo.Value	'{PropertyName}' {ComparisonValue} мәніне тең болмауы керек.
+NotEqualTo	'{PropertyName}' талап етілетін мәнге тең болуы керек.
+NotEqualTo.Value	'{PropertyName}' {ComparisonValue} мәніне тең болуы керек.
+OneOf	'{PropertyName}' рұқсат етілмеген мәндердің бірі болмауы керек.
+NotOneOf	'{PropertyName}' рұқсат етілген мәндердің бірі болуы керек.
+Condition	'{PropertyName}' жарамды емес.
+Condition.If	'{PropertyName}' келесі шартты қанағаттандырмауы керек: {Condition}.
+Condition.IfNot	'{PropertyName}' келесі шартты қанағаттандыруы керек: {Condition}.
+Type	'{PropertyName}' {Type} түрінде болмауы керек.
+NotType	'{PropertyName}' {Type} түрінде болуы керек.
+True	'{PropertyName}' false болуы керек.
+False	'{PropertyName}' true болуы керек.
+Must	'{PropertyName}' жарамды емес.
+Invalid	'{PropertyName}' жарамды емес.
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' {ComparisonValue} мәнінен кіші немесе оған тең болуы керек.
+GreaterThanOrEqualTo	'{PropertyName}' {ComparisonValue} мәнінен кіші болуы керек.
+LessThan	'{PropertyName}' {ComparisonValue} мәнінен үлкен немесе оған тең болуы керек.
+LessThanOrEqualTo	'{PropertyName}' {ComparisonValue} мәнінен үлкен болуы керек.
+OutOfRange	'{PropertyName}' {From} және {To} аралығында болуы керек.
+OutOfRangeExclusive	'{PropertyName}' {From} және {To} аралығында болуы керек (шекаралық мәндерді қоспағанда).
+InRange	'{PropertyName}' {From} және {To} аралығында болмауы керек.
+Negative	'{PropertyName}' теріс болмауы керек.
+NegativeOrZero	'{PropertyName}' 0-ден үлкен болуы керек.
+Positive	'{PropertyName}' 0-ден үлкен болмауы керек.
+PositiveOrZero	'{PropertyName}' 0-ден кіші болуы керек.
+Zero	'{PropertyName}' 0 болмауы керек.
+NaN	'{PropertyName}' NaN емес, сан болуы керек.
+Infinity	'{PropertyName}' ақырлы сан болуы керек.
+NotFinite	'{PropertyName}' ақырлы сан болуы керек.
+Odd	'{PropertyName}' жұп сан болуы керек.
+Even	'{PropertyName}' тақ сан болуы керек.
+NotMultipleOf	'{PropertyName}' {Divisor} санына еселі болуы керек.
+NotPowerOfTwo	'{PropertyName}' 2 санының дәрежесі болуы керек.
+NotInteger	'{PropertyName}' бүтін сан болуы керек.
+PrecisionScaleExceeded	'{PropertyName}' барлығы ең көбі {ExpectedPrecision} цифрдан тұруы керек, оның ішінде бөлшек бөлігінде ең көбі {ExpectedScale} цифр болуы керек. Бүтін бөлігінде {Digits} цифр, бөлшек бөлігінде {ActualScale} цифр табылды.
+
+# Strings
+WhiteSpace	'{PropertyName}' бос болмауы және тек бос орындардан тұрмауы керек.
+LongerThan	'{PropertyName}' ұзындығы ең көбі {MaxLength} таңба болуы керек.
+ShorterThan	'{PropertyName}' ұзындығы кемінде {MinLength} таңба болуы керек.
+LengthNotEqualTo	'{PropertyName}' ұзындығы дәл {Length} таңба болуы керек.
+LengthOutOfRange	'{PropertyName}' ұзындығы {MinLength} және {MaxLength} таңба аралығында болуы керек.
+Contains	'{PropertyName}' рұқсат етілмеген элементті қамтымауы керек.
+Contains.Value	'{PropertyName}' {Value} мәнін қамтымауы керек.
+NotContains	'{PropertyName}' талап етілетін элементті қамтуы керек.
+NotContains.Value	'{PropertyName}' {Value} мәнін қамтуы керек.
+StartsWith	'{PropertyName}' {Value} мәнінен басталмауы керек.
+NotStartsWith	'{PropertyName}' {Value} мәнінен басталуы керек.
+EndsWith	'{PropertyName}' {Value} мәнімен аяқталмауы керек.
+NotEndsWith	'{PropertyName}' {Value} мәнімен аяқталуы керек.
+Matches	'{PropertyName}' {Pattern} үлгісіне сәйкес келмеуі керек.
+NotMatches	'{PropertyName}' {Pattern} үлгісіне сәйкес келуі керек.
+NotEmailAddress	'{PropertyName}' жарамды электрондық пошта мекенжайы болуы керек.
+NotJson	'{PropertyName}' жарамды JSON болуы керек.
+NotXml	'{PropertyName}' дұрыс құрылған XML болуы керек.
+NotUri	'{PropertyName}' жарамды URI болуы керек.
+NotUri.Absolute	'{PropertyName}' жарамды абсолютті URI болуы керек.
+NotUri.Relative	'{PropertyName}' жарамды салыстырмалы URI болуы керек.
+NotHttpUrl	'{PropertyName}' абсолютті HTTP немесе HTTPS URL мекенжайы болуы керек.
+NotParsable	'{PropertyName}' {Type} түріндегі жарамды мән болуы керек.
+AllUpperCase	'{PropertyName}' тек бас әріптерден тұрмауы керек.
+AllLowerCase	'{PropertyName}' тек кіші әріптерден тұрмауы керек.
+NotTrimmed	'{PropertyName}' бос орынмен басталмауы және аяқталмауы керек.
+ContainsWhiteSpace	'{PropertyName}' бос орындарды қамтымауы керек.
+ContainsControlCharacters	'{PropertyName}' басқару таңбаларын қамтымауы керек.
+ContainsAny	'{PropertyName}' рұқсат етілмеген таңбалардың ешқайсысын қамтымауы керек.
+ContainsAnyExcept	'{PropertyName}' тек рұқсат етілген таңбалардан тұруы керек.
+NotAscii	'{PropertyName}' тек ASCII таңбаларынан тұруы керек.
+NotDigits	'{PropertyName}' тек 0-ден 9-ға дейінгі цифрлардан тұруы керек.
+NotLettersOrDigits	'{PropertyName}' тек әріптерден немесе цифрлардан тұруы керек.
+NotHex	'{PropertyName}' он алтылық жол болуы керек.
+NotBase64	'{PropertyName}' жарамды Base64 жолы болуы керек.
+NotGuid	'{PropertyName}' жарамды GUID болуы керек.
+NotIPAddress	'{PropertyName}' жарамды IP мекенжайы болуы керек.
+NotSlug	'{PropertyName}' кіші әріптерден, цифрлардан және жалғыз дефистерден тұратын slug болуы керек.
+NotVersion	'{PropertyName}' жарамды нұсқа нөмірі болуы керек.
+NotCreditCardNumber	'{PropertyName}' жарамды несие картасының нөмірі болуы керек.
+NotEnumName	'{PropertyName}' {Type} enum түрінде анықталған атау болуы керек.
+NotFileName	'{PropertyName}' жарамды файл атауы болуы керек.
+
+# Collections and dictionaries
+CountEqualTo	'{PropertyName}' дәл {Count} элементтен тұрмауы керек.
+CountEqualTo.One	'{PropertyName}' дәл 1 элементтен тұрмауы керек.
+CountNotEqualTo	'{PropertyName}' дәл {Count} элементтен тұруы керек.
+CountNotEqualTo.One	'{PropertyName}' дәл 1 элементтен тұруы керек.
+CountGreaterThan	'{PropertyName}' ең көбі {MaxCount} элементтен тұруы керек.
+CountGreaterThan.One	'{PropertyName}' ең көбі 1 элементтен тұруы керек.
+CountLessThan	'{PropertyName}' кемінде {MinCount} элементтен тұруы керек.
+CountLessThan.One	'{PropertyName}' кемінде 1 элементтен тұруы керек.
+CountOutOfRange	'{PropertyName}' элементтерінің саны {MinCount} және {MaxCount} аралығында болуы керек.
+ContainsNull	'{PropertyName}' null элементтерді қамтымауы керек.
+HasDuplicates	'{PropertyName}' қайталанатын элементтерді қамтымауы керек.
+Any	'{PropertyName}' шартты қанағаттандыратын ешбір элементті қамтымауы керек.
+None	'{PropertyName}' шартты қанағаттандыратын кемінде бір элементті қамтуы керек.
+ContainsKey	'{PropertyName}' рұқсат етілмеген кілтті қамтымауы керек.
+ContainsKey.Value	'{PropertyName}' {Key} кілтін қамтымауы керек.
+NotContainsKey	'{PropertyName}' талап етілетін кілтті қамтуы керек.
+NotContainsKey.Value	'{PropertyName}' {Key} кілтін қамтуы керек.
+
+# Enums
+NotDefined	'{PropertyName}' {Type} түрінде анықталған мән болуы керек.
+HasFlag	'{PropertyName}' {Flag} жалаушасына ие болмауы керек.
+NotHasFlag	'{PropertyName}' {Flag} жалаушасына ие болуы керек.
+
+# Dates and times
+Before	'{PropertyName}' {ComparisonValue} күнінен бұрын болмауы керек.
+After	'{PropertyName}' {ComparisonValue} күнінен кейін болмауы керек.
+InPast	'{PropertyName}' өткен уақытта болмауы керек.
+InFuture	'{PropertyName}' болашақта болмауы керек.
+NotUtc	'{PropertyName}' UTC уақытында болуы керек.
+Weekend	'{PropertyName}' жұмыс күні (дүйсенбіден жұмаға дейін) болуы керек.
+Weekday	'{PropertyName}' демалыс күні (сенбі немесе жексенбі) болуы керек.
+HasTimeOfDay	'{PropertyName}' уақыт бөлігін қамтымауы керек.
+OlderThan	'{PropertyName}' {MaxAge} мерзімінен ескі болмауы керек.
+NewerThan	'{PropertyName}' кемінде {MinAge} мерзім бұрын болуы керек.
+
+# Uri and IPAddress
+Relative	'{PropertyName}' абсолютті URI болуы керек.
+NotHttps	'{PropertyName}' абсолютті HTTPS URL мекенжайы болуы керек.
+NotHttpOrHttps	'{PropertyName}' абсолютті HTTP немесе HTTPS URL мекенжайы болуы керек.
+NotScheme	'{PropertyName}' келесі URI схемаларының бірін пайдалануы керек: {Schemes}.
+Loopback	'{PropertyName}' loopback мекенжайы болмауы керек.
+Private	'{PropertyName}' жеке немесе link-local мекенжайы болмауы керек.
+NotIPv4	'{PropertyName}' IPv4 мекенжайы болуы керек.
+NotIPv6	'{PropertyName}' IPv6 мекенжайы болуы керек.
+
+# Streams and types
+NotReadable	'{PropertyName}' оқуды қолдауы керек.
+NotWritable	'{PropertyName}' жазуды қолдауы керек.
+NotSeekable	'{PropertyName}' орынды ауыстыруды (seek) қолдауы керек.
+NotAssignableTo	'{PropertyName}' {Type} түріне меншіктелетін болуы керек.
+Abstract	'{PropertyName}' абстрактілі түр болмауы керек.
+Interface	'{PropertyName}' интерфейс болмауы керек.

@@ -1,0 +1,146 @@
+# Swedish (sv). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	"{PropertyName}" får inte vara null.
+NotNull	"{PropertyName}" måste vara null.
+Default	"{PropertyName}" får inte vara standardvärdet.
+Empty	"{PropertyName}" får inte vara tomt.
+Empty.Guid	"{PropertyName}" får inte vara ett tomt GUID.
+NotEmpty	"{PropertyName}" måste vara tomt.
+EqualTo	"{PropertyName}" får inte vara lika med det avvisade värdet.
+EqualTo.Value	"{PropertyName}" får inte vara lika med {ComparisonValue}.
+NotEqualTo	"{PropertyName}" måste vara lika med det krävda värdet.
+NotEqualTo.Value	"{PropertyName}" måste vara lika med {ComparisonValue}.
+OneOf	"{PropertyName}" får inte vara ett av de avvisade värdena.
+NotOneOf	"{PropertyName}" måste vara ett av de tillåtna värdena.
+Condition	"{PropertyName}" är ogiltigt.
+Condition.If	"{PropertyName}" får inte uppfylla villkoret: {Condition}.
+Condition.IfNot	"{PropertyName}" måste uppfylla villkoret: {Condition}.
+Type	"{PropertyName}" får inte vara av typen {Type}.
+NotType	"{PropertyName}" måste vara av typen {Type}.
+True	"{PropertyName}" måste vara false.
+False	"{PropertyName}" måste vara true.
+Must	"{PropertyName}" är ogiltigt.
+Invalid	"{PropertyName}" är ogiltigt.
+
+# Comparisons and numbers
+GreaterThan	"{PropertyName}" måste vara mindre än eller lika med {ComparisonValue}.
+GreaterThanOrEqualTo	"{PropertyName}" måste vara mindre än {ComparisonValue}.
+LessThan	"{PropertyName}" måste vara större än eller lika med {ComparisonValue}.
+LessThanOrEqualTo	"{PropertyName}" måste vara större än {ComparisonValue}.
+OutOfRange	"{PropertyName}" måste vara mellan {From} och {To}.
+OutOfRangeExclusive	"{PropertyName}" måste vara mellan {From} och {To} (gränsvärdena ej inräknade).
+InRange	"{PropertyName}" får inte vara mellan {From} och {To}.
+Negative	"{PropertyName}" får inte vara negativt.
+NegativeOrZero	"{PropertyName}" måste vara större än 0.
+Positive	"{PropertyName}" får inte vara större än 0.
+PositiveOrZero	"{PropertyName}" måste vara mindre än 0.
+Zero	"{PropertyName}" får inte vara 0.
+NaN	"{PropertyName}" måste vara ett tal, inte NaN.
+Infinity	"{PropertyName}" måste vara ett ändligt tal.
+NotFinite	"{PropertyName}" måste vara ett ändligt tal.
+Odd	"{PropertyName}" måste vara ett jämnt tal.
+Even	"{PropertyName}" måste vara ett udda tal.
+NotMultipleOf	"{PropertyName}" måste vara en multipel av {Divisor}.
+NotPowerOfTwo	"{PropertyName}" måste vara en tvåpotens.
+NotInteger	"{PropertyName}" måste vara ett heltal.
+PrecisionScaleExceeded	"{PropertyName}" får ha högst {ExpectedPrecision} siffror totalt, varav högst {ExpectedScale} decimaler. Hittade {Digits} siffror före decimaltecknet och {ActualScale} decimaler.
+
+# Strings
+WhiteSpace	"{PropertyName}" får inte vara tomt eller bara innehålla blanksteg.
+LongerThan	"{PropertyName}" får vara högst {MaxLength} tecken långt.
+ShorterThan	"{PropertyName}" måste vara minst {MinLength} tecken långt.
+LengthNotEqualTo	"{PropertyName}" måste vara exakt {Length} tecken långt.
+LengthOutOfRange	"{PropertyName}" måste vara mellan {MinLength} och {MaxLength} tecken långt.
+Contains	"{PropertyName}" får inte innehålla det avvisade elementet.
+Contains.Value	"{PropertyName}" får inte innehålla {Value}.
+NotContains	"{PropertyName}" måste innehålla det krävda elementet.
+NotContains.Value	"{PropertyName}" måste innehålla {Value}.
+StartsWith	"{PropertyName}" får inte börja med {Value}.
+NotStartsWith	"{PropertyName}" måste börja med {Value}.
+EndsWith	"{PropertyName}" får inte sluta med {Value}.
+NotEndsWith	"{PropertyName}" måste sluta med {Value}.
+Matches	"{PropertyName}" får inte matcha mönstret {Pattern}.
+NotMatches	"{PropertyName}" måste matcha mönstret {Pattern}.
+NotEmailAddress	"{PropertyName}" måste vara en giltig e-postadress.
+NotJson	"{PropertyName}" måste vara giltig JSON.
+NotXml	"{PropertyName}" måste vara välformad XML.
+NotUri	"{PropertyName}" måste vara en giltig URI.
+NotUri.Absolute	"{PropertyName}" måste vara en giltig absolut URI.
+NotUri.Relative	"{PropertyName}" måste vara en giltig relativ URI.
+NotHttpUrl	"{PropertyName}" måste vara en absolut HTTP- eller HTTPS-URL.
+NotParsable	"{PropertyName}" måste vara ett giltigt värde av typen {Type}.
+AllUpperCase	"{PropertyName}" får inte bestå av enbart versaler.
+AllLowerCase	"{PropertyName}" får inte bestå av enbart gemener.
+NotTrimmed	"{PropertyName}" får inte börja eller sluta med blanksteg.
+ContainsWhiteSpace	"{PropertyName}" får inte innehålla blanksteg.
+ContainsControlCharacters	"{PropertyName}" får inte innehålla kontrolltecken.
+ContainsAny	"{PropertyName}" får inte innehålla något av de avvisade tecknen.
+ContainsAnyExcept	"{PropertyName}" får endast innehålla de tillåtna tecknen.
+NotAscii	"{PropertyName}" får endast innehålla ASCII-tecken.
+NotDigits	"{PropertyName}" får endast innehålla siffrorna 0 till 9.
+NotLettersOrDigits	"{PropertyName}" får endast innehålla bokstäver eller siffror.
+NotHex	"{PropertyName}" måste vara en hexadecimal sträng.
+NotBase64	"{PropertyName}" måste vara en giltig Base64-sträng.
+NotGuid	"{PropertyName}" måste vara ett giltigt GUID.
+NotIPAddress	"{PropertyName}" måste vara en giltig IP-adress.
+NotSlug	"{PropertyName}" måste vara en slug av gemener, siffror och enkla bindestreck.
+NotVersion	"{PropertyName}" måste vara ett giltigt versionsnummer.
+NotCreditCardNumber	"{PropertyName}" måste vara ett giltigt kreditkortsnummer.
+NotEnumName	"{PropertyName}" måste vara ett definierat namn i {Type}.
+NotFileName	"{PropertyName}" måste vara ett giltigt filnamn.
+
+# Collections and dictionaries
+CountEqualTo	"{PropertyName}" får inte ha exakt {Count} element.
+CountEqualTo.One	"{PropertyName}" får inte ha exakt 1 element.
+CountNotEqualTo	"{PropertyName}" måste ha exakt {Count} element.
+CountNotEqualTo.One	"{PropertyName}" måste ha exakt 1 element.
+CountGreaterThan	"{PropertyName}" får ha högst {MaxCount} element.
+CountGreaterThan.One	"{PropertyName}" får ha högst 1 element.
+CountLessThan	"{PropertyName}" måste ha minst {MinCount} element.
+CountLessThan.One	"{PropertyName}" måste ha minst 1 element.
+CountOutOfRange	"{PropertyName}" måste ha mellan {MinCount} och {MaxCount} element.
+ContainsNull	"{PropertyName}" får inte innehålla element som är null.
+HasDuplicates	"{PropertyName}" får inte innehålla duplicerade element.
+Any	"{PropertyName}" får inte innehålla något element som uppfyller villkoret.
+None	"{PropertyName}" måste innehålla minst ett element som uppfyller villkoret.
+ContainsKey	"{PropertyName}" får inte innehålla den avvisade nyckeln.
+ContainsKey.Value	"{PropertyName}" får inte innehålla nyckeln {Key}.
+NotContainsKey	"{PropertyName}" måste innehålla den krävda nyckeln.
+NotContainsKey.Value	"{PropertyName}" måste innehålla nyckeln {Key}.
+
+# Enums
+NotDefined	"{PropertyName}" måste vara ett definierat värde i {Type}.
+HasFlag	"{PropertyName}" får inte ha flaggan {Flag}.
+NotHasFlag	"{PropertyName}" måste ha flaggan {Flag}.
+
+# Dates and times
+Before	"{PropertyName}" får inte vara före {ComparisonValue}.
+After	"{PropertyName}" får inte vara efter {ComparisonValue}.
+InPast	"{PropertyName}" får inte ligga i det förflutna.
+InFuture	"{PropertyName}" får inte ligga i framtiden.
+NotUtc	"{PropertyName}" måste vara i UTC.
+Weekend	"{PropertyName}" måste vara en vardag (måndag till fredag).
+Weekday	"{PropertyName}" måste vara en lördag eller söndag.
+HasTimeOfDay	"{PropertyName}" får inte innehålla något klockslag.
+OlderThan	"{PropertyName}" får inte ligga mer än {MaxAge} bakåt i tiden.
+NewerThan	"{PropertyName}" måste ligga minst {MinAge} bakåt i tiden.
+
+# Uri and IPAddress
+Relative	"{PropertyName}" måste vara en absolut URI.
+NotHttps	"{PropertyName}" måste vara en absolut HTTPS-URL.
+NotHttpOrHttps	"{PropertyName}" måste vara en absolut HTTP- eller HTTPS-URL.
+NotScheme	"{PropertyName}" måste använda ett av dessa URI-scheman: {Schemes}.
+Loopback	"{PropertyName}" får inte vara en loopback-adress.
+Private	"{PropertyName}" får inte vara en privat eller link-local-adress.
+NotIPv4	"{PropertyName}" måste vara en IPv4-adress.
+NotIPv6	"{PropertyName}" måste vara en IPv6-adress.
+
+# Streams and types
+NotReadable	"{PropertyName}" måste stödja läsning.
+NotWritable	"{PropertyName}" måste stödja skrivning.
+NotSeekable	"{PropertyName}" måste stödja sökning.
+NotAssignableTo	"{PropertyName}" måste kunna tilldelas typen {Type}.
+Abstract	"{PropertyName}" får inte vara en abstrakt typ.
+Interface	"{PropertyName}" får inte vara ett gränssnitt.

@@ -1,0 +1,146 @@
+# Georgian (ka). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' არ უნდა იყოს null.
+NotNull	'{PropertyName}' უნდა იყოს null.
+Default	'{PropertyName}' არ უნდა იყოს ნაგულისხმევი მნიშვნელობა.
+Empty	'{PropertyName}' არ უნდა იყოს ცარიელი.
+Empty.Guid	'{PropertyName}' არ უნდა იყოს ცარიელი GUID.
+NotEmpty	'{PropertyName}' უნდა იყოს ცარიელი.
+EqualTo	'{PropertyName}' არ უნდა უდრიდეს აკრძალულ მნიშვნელობას.
+EqualTo.Value	'{PropertyName}' არ უნდა უდრიდეს {ComparisonValue}-ს.
+NotEqualTo	'{PropertyName}' უნდა უდრიდეს მოთხოვნილ მნიშვნელობას.
+NotEqualTo.Value	'{PropertyName}' უნდა უდრიდეს {ComparisonValue}-ს.
+OneOf	'{PropertyName}' არ უნდა იყოს აკრძალული მნიშვნელობებიდან ერთ-ერთი.
+NotOneOf	'{PropertyName}' უნდა იყოს დაშვებული მნიშვნელობებიდან ერთ-ერთი.
+Condition	'{PropertyName}' არ არის ვალიდური.
+Condition.If	'{PropertyName}' არ უნდა აკმაყოფილებდეს პირობას: {Condition}.
+Condition.IfNot	'{PropertyName}' უნდა აკმაყოფილებდეს პირობას: {Condition}.
+Type	'{PropertyName}' არ უნდა იყოს {Type} ტიპის.
+NotType	'{PropertyName}' უნდა იყოს {Type} ტიპის.
+True	'{PropertyName}' უნდა იყოს false.
+False	'{PropertyName}' უნდა იყოს true.
+Must	'{PropertyName}' არ არის ვალიდური.
+Invalid	'{PropertyName}' არ არის ვალიდური.
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' უნდა იყოს {ComparisonValue}-ზე ნაკლები ან ტოლი.
+GreaterThanOrEqualTo	'{PropertyName}' უნდა იყოს {ComparisonValue}-ზე ნაკლები.
+LessThan	'{PropertyName}' უნდა იყოს {ComparisonValue}-ზე მეტი ან ტოლი.
+LessThanOrEqualTo	'{PropertyName}' უნდა იყოს {ComparisonValue}-ზე მეტი.
+OutOfRange	'{PropertyName}' უნდა იყოს {From}-სა და {To}-ს შორის.
+OutOfRangeExclusive	'{PropertyName}' უნდა იყოს {From}-სა და {To}-ს შორის (ზღვრული მნიშვნელობების გარეშე).
+InRange	'{PropertyName}' არ უნდა იყოს {From}-სა და {To}-ს შორის.
+Negative	'{PropertyName}' არ უნდა იყოს უარყოფითი.
+NegativeOrZero	'{PropertyName}' უნდა იყოს 0-ზე მეტი.
+Positive	'{PropertyName}' არ უნდა იყოს 0-ზე მეტი.
+PositiveOrZero	'{PropertyName}' უნდა იყოს 0-ზე ნაკლები.
+Zero	'{PropertyName}' არ უნდა იყოს 0.
+NaN	'{PropertyName}' უნდა იყოს რიცხვი და არა NaN.
+Infinity	'{PropertyName}' უნდა იყოს სასრული რიცხვი.
+NotFinite	'{PropertyName}' უნდა იყოს სასრული რიცხვი.
+Odd	'{PropertyName}' უნდა იყოს ლუწი რიცხვი.
+Even	'{PropertyName}' უნდა იყოს კენტი რიცხვი.
+NotMultipleOf	'{PropertyName}' უნდა იყოს {Divisor}-ის ჯერადი.
+NotPowerOfTwo	'{PropertyName}' უნდა იყოს ორის ხარისხი.
+NotInteger	'{PropertyName}' უნდა იყოს მთელი რიცხვი.
+PrecisionScaleExceeded	'{PropertyName}' ჯამში უნდა შეიცავდეს მაქსიმუმ {ExpectedPrecision} ციფრს, მათ შორის მაქსიმუმ {ExpectedScale} ციფრს ათწილადის გამყოფის შემდეგ. ნაპოვნია {Digits} ციფრი გამყოფამდე და {ActualScale} ციფრი მის შემდეგ.
+
+# Strings
+WhiteSpace	'{PropertyName}' არ უნდა იყოს ცარიელი და არ უნდა შედგებოდეს მხოლოდ ჰარებისგან.
+LongerThan	'{PropertyName}'-ის სიგრძე უნდა იყოს მაქსიმუმ {MaxLength} სიმბოლო.
+ShorterThan	'{PropertyName}'-ის სიგრძე უნდა იყოს მინიმუმ {MinLength} სიმბოლო.
+LengthNotEqualTo	'{PropertyName}'-ის სიგრძე უნდა იყოს ზუსტად {Length} სიმბოლო.
+LengthOutOfRange	'{PropertyName}'-ის სიგრძე უნდა იყოს {MinLength}-დან {MaxLength} სიმბოლომდე.
+Contains	'{PropertyName}' არ უნდა შეიცავდეს აკრძალულ ელემენტს.
+Contains.Value	'{PropertyName}' არ უნდა შეიცავდეს {Value}-ს.
+NotContains	'{PropertyName}' უნდა შეიცავდეს მოთხოვნილ ელემენტს.
+NotContains.Value	'{PropertyName}' უნდა შეიცავდეს {Value}-ს.
+StartsWith	'{PropertyName}' არ უნდა იწყებოდეს {Value}-ით.
+NotStartsWith	'{PropertyName}' უნდა იწყებოდეს {Value}-ით.
+EndsWith	'{PropertyName}' არ უნდა მთავრდებოდეს {Value}-ით.
+NotEndsWith	'{PropertyName}' უნდა მთავრდებოდეს {Value}-ით.
+Matches	'{PropertyName}' არ უნდა შეესაბამებოდეს შაბლონს {Pattern}.
+NotMatches	'{PropertyName}' უნდა შეესაბამებოდეს შაბლონს {Pattern}.
+NotEmailAddress	'{PropertyName}' უნდა იყოს ვალიდური ელ.ფოსტის მისამართი.
+NotJson	'{PropertyName}' უნდა იყოს ვალიდური JSON.
+NotXml	'{PropertyName}' უნდა იყოს სწორად ფორმირებული XML.
+NotUri	'{PropertyName}' უნდა იყოს ვალიდური URI.
+NotUri.Absolute	'{PropertyName}' უნდა იყოს ვალიდური აბსოლუტური URI.
+NotUri.Relative	'{PropertyName}' უნდა იყოს ვალიდური ფარდობითი URI.
+NotHttpUrl	'{PropertyName}' უნდა იყოს აბსოლუტური HTTP ან HTTPS URL.
+NotParsable	'{PropertyName}' უნდა იყოს {Type} ტიპის ვალიდური მნიშვნელობა.
+AllUpperCase	'{PropertyName}' არ უნდა შედგებოდეს მხოლოდ დიდი ასოებისგან.
+AllLowerCase	'{PropertyName}' არ უნდა შედგებოდეს მხოლოდ პატარა ასოებისგან.
+NotTrimmed	'{PropertyName}' არ უნდა იწყებოდეს ან მთავრდებოდეს ჰარით.
+ContainsWhiteSpace	'{PropertyName}' არ უნდა შეიცავდეს ჰარებს.
+ContainsControlCharacters	'{PropertyName}' არ უნდა შეიცავდეს მმართველ სიმბოლოებს.
+ContainsAny	'{PropertyName}' არ უნდა შეიცავდეს არცერთ აკრძალულ სიმბოლოს.
+ContainsAnyExcept	'{PropertyName}' უნდა შეიცავდეს მხოლოდ დაშვებულ სიმბოლოებს.
+NotAscii	'{PropertyName}' უნდა შეიცავდეს მხოლოდ ASCII სიმბოლოებს.
+NotDigits	'{PropertyName}' უნდა შეიცავდეს მხოლოდ ციფრებს 0-დან 9-მდე.
+NotLettersOrDigits	'{PropertyName}' უნდა შეიცავდეს მხოლოდ ასოებს ან ციფრებს.
+NotHex	'{PropertyName}' უნდა იყოს თექვსმეტობითი სტრიქონი.
+NotBase64	'{PropertyName}' უნდა იყოს ვალიდური Base64 სტრიქონი.
+NotGuid	'{PropertyName}' უნდა იყოს ვალიდური GUID.
+NotIPAddress	'{PropertyName}' უნდა იყოს ვალიდური IP მისამართი.
+NotSlug	'{PropertyName}' უნდა იყოს slug, რომელიც შედგება პატარა ასოებისგან, ციფრებისგან და ერთმაგი დეფისებისგან.
+NotVersion	'{PropertyName}' უნდა იყოს ვალიდური ვერსიის ნომერი.
+NotCreditCardNumber	'{PropertyName}' უნდა იყოს ვალიდური საკრედიტო ბარათის ნომერი.
+NotEnumName	'{PropertyName}' უნდა იყოს {Type}-ში განსაზღვრული სახელი.
+NotFileName	'{PropertyName}' უნდა იყოს ვალიდური ფაილის სახელი.
+
+# Collections and dictionaries
+CountEqualTo	'{PropertyName}' არ უნდა შეიცავდეს ზუსტად {Count} ელემენტს.
+CountEqualTo.One	'{PropertyName}' არ უნდა შეიცავდეს ზუსტად 1 ელემენტს.
+CountNotEqualTo	'{PropertyName}' უნდა შეიცავდეს ზუსტად {Count} ელემენტს.
+CountNotEqualTo.One	'{PropertyName}' უნდა შეიცავდეს ზუსტად 1 ელემენტს.
+CountGreaterThan	'{PropertyName}' უნდა შეიცავდეს მაქსიმუმ {MaxCount} ელემენტს.
+CountGreaterThan.One	'{PropertyName}' უნდა შეიცავდეს მაქსიმუმ 1 ელემენტს.
+CountLessThan	'{PropertyName}' უნდა შეიცავდეს მინიმუმ {MinCount} ელემენტს.
+CountLessThan.One	'{PropertyName}' უნდა შეიცავდეს მინიმუმ 1 ელემენტს.
+CountOutOfRange	'{PropertyName}' უნდა შეიცავდეს {MinCount}-დან {MaxCount} ელემენტამდე.
+ContainsNull	'{PropertyName}' არ უნდა შეიცავდეს null ელემენტებს.
+HasDuplicates	'{PropertyName}' არ უნდა შეიცავდეს დუბლირებულ ელემენტებს.
+Any	'{PropertyName}' არ უნდა შეიცავდეს არცერთ ელემენტს, რომელიც აკმაყოფილებს პირობას.
+None	'{PropertyName}' უნდა შეიცავდეს მინიმუმ ერთ ელემენტს, რომელიც აკმაყოფილებს პირობას.
+ContainsKey	'{PropertyName}' არ უნდა შეიცავდეს აკრძალულ გასაღებს.
+ContainsKey.Value	'{PropertyName}' არ უნდა შეიცავდეს გასაღებს {Key}.
+NotContainsKey	'{PropertyName}' უნდა შეიცავდეს მოთხოვნილ გასაღებს.
+NotContainsKey.Value	'{PropertyName}' უნდა შეიცავდეს გასაღებს {Key}.
+
+# Enums
+NotDefined	'{PropertyName}' უნდა იყოს {Type}-ში განსაზღვრული მნიშვნელობა.
+HasFlag	'{PropertyName}'-ს არ უნდა ჰქონდეს ალამი {Flag}.
+NotHasFlag	'{PropertyName}'-ს უნდა ჰქონდეს ალამი {Flag}.
+
+# Dates and times
+Before	'{PropertyName}' არ უნდა იყოს {ComparisonValue}-ზე ადრე.
+After	'{PropertyName}' არ უნდა იყოს {ComparisonValue}-ზე გვიან.
+InPast	'{PropertyName}' არ უნდა იყოს წარსულში.
+InFuture	'{PropertyName}' არ უნდა იყოს მომავალში.
+NotUtc	'{PropertyName}' უნდა იყოს UTC-ში.
+Weekend	'{PropertyName}' უნდა იყოს სამუშაო დღე (ორშაბათიდან პარასკევამდე).
+Weekday	'{PropertyName}' უნდა იყოს შაბათ-კვირის დღე (შაბათი ან კვირა).
+HasTimeOfDay	'{PropertyName}' არ უნდა შეიცავდეს დღის დროს.
+OlderThan	'{PropertyName}' არ უნდა იყოს {MaxAge}-ზე მეტით წარსულში.
+NewerThan	'{PropertyName}' უნდა იყოს მინიმუმ {MinAge}-ით წარსულში.
+
+# Uri and IPAddress
+Relative	'{PropertyName}' უნდა იყოს აბსოლუტური URI.
+NotHttps	'{PropertyName}' უნდა იყოს აბსოლუტური HTTPS URL.
+NotHttpOrHttps	'{PropertyName}' უნდა იყოს აბსოლუტური HTTP ან HTTPS URL.
+NotScheme	'{PropertyName}' უნდა იყენებდეს შემდეგი URI სქემებიდან ერთ-ერთს: {Schemes}.
+Loopback	'{PropertyName}' არ უნდა იყოს loopback მისამართი.
+Private	'{PropertyName}' არ უნდა იყოს კერძო ან link-local მისამართი.
+NotIPv4	'{PropertyName}' უნდა იყოს IPv4 მისამართი.
+NotIPv6	'{PropertyName}' უნდა იყოს IPv6 მისამართი.
+
+# Streams and types
+NotReadable	'{PropertyName}' უნდა უჭერდეს მხარს წაკითხვას.
+NotWritable	'{PropertyName}' უნდა უჭერდეს მხარს ჩაწერას.
+NotSeekable	'{PropertyName}' უნდა უჭერდეს მხარს პოზიციის შეცვლას (seek).
+NotAssignableTo	'{PropertyName}' უნდა იყოს {Type} ტიპზე მინიჭებადი.
+Abstract	'{PropertyName}' არ უნდა იყოს აბსტრაქტული ტიპი.
+Interface	'{PropertyName}' არ უნდა იყოს ინტერფეისი.

@@ -1,0 +1,146 @@
+# Welsh (cy). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	Ni ddylai '{PropertyName}' fod yn null.
+NotNull	Rhaid i '{PropertyName}' fod yn null.
+Default	Ni ddylai '{PropertyName}' fod yn werth diofyn.
+Empty	Ni ddylai '{PropertyName}' fod yn wag.
+Empty.Guid	Ni ddylai '{PropertyName}' fod yn GUID gwag.
+NotEmpty	Rhaid i '{PropertyName}' fod yn wag.
+EqualTo	Ni ddylai '{PropertyName}' fod yn hafal i'r gwerth a wrthodir.
+EqualTo.Value	Ni ddylai '{PropertyName}' fod yn hafal i {ComparisonValue}.
+NotEqualTo	Rhaid i '{PropertyName}' fod yn hafal i'r gwerth gofynnol.
+NotEqualTo.Value	Rhaid i '{PropertyName}' fod yn hafal i {ComparisonValue}.
+OneOf	Ni ddylai '{PropertyName}' fod yn un o'r gwerthoedd a wrthodir.
+NotOneOf	Rhaid i '{PropertyName}' fod yn un o'r gwerthoedd a ganiateir.
+Condition	Nid yw '{PropertyName}' yn ddilys.
+Condition.If	Ni ddylai '{PropertyName}' fodloni'r amod: {Condition}.
+Condition.IfNot	Rhaid i '{PropertyName}' fodloni'r amod: {Condition}.
+Type	Ni ddylai '{PropertyName}' fod o'r math {Type}.
+NotType	Rhaid i '{PropertyName}' fod o'r math {Type}.
+True	Rhaid i '{PropertyName}' fod yn false.
+False	Rhaid i '{PropertyName}' fod yn true.
+Must	Nid yw '{PropertyName}' yn ddilys.
+Invalid	Nid yw '{PropertyName}' yn ddilys.
+
+# Comparisons and numbers
+GreaterThan	Rhaid i '{PropertyName}' fod yn llai na neu'n hafal i {ComparisonValue}.
+GreaterThanOrEqualTo	Rhaid i '{PropertyName}' fod yn llai na {ComparisonValue}.
+LessThan	Rhaid i '{PropertyName}' fod yn fwy na neu'n hafal i {ComparisonValue}.
+LessThanOrEqualTo	Rhaid i '{PropertyName}' fod yn fwy na {ComparisonValue}.
+OutOfRange	Rhaid i '{PropertyName}' fod rhwng {From} a {To}.
+OutOfRangeExclusive	Rhaid i '{PropertyName}' fod rhwng {From} a {To} (heb gynnwys y terfynau).
+InRange	Ni ddylai '{PropertyName}' fod rhwng {From} a {To}.
+Negative	Ni ddylai '{PropertyName}' fod yn negatif.
+NegativeOrZero	Rhaid i '{PropertyName}' fod yn fwy na 0.
+Positive	Ni ddylai '{PropertyName}' fod yn fwy na 0.
+PositiveOrZero	Rhaid i '{PropertyName}' fod yn llai na 0.
+Zero	Ni ddylai '{PropertyName}' fod yn 0.
+NaN	Rhaid i '{PropertyName}' fod yn rhif, nid NaN.
+Infinity	Rhaid i '{PropertyName}' fod yn rhif meidraidd.
+NotFinite	Rhaid i '{PropertyName}' fod yn rhif meidraidd.
+Odd	Rhaid i '{PropertyName}' fod yn eilrif.
+Even	Rhaid i '{PropertyName}' fod yn odrif.
+NotMultipleOf	Rhaid i '{PropertyName}' fod yn lluosrif o {Divisor}.
+NotPowerOfTwo	Rhaid i '{PropertyName}' fod yn bŵer o 2.
+NotInteger	Rhaid i '{PropertyName}' fod yn gyfanrif.
+PrecisionScaleExceeded	Rhaid i gyfanswm y digidau yn '{PropertyName}' fod yn {ExpectedPrecision} ar y mwyaf, a nifer y lleoedd degol yn {ExpectedScale} ar y mwyaf. Digidau a ganfuwyd: {Digits} cyn y pwynt degol a {ActualScale} ar ei ôl.
+
+# Strings
+WhiteSpace	Ni ddylai '{PropertyName}' fod yn wag na chynnwys gofod gwyn yn unig.
+LongerThan	Rhaid i nifer y nodau yn '{PropertyName}' fod yn {MaxLength} ar y mwyaf.
+ShorterThan	Rhaid i nifer y nodau yn '{PropertyName}' fod yn {MinLength} o leiaf.
+LengthNotEqualTo	Rhaid i nifer y nodau yn '{PropertyName}' fod yn union {Length}.
+LengthOutOfRange	Rhaid i nifer y nodau yn '{PropertyName}' fod rhwng {MinLength} a {MaxLength}.
+Contains	Ni ddylai '{PropertyName}' gynnwys yr eitem a wrthodir.
+Contains.Value	Ni ddylai '{PropertyName}' gynnwys {Value}.
+NotContains	Rhaid i '{PropertyName}' gynnwys yr eitem ofynnol.
+NotContains.Value	Rhaid i '{PropertyName}' gynnwys {Value}.
+StartsWith	Ni ddylai '{PropertyName}' ddechrau gyda {Value}.
+NotStartsWith	Rhaid i '{PropertyName}' ddechrau gyda {Value}.
+EndsWith	Ni ddylai '{PropertyName}' orffen gyda {Value}.
+NotEndsWith	Rhaid i '{PropertyName}' orffen gyda {Value}.
+Matches	Ni ddylai '{PropertyName}' gyfateb i'r patrwm {Pattern}.
+NotMatches	Rhaid i '{PropertyName}' gyfateb i'r patrwm {Pattern}.
+NotEmailAddress	Rhaid i '{PropertyName}' fod yn gyfeiriad e-bost dilys.
+NotJson	Rhaid i '{PropertyName}' fod yn JSON dilys.
+NotXml	Rhaid i '{PropertyName}' fod yn XML wedi'i ffurfio'n dda.
+NotUri	Rhaid i '{PropertyName}' fod yn URI dilys.
+NotUri.Absolute	Rhaid i '{PropertyName}' fod yn URI absoliwt dilys.
+NotUri.Relative	Rhaid i '{PropertyName}' fod yn URI perthynol dilys.
+NotHttpUrl	Rhaid i '{PropertyName}' fod yn URL HTTP neu HTTPS absoliwt.
+NotParsable	Rhaid i '{PropertyName}' fod yn werth dilys o'r math {Type}.
+AllUpperCase	Ni ddylai '{PropertyName}' gynnwys priflythrennau yn unig.
+AllLowerCase	Ni ddylai '{PropertyName}' gynnwys llythrennau bach yn unig.
+NotTrimmed	Ni ddylai '{PropertyName}' ddechrau na gorffen gyda gofod gwyn.
+ContainsWhiteSpace	Ni ddylai '{PropertyName}' gynnwys gofod gwyn.
+ContainsControlCharacters	Ni ddylai '{PropertyName}' gynnwys nodau rheoli.
+ContainsAny	Ni ddylai '{PropertyName}' gynnwys unrhyw un o'r nodau a wrthodir.
+ContainsAnyExcept	Rhaid i '{PropertyName}' gynnwys y nodau a ganiateir yn unig.
+NotAscii	Rhaid i '{PropertyName}' gynnwys nodau ASCII yn unig.
+NotDigits	Rhaid i '{PropertyName}' gynnwys y digidau 0 i 9 yn unig.
+NotLettersOrDigits	Rhaid i '{PropertyName}' gynnwys llythrennau neu ddigidau yn unig.
+NotHex	Rhaid i '{PropertyName}' fod yn llinyn hecsadegol.
+NotBase64	Rhaid i '{PropertyName}' fod yn llinyn Base64 dilys.
+NotGuid	Rhaid i '{PropertyName}' fod yn GUID dilys.
+NotIPAddress	Rhaid i '{PropertyName}' fod yn gyfeiriad IP dilys.
+NotSlug	Rhaid i '{PropertyName}' fod yn slug o lythrennau bach, digidau a chysylltnodau unigol.
+NotVersion	Rhaid i '{PropertyName}' fod yn rhif fersiwn dilys.
+NotCreditCardNumber	Rhaid i '{PropertyName}' fod yn rhif cerdyn credyd dilys.
+NotEnumName	Rhaid i '{PropertyName}' fod yn enw a ddiffinnir yn {Type}.
+NotFileName	Rhaid i '{PropertyName}' fod yn enw ffeil dilys.
+
+# Collections and dictionaries
+CountEqualTo	Ni ddylai nifer yr eitemau yn '{PropertyName}' fod yn union {Count}.
+CountEqualTo.One	Ni ddylai '{PropertyName}' gynnwys 1 eitem yn union.
+CountNotEqualTo	Rhaid i nifer yr eitemau yn '{PropertyName}' fod yn union {Count}.
+CountNotEqualTo.One	Rhaid i '{PropertyName}' gynnwys 1 eitem yn union.
+CountGreaterThan	Rhaid i nifer yr eitemau yn '{PropertyName}' fod yn {MaxCount} ar y mwyaf.
+CountGreaterThan.One	Rhaid i '{PropertyName}' gynnwys 1 eitem ar y mwyaf.
+CountLessThan	Rhaid i nifer yr eitemau yn '{PropertyName}' fod yn {MinCount} o leiaf.
+CountLessThan.One	Rhaid i '{PropertyName}' gynnwys 1 eitem o leiaf.
+CountOutOfRange	Rhaid i nifer yr eitemau yn '{PropertyName}' fod rhwng {MinCount} a {MaxCount}.
+ContainsNull	Ni ddylai '{PropertyName}' gynnwys eitemau null.
+HasDuplicates	Ni ddylai '{PropertyName}' gynnwys eitemau dyblyg.
+Any	Ni ddylai '{PropertyName}' gynnwys unrhyw eitem sy'n bodloni'r amod.
+None	Rhaid i '{PropertyName}' gynnwys o leiaf un eitem sy'n bodloni'r amod.
+ContainsKey	Ni ddylai '{PropertyName}' gynnwys yr allwedd a wrthodir.
+ContainsKey.Value	Ni ddylai '{PropertyName}' gynnwys yr allwedd {Key}.
+NotContainsKey	Rhaid i '{PropertyName}' gynnwys yr allwedd ofynnol.
+NotContainsKey.Value	Rhaid i '{PropertyName}' gynnwys yr allwedd {Key}.
+
+# Enums
+NotDefined	Rhaid i '{PropertyName}' fod yn werth a ddiffinnir yn {Type}.
+HasFlag	Ni ddylai '{PropertyName}' gynnwys y faner {Flag}.
+NotHasFlag	Rhaid i '{PropertyName}' gynnwys y faner {Flag}.
+
+# Dates and times
+Before	Ni ddylai '{PropertyName}' fod cyn {ComparisonValue}.
+After	Ni ddylai '{PropertyName}' fod ar ôl {ComparisonValue}.
+InPast	Ni ddylai '{PropertyName}' fod yn y gorffennol.
+InFuture	Ni ddylai '{PropertyName}' fod yn y dyfodol.
+NotUtc	Rhaid i '{PropertyName}' fod mewn UTC.
+Weekend	Rhaid i '{PropertyName}' fod yn ddiwrnod gwaith (dydd Llun i ddydd Gwener).
+Weekday	Rhaid i '{PropertyName}' fod yn ddiwrnod penwythnos (dydd Sadwrn neu ddydd Sul).
+HasTimeOfDay	Ni ddylai '{PropertyName}' gynnwys amser o'r dydd.
+OlderThan	Ni ddylai '{PropertyName}' fod yn fwy na {MaxAge} yn y gorffennol.
+NewerThan	Rhaid i '{PropertyName}' fod o leiaf {MinAge} yn y gorffennol.
+
+# Uri and IPAddress
+Relative	Rhaid i '{PropertyName}' fod yn URI absoliwt.
+NotHttps	Rhaid i '{PropertyName}' fod yn URL HTTPS absoliwt.
+NotHttpOrHttps	Rhaid i '{PropertyName}' fod yn URL HTTP neu HTTPS absoliwt.
+NotScheme	Rhaid i '{PropertyName}' ddefnyddio un o'r cynlluniau URI hyn: {Schemes}.
+Loopback	Ni ddylai '{PropertyName}' fod yn gyfeiriad loopback.
+Private	Ni ddylai '{PropertyName}' fod yn gyfeiriad preifat neu link-local.
+NotIPv4	Rhaid i '{PropertyName}' fod yn gyfeiriad IPv4.
+NotIPv6	Rhaid i '{PropertyName}' fod yn gyfeiriad IPv6.
+
+# Streams and types
+NotReadable	Rhaid i '{PropertyName}' gefnogi darllen.
+NotWritable	Rhaid i '{PropertyName}' gefnogi ysgrifennu.
+NotSeekable	Rhaid i '{PropertyName}' gefnogi newid safle.
+NotAssignableTo	Rhaid gallu aseinio '{PropertyName}' i'r math {Type}.
+Abstract	Ni ddylai '{PropertyName}' fod yn fath haniaethol.
+Interface	Ni ddylai '{PropertyName}' fod yn rhyngwyneb.

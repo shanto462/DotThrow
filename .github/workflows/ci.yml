@@ -1,0 +1,314 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  merge_group:
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+# Explicit bash adds pipefail, and gives Windows the same shell as Linux and macOS.
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  format:
+    name: Format
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+      - name: Check formatting
+        run: dotnet format DotThrow.slnx --verify-no-changes
+
+  test:
+    name: Test (${{ matrix.label }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        # Every leg runs in Release, because the zero-allocation tests skip in Debug.
+        # The OS legs run every test project under tests/ on net8.0, net9.0 and net10.0
+        # (Windows also on net472 and net481). Together the legs cover all six builds of
+        # the library: net8.0, net9.0 and net10.0 directly, net462 through the .NET Framework
+        # tests on Windows, and netstandard2.0 and netstandard2.1 through the asset legs,
+        # which run the net8.0 core tests against those builds.
+        include:
+          - label: ubuntu-latest
+            os: ubuntu-latest
+            coverage: true
+          - label: macos-latest
+            os: macos-latest
+          - label: windows-latest
+            os: windows-latest
+          - label: netstandard2.0 asset
+            os: ubuntu-latest
+            asset: netstandard2.0
+          - label: netstandard2.1 asset
+            os: ubuntu-latest
+            asset: netstandard2.1
+    env:
+      ASSET: ${{ matrix.asset }}
+      COVERAGE: ${{ matrix.coverage }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install .NET (SDK from global.json, plus the .NET 8 and 9 runtimes)
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+          dotnet-version: |
+            8.0.x
+            9.0.x
+          cache: true
+          cache-dependency-path: |
+            Directory.Packages.props
+            **/*.csproj
+      - name: Run tests (Release)
+        run: |
+          args=()
+          if [ -n "$ASSET" ]; then
+            # Only the core tests can swap in another build of the library.
+            projects=(tests/DotThrow.Tests/DotThrow.Tests.csproj)
+            args+=(-f net8.0 "-p:DotThrowAssetTfm=$ASSET")
+          else
+            projects=(tests/*/*.csproj)
+          fi
+          if [ "$COVERAGE" = "true" ]; then
+            args+=(--collect "XPlat Code Coverage" --results-directory coverage)
+          fi
+          failed=0
+          for project in "${projects[@]}"; do
+            echo "::group::$project"
+            dotnet test "$project" -c Release "${args[@]}" || failed=1
+            echo "::endgroup::"
+          done
+          exit "$failed"
+      - name: Upload coverage files
+        if: matrix.coverage
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: coverage-raw
+          path: coverage/**/coverage.cobertura.xml
+          if-no-files-found: error
+          retention-days: 7
+
+  pack:
+    name: Pack
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+      # Packs every packable project under src/ (package validation runs on pack) and
+      # checks target framework folders, lockstep versions, symbols, and that the core
+      # package has no dependencies. See the comment at the top of eng/pack.sh.
+      - name: Pack and check packages
+        run: bash eng/pack.sh dist
+      - name: Upload package
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: nuget-packages
+          path: |
+            dist/*.nupkg
+            dist/*.snupkg
+          if-no-files-found: error
+          retention-days: 14
+
+  consumer:
+    name: Consumer (.NET 8 SDK)
+    needs: pack
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # Only the .NET 8 SDK, and its oldest feature band: 8.0.1xx has the oldest compiler
+      # (Roslyn 4.8) that the analyzers inside the DotThrow package must load in.
+      # eng/consumer/global.json selects it even if the runner has newer SDKs.
+      - name: Install the .NET 8.0.1xx SDK
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 8.0.1xx
+      - name: Download packages
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: nuget-packages
+          path: feed
+      # Builds eng/consumer against the packages, checks that the analyzers report the
+      # seeded DT0001 and DT0010, and fails on CS8032, CS8034 or AD0001.
+      - name: Build a consumer app with the .NET 8 SDK
+        run: bash eng/consumer/check.sh feed
+
+  aot:
+    name: Native AOT
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+      - name: Install Native AOT prerequisites
+        run: |
+          if ! command -v clang > /dev/null || ! dpkg -s zlib1g-dev > /dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y --no-install-recommends clang zlib1g-dev
+          fi
+      # PublishAot must be set in the project file. On the command line it is a global
+      # property, so it also reaches the netstandard2.0 build of the library and fails
+      # there with NETSDK1207.
+      - name: Check that the sample sets PublishAot
+        run: |
+          value="$(dotnet msbuild samples/DotThrow.Samples/DotThrow.Samples.csproj -getProperty:PublishAot | tail -n 1 | tr -d '[:space:]')"
+          if [ "$value" != "true" ]; then
+            echo "::error file=samples/DotThrow.Samples/DotThrow.Samples.csproj::Set <PublishAot>true</PublishAot> in the sample project file"
+            exit 1
+          fi
+      - name: Publish samples with Native AOT
+        run: |
+          dotnet publish samples/DotThrow.Samples/DotThrow.Samples.csproj \
+            -c Release -r linux-x64 -warnaserror -o aot 2>&1 | tee publish.log
+          # Trim (IL2xxx) and AOT (IL3xxx) warnings must never pass silently.
+          if grep -Eq 'warning IL[23][0-9]{3}' publish.log; then
+            echo "::error::Native AOT publish reported trim or AOT warnings"
+            exit 1
+          fi
+      - name: Run the native binary
+        run: |
+          file aot/DotThrow.Samples
+          ./aot/DotThrow.Samples
+      # A minimal API with DotThrow.AspNetCore and DotThrow.DependencyInjection (validator
+      # class, options validation, dynamic rules with a PropertyMap). See eng/aot-smoke.
+      - name: Publish the ASP.NET Core smoke app with Native AOT
+        run: |
+          dotnet publish eng/aot-smoke/AotSmoke.csproj \
+            -c Release -r linux-x64 -warnaserror -o aot-web 2>&1 | tee publish-web.log
+          if grep -Eq 'warning IL[23][0-9]{3}' publish-web.log; then
+            echo "::error::Native AOT publish of eng/aot-smoke reported trim or AOT warnings"
+            exit 1
+          fi
+      - name: Send valid and invalid requests to the native ASP.NET Core app
+        run: bash eng/aot-smoke/smoke.sh aot-web/AotSmoke
+      - name: Write AOT summary
+        run: |
+          size="$(du -h aot/DotThrow.Samples | cut -f1)"
+          {
+            echo '## Native AOT'
+            echo
+            echo "Published \`samples/DotThrow.Samples\` for linux-x64 with no trim or AOT warnings. Binary size: $size."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  coverage:
+    name: Coverage
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      # The sources make the HTML report show covered lines.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+      - name: Download coverage files
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: coverage-raw
+          path: coverage
+      - name: Merge coverage of every test project and framework
+        uses: danielpalme/ReportGenerator-GitHub-Action@d3ebf1f760f7d8ab92cc44d9bcfee7ad73722a31 # 5.5.11
+        with:
+          reports: coverage/**/coverage.cobertura.xml
+          targetdir: coverage-report
+          reporttypes: HtmlInline;Cobertura;MarkdownSummaryGithub
+          assemblyfilters: +DotThrow*;-*.Tests
+          title: DotThrow coverage
+      - name: Write coverage summary
+        run: cat coverage-report/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload coverage report
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: coverage-report
+          path: coverage-report
+          if-no-files-found: error
+          retention-days: 14
+
+  benchmarks:
+    name: Benchmarks (build only)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+      - name: Build benchmarks
+        run: dotnet build benchmarks/DotThrow.Benchmarks/DotThrow.Benchmarks.csproj -c Release
+
+  ci-result:
+    name: CI result
+    if: always()
+    needs: [format, test, pack, consumer, aot, coverage, benchmarks]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - name: Fail if any job failed or was cancelled
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          echo "One or more CI jobs did not succeed:"
+          echo "$RESULTS"
+          exit 1
+      - name: All jobs passed
+        run: echo "All CI jobs succeeded."

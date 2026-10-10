@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Roslyn analyzers for DotThrow. They ship inside the DotThrow package under
+    analyzers/dotnet/cs, so users get them without another install (decision D24).
+    netstandard2.0 and Roslyn 4.8 (the .NET 8 SDK compiler) are the oldest host the
+    analyzers support. Code fixes live in DotThrow.Analyzers.CodeFixes, so the command-line
+    compiler never loads the Workspaces layer.
+  -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>DotThrow.Analyzers</RootNamespace>
+    <IsRoslynComponent>true</IsRoslynComponent>
+    <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The compiler provides these at run time, so nothing flows to consumers. -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
+    <!-- Analyzer-author rules: release tracking (RS2xxx) and banned APIs (RS1035). -->
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="AnalyzerReleases.Shipped.md" />
+    <AdditionalFiles Include="AnalyzerReleases.Unshipped.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="DotThrow.Analyzers.CodeFixes" />
+    <InternalsVisibleTo Include="DotThrow.Analyzers.Tests" />
+  </ItemGroup>
+
+</Project>

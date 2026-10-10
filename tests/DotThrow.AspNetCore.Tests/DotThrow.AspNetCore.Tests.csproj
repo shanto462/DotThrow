@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+    <RootNamespace>DotThrow.AspNetCore.Tests</RootNamespace>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <!-- Run through VSTest (xunit.runner.visualstudio), so coverlet.collector works with dotnet test. -->
+    <IsTestingPlatformApplication>false</IsTestingPlatformApplication>
+    <!--
+      Microsoft.AspNetCore.Mvc.Testing 9 and 10 need the Microsoft.Extensions.* packages of their own
+      version. Transitive pinning (Directory.Packages.props) would hold them at the 8.0 line used by
+      DotThrow.DependencyInjection and fail restore with NU1109, so this test project resolves
+      transitive versions normally: the highest requested version wins.
+    -->
+    <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="coverlet.collector" />
+    <!-- The version matches the target framework (Directory.Packages.props). It brings TestServer. -->
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\DotThrow.AspNetCore\DotThrow.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\DotThrow.DependencyInjection\DotThrow.DependencyInjection.csproj" />
+  </ItemGroup>
+
+</Project>

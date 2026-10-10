@@ -1,0 +1,146 @@
+# Polish (pl). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	Pole '{PropertyName}' nie może być null.
+NotNull	Pole '{PropertyName}' musi być null.
+Default	Pole '{PropertyName}' nie może mieć wartości domyślnej.
+Empty	Pole '{PropertyName}' nie może być puste.
+Empty.Guid	Pole '{PropertyName}' nie może być pustym identyfikatorem GUID.
+NotEmpty	Pole '{PropertyName}' musi być puste.
+EqualTo	Pole '{PropertyName}' nie może mieć niedozwolonej wartości.
+EqualTo.Value	Pole '{PropertyName}' nie może być równe {ComparisonValue}.
+NotEqualTo	Pole '{PropertyName}' musi mieć wymaganą wartość.
+NotEqualTo.Value	Pole '{PropertyName}' musi być równe {ComparisonValue}.
+OneOf	Pole '{PropertyName}' nie może mieć żadnej z niedozwolonych wartości.
+NotOneOf	Pole '{PropertyName}' musi mieć jedną z dozwolonych wartości.
+Condition	Pole '{PropertyName}' jest nieprawidłowe.
+Condition.If	Pole '{PropertyName}' nie może spełniać warunku: {Condition}.
+Condition.IfNot	Pole '{PropertyName}' musi spełniać warunek: {Condition}.
+Type	Pole '{PropertyName}' nie może być typu {Type}.
+NotType	Pole '{PropertyName}' musi być typu {Type}.
+True	Pole '{PropertyName}' musi być false.
+False	Pole '{PropertyName}' musi być true.
+Must	Pole '{PropertyName}' jest nieprawidłowe.
+Invalid	Pole '{PropertyName}' jest nieprawidłowe.
+
+# Comparisons and numbers
+GreaterThan	Pole '{PropertyName}' musi być mniejsze lub równe {ComparisonValue}.
+GreaterThanOrEqualTo	Pole '{PropertyName}' musi być mniejsze niż {ComparisonValue}.
+LessThan	Pole '{PropertyName}' musi być większe lub równe {ComparisonValue}.
+LessThanOrEqualTo	Pole '{PropertyName}' musi być większe niż {ComparisonValue}.
+OutOfRange	Pole '{PropertyName}' musi mieścić się w przedziale od {From} do {To}.
+OutOfRangeExclusive	Pole '{PropertyName}' musi mieścić się w przedziale od {From} do {To} (bez wartości granicznych).
+InRange	Pole '{PropertyName}' nie może mieścić się w przedziale od {From} do {To}.
+Negative	Pole '{PropertyName}' nie może być ujemne.
+NegativeOrZero	Pole '{PropertyName}' musi być większe niż 0.
+Positive	Pole '{PropertyName}' nie może być większe niż 0.
+PositiveOrZero	Pole '{PropertyName}' musi być mniejsze niż 0.
+Zero	Pole '{PropertyName}' nie może być równe 0.
+NaN	Pole '{PropertyName}' musi być liczbą, a nie NaN.
+Infinity	Pole '{PropertyName}' musi być liczbą skończoną.
+NotFinite	Pole '{PropertyName}' musi być liczbą skończoną.
+Odd	Pole '{PropertyName}' musi być liczbą parzystą.
+Even	Pole '{PropertyName}' musi być liczbą nieparzystą.
+NotMultipleOf	Pole '{PropertyName}' musi być wielokrotnością {Divisor}.
+NotPowerOfTwo	Pole '{PropertyName}' musi być potęgą dwójki.
+NotInteger	Pole '{PropertyName}' musi być liczbą całkowitą.
+PrecisionScaleExceeded	Łączna liczba cyfr w polu '{PropertyName}' musi wynosić co najwyżej {ExpectedPrecision}, w tym co najwyżej {ExpectedScale} po przecinku. Liczba cyfr przed przecinkiem: {Digits}, po przecinku: {ActualScale}.
+
+# Strings
+WhiteSpace	Pole '{PropertyName}' nie może być puste ani składać się wyłącznie z białych znaków.
+LongerThan	Liczba znaków w polu '{PropertyName}' musi wynosić co najwyżej {MaxLength}.
+ShorterThan	Liczba znaków w polu '{PropertyName}' musi wynosić co najmniej {MinLength}.
+LengthNotEqualTo	Liczba znaków w polu '{PropertyName}' musi wynosić dokładnie {Length}.
+LengthOutOfRange	Liczba znaków w polu '{PropertyName}' musi wynosić od {MinLength} do {MaxLength}.
+Contains	Pole '{PropertyName}' nie może zawierać niedozwolonego elementu.
+Contains.Value	Pole '{PropertyName}' nie może zawierać {Value}.
+NotContains	Pole '{PropertyName}' musi zawierać wymagany element.
+NotContains.Value	Pole '{PropertyName}' musi zawierać {Value}.
+StartsWith	Pole '{PropertyName}' nie może zaczynać się od {Value}.
+NotStartsWith	Pole '{PropertyName}' musi zaczynać się od {Value}.
+EndsWith	Pole '{PropertyName}' nie może kończyć się na {Value}.
+NotEndsWith	Pole '{PropertyName}' musi kończyć się na {Value}.
+Matches	Pole '{PropertyName}' nie może pasować do wzorca {Pattern}.
+NotMatches	Pole '{PropertyName}' musi pasować do wzorca {Pattern}.
+NotEmailAddress	Pole '{PropertyName}' musi być prawidłowym adresem e-mail.
+NotJson	Pole '{PropertyName}' musi być prawidłowym dokumentem JSON.
+NotXml	Pole '{PropertyName}' musi być poprawnie sformułowanym dokumentem XML.
+NotUri	Pole '{PropertyName}' musi być prawidłowym identyfikatorem URI.
+NotUri.Absolute	Pole '{PropertyName}' musi być prawidłowym bezwzględnym identyfikatorem URI.
+NotUri.Relative	Pole '{PropertyName}' musi być prawidłowym względnym identyfikatorem URI.
+NotHttpUrl	Pole '{PropertyName}' musi być bezwzględnym adresem URL HTTP lub HTTPS.
+NotParsable	Pole '{PropertyName}' musi być prawidłową wartością typu {Type}.
+AllUpperCase	Pole '{PropertyName}' nie może składać się wyłącznie z wielkich liter.
+AllLowerCase	Pole '{PropertyName}' nie może składać się wyłącznie z małych liter.
+NotTrimmed	Pole '{PropertyName}' nie może zaczynać się ani kończyć białym znakiem.
+ContainsWhiteSpace	Pole '{PropertyName}' nie może zawierać białych znaków.
+ContainsControlCharacters	Pole '{PropertyName}' nie może zawierać znaków sterujących.
+ContainsAny	Pole '{PropertyName}' nie może zawierać żadnego z niedozwolonych znaków.
+ContainsAnyExcept	Pole '{PropertyName}' musi zawierać wyłącznie dozwolone znaki.
+NotAscii	Pole '{PropertyName}' musi zawierać wyłącznie znaki ASCII.
+NotDigits	Pole '{PropertyName}' musi zawierać wyłącznie cyfry od 0 do 9.
+NotLettersOrDigits	Pole '{PropertyName}' musi zawierać wyłącznie litery lub cyfry.
+NotHex	Pole '{PropertyName}' musi być ciągiem szesnastkowym.
+NotBase64	Pole '{PropertyName}' musi być prawidłowym ciągiem Base64.
+NotGuid	Pole '{PropertyName}' musi być prawidłowym identyfikatorem GUID.
+NotIPAddress	Pole '{PropertyName}' musi być prawidłowym adresem IP.
+NotSlug	Pole '{PropertyName}' musi być slugiem złożonym z małych liter, cyfr i pojedynczych łączników.
+NotVersion	Pole '{PropertyName}' musi być prawidłowym numerem wersji.
+NotCreditCardNumber	Pole '{PropertyName}' musi być prawidłowym numerem karty kredytowej.
+NotEnumName	Pole '{PropertyName}' musi być nazwą zdefiniowaną w {Type}.
+NotFileName	Pole '{PropertyName}' musi być prawidłową nazwą pliku.
+
+# Collections and dictionaries
+CountEqualTo	Liczba elementów w polu '{PropertyName}' nie może wynosić dokładnie {Count}.
+CountEqualTo.One	Pole '{PropertyName}' nie może zawierać dokładnie 1 elementu.
+CountNotEqualTo	Liczba elementów w polu '{PropertyName}' musi wynosić dokładnie {Count}.
+CountNotEqualTo.One	Pole '{PropertyName}' musi zawierać dokładnie 1 element.
+CountGreaterThan	Liczba elementów w polu '{PropertyName}' musi wynosić co najwyżej {MaxCount}.
+CountGreaterThan.One	Pole '{PropertyName}' musi zawierać co najwyżej 1 element.
+CountLessThan	Liczba elementów w polu '{PropertyName}' musi wynosić co najmniej {MinCount}.
+CountLessThan.One	Pole '{PropertyName}' musi zawierać co najmniej 1 element.
+CountOutOfRange	Liczba elementów w polu '{PropertyName}' musi wynosić od {MinCount} do {MaxCount}.
+ContainsNull	Pole '{PropertyName}' nie może zawierać elementów o wartości null.
+HasDuplicates	Pole '{PropertyName}' nie może zawierać powtarzających się elementów.
+Any	Pole '{PropertyName}' nie może zawierać żadnego elementu spełniającego warunek.
+None	Pole '{PropertyName}' musi zawierać co najmniej jeden element spełniający warunek.
+ContainsKey	Pole '{PropertyName}' nie może zawierać niedozwolonego klucza.
+ContainsKey.Value	Pole '{PropertyName}' nie może zawierać klucza {Key}.
+NotContainsKey	Pole '{PropertyName}' musi zawierać wymagany klucz.
+NotContainsKey.Value	Pole '{PropertyName}' musi zawierać klucz {Key}.
+
+# Enums
+NotDefined	Pole '{PropertyName}' musi być wartością zdefiniowaną w {Type}.
+HasFlag	Pole '{PropertyName}' nie może mieć ustawionej flagi {Flag}.
+NotHasFlag	Pole '{PropertyName}' musi mieć ustawioną flagę {Flag}.
+
+# Dates and times
+Before	Pole '{PropertyName}' nie może być wcześniejsze niż {ComparisonValue}.
+After	Pole '{PropertyName}' nie może być późniejsze niż {ComparisonValue}.
+InPast	Pole '{PropertyName}' nie może być w przeszłości.
+InFuture	Pole '{PropertyName}' nie może być w przyszłości.
+NotUtc	Pole '{PropertyName}' musi być wyrażone w UTC.
+Weekend	Pole '{PropertyName}' musi być dniem roboczym (od poniedziałku do piątku).
+Weekday	Pole '{PropertyName}' musi być dniem weekendu (sobotą lub niedzielą).
+HasTimeOfDay	Pole '{PropertyName}' nie może zawierać godziny.
+OlderThan	Pole '{PropertyName}' nie może być w przeszłości o więcej niż {MaxAge}.
+NewerThan	Pole '{PropertyName}' musi być w przeszłości o co najmniej {MinAge}.
+
+# Uri and IPAddress
+Relative	Pole '{PropertyName}' musi być bezwzględnym identyfikatorem URI.
+NotHttps	Pole '{PropertyName}' musi być bezwzględnym adresem URL HTTPS.
+NotHttpOrHttps	Pole '{PropertyName}' musi być bezwzględnym adresem URL HTTP lub HTTPS.
+NotScheme	Pole '{PropertyName}' musi używać jednego z tych schematów URI: {Schemes}.
+Loopback	Pole '{PropertyName}' nie może być adresem loopback.
+Private	Pole '{PropertyName}' nie może być adresem prywatnym ani adresem link-local.
+NotIPv4	Pole '{PropertyName}' musi być adresem IPv4.
+NotIPv6	Pole '{PropertyName}' musi być adresem IPv6.
+
+# Streams and types
+NotReadable	Pole '{PropertyName}' musi obsługiwać odczyt.
+NotWritable	Pole '{PropertyName}' musi obsługiwać zapis.
+NotSeekable	Pole '{PropertyName}' musi obsługiwać zmianę pozycji.
+NotAssignableTo	Pole '{PropertyName}' musi dać się przypisać do typu {Type}.
+Abstract	Pole '{PropertyName}' nie może być typem abstrakcyjnym.
+Interface	Pole '{PropertyName}' nie może być interfejsem.

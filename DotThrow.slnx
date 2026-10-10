@@ -1,0 +1,21 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/DotThrow/DotThrow.csproj" />
+    <Project Path="src/DotThrow.DependencyInjection/DotThrow.DependencyInjection.csproj" />
+    <Project Path="src/DotThrow.AspNetCore/DotThrow.AspNetCore.csproj" />
+    <Project Path="src/DotThrow.Analyzers/DotThrow.Analyzers.csproj" />
+    <Project Path="src/DotThrow.Analyzers.CodeFixes/DotThrow.Analyzers.CodeFixes.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/DotThrow.Tests/DotThrow.Tests.csproj" />
+    <Project Path="tests/DotThrow.DependencyInjection.Tests/DotThrow.DependencyInjection.Tests.csproj" />
+    <Project Path="tests/DotThrow.AspNetCore.Tests/DotThrow.AspNetCore.Tests.csproj" />
+    <Project Path="tests/DotThrow.Analyzers.Tests/DotThrow.Analyzers.Tests.csproj" />
+  </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/DotThrow.Samples/DotThrow.Samples.csproj" />
+  </Folder>
+  <Folder Name="/benchmarks/">
+    <Project Path="benchmarks/DotThrow.Benchmarks/DotThrow.Benchmarks.csproj" />
+  </Folder>
+</Solution>

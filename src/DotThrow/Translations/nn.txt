@@ -1,0 +1,146 @@
+# Norwegian Nynorsk (nn). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' må ikkje vere null.
+NotNull	'{PropertyName}' må vere null.
+Default	'{PropertyName}' må ikkje vere standardverdien.
+Empty	'{PropertyName}' må ikkje vere tom.
+Empty.Guid	'{PropertyName}' må ikkje vere ein tom GUID.
+NotEmpty	'{PropertyName}' må vere tom.
+EqualTo	'{PropertyName}' må ikkje vere lik den avviste verdien.
+EqualTo.Value	'{PropertyName}' må ikkje vere lik {ComparisonValue}.
+NotEqualTo	'{PropertyName}' må vere lik den påkravde verdien.
+NotEqualTo.Value	'{PropertyName}' må vere lik {ComparisonValue}.
+OneOf	'{PropertyName}' må ikkje vere ein av dei avviste verdiane.
+NotOneOf	'{PropertyName}' må vere ein av dei tillatne verdiane.
+Condition	'{PropertyName}' er ikkje gyldig.
+Condition.If	'{PropertyName}' må ikkje oppfylle vilkåret: {Condition}.
+Condition.IfNot	'{PropertyName}' må oppfylle vilkåret: {Condition}.
+Type	'{PropertyName}' må ikkje vere av typen {Type}.
+NotType	'{PropertyName}' må vere av typen {Type}.
+True	'{PropertyName}' må vere false.
+False	'{PropertyName}' må vere true.
+Must	'{PropertyName}' er ikkje gyldig.
+Invalid	'{PropertyName}' er ikkje gyldig.
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' må vere mindre enn eller lik {ComparisonValue}.
+GreaterThanOrEqualTo	'{PropertyName}' må vere mindre enn {ComparisonValue}.
+LessThan	'{PropertyName}' må vere større enn eller lik {ComparisonValue}.
+LessThanOrEqualTo	'{PropertyName}' må vere større enn {ComparisonValue}.
+OutOfRange	'{PropertyName}' må vere mellom {From} og {To}.
+OutOfRangeExclusive	'{PropertyName}' må vere mellom {From} og {To} (grenseverdiane ikkje medrekna).
+InRange	'{PropertyName}' må ikkje vere mellom {From} og {To}.
+Negative	'{PropertyName}' må ikkje vere negativ.
+NegativeOrZero	'{PropertyName}' må vere større enn 0.
+Positive	'{PropertyName}' må ikkje vere større enn 0.
+PositiveOrZero	'{PropertyName}' må vere mindre enn 0.
+Zero	'{PropertyName}' må ikkje vere 0.
+NaN	'{PropertyName}' må vere eit tal, ikkje NaN.
+Infinity	'{PropertyName}' må vere eit endeleg tal.
+NotFinite	'{PropertyName}' må vere eit endeleg tal.
+Odd	'{PropertyName}' må vere eit partal.
+Even	'{PropertyName}' må vere eit oddetal.
+NotMultipleOf	'{PropertyName}' må vere eit multiplum av {Divisor}.
+NotPowerOfTwo	'{PropertyName}' må vere ein potens av to.
+NotInteger	'{PropertyName}' må vere eit heiltal.
+PrecisionScaleExceeded	'{PropertyName}' må ha høgst {ExpectedPrecision} siffer totalt, av desse høgst {ExpectedScale} desimalar. Fann {Digits} siffer før desimalteiknet og {ActualScale} desimalar.
+
+# Strings
+WhiteSpace	'{PropertyName}' må ikkje vere tom eller berre bestå av blankteikn.
+LongerThan	'{PropertyName}' må vere på høgst {MaxLength} teikn.
+ShorterThan	'{PropertyName}' må vere på minst {MinLength} teikn.
+LengthNotEqualTo	'{PropertyName}' må vere på nøyaktig {Length} teikn.
+LengthOutOfRange	'{PropertyName}' må vere på mellom {MinLength} og {MaxLength} teikn.
+Contains	'{PropertyName}' må ikkje innehalde det avviste elementet.
+Contains.Value	'{PropertyName}' må ikkje innehalde {Value}.
+NotContains	'{PropertyName}' må innehalde det påkravde elementet.
+NotContains.Value	'{PropertyName}' må innehalde {Value}.
+StartsWith	'{PropertyName}' må ikkje byrje med {Value}.
+NotStartsWith	'{PropertyName}' må byrje med {Value}.
+EndsWith	'{PropertyName}' må ikkje slutte med {Value}.
+NotEndsWith	'{PropertyName}' må slutte med {Value}.
+Matches	'{PropertyName}' må ikkje samsvare med mønsteret {Pattern}.
+NotMatches	'{PropertyName}' må samsvare med mønsteret {Pattern}.
+NotEmailAddress	'{PropertyName}' må vere ei gyldig e-postadresse.
+NotJson	'{PropertyName}' må vere gyldig JSON.
+NotXml	'{PropertyName}' må vere velforma XML.
+NotUri	'{PropertyName}' må vere ein gyldig URI.
+NotUri.Absolute	'{PropertyName}' må vere ein gyldig absolutt URI.
+NotUri.Relative	'{PropertyName}' må vere ein gyldig relativ URI.
+NotHttpUrl	'{PropertyName}' må vere ein absolutt HTTP- eller HTTPS-URL.
+NotParsable	'{PropertyName}' må vere ein gyldig verdi av typen {Type}.
+AllUpperCase	'{PropertyName}' må ikkje berre bestå av store bokstavar.
+AllLowerCase	'{PropertyName}' må ikkje berre bestå av små bokstavar.
+NotTrimmed	'{PropertyName}' må ikkje byrje eller slutte med blankteikn.
+ContainsWhiteSpace	'{PropertyName}' må ikkje innehalde blankteikn.
+ContainsControlCharacters	'{PropertyName}' må ikkje innehalde kontrollteikn.
+ContainsAny	'{PropertyName}' må ikkje innehalde nokon av dei avviste teikna.
+ContainsAnyExcept	'{PropertyName}' må berre innehalde dei tillatne teikna.
+NotAscii	'{PropertyName}' må berre innehalde ASCII-teikn.
+NotDigits	'{PropertyName}' må berre innehalde sifra 0 til 9.
+NotLettersOrDigits	'{PropertyName}' må berre innehalde bokstavar eller siffer.
+NotHex	'{PropertyName}' må vere ein heksadesimal streng.
+NotBase64	'{PropertyName}' må vere ein gyldig Base64-streng.
+NotGuid	'{PropertyName}' må vere ein gyldig GUID.
+NotIPAddress	'{PropertyName}' må vere ei gyldig IP-adresse.
+NotSlug	'{PropertyName}' må vere ein slug av små bokstavar, siffer og enkeltståande bindestrekar.
+NotVersion	'{PropertyName}' må vere eit gyldig versjonsnummer.
+NotCreditCardNumber	'{PropertyName}' må vere eit gyldig kredittkortnummer.
+NotEnumName	'{PropertyName}' må vere eit definert namn i {Type}.
+NotFileName	'{PropertyName}' må vere eit gyldig filnamn.
+
+# Collections and dictionaries
+CountEqualTo	'{PropertyName}' må ikkje ha nøyaktig {Count} element.
+CountEqualTo.One	'{PropertyName}' må ikkje ha nøyaktig 1 element.
+CountNotEqualTo	'{PropertyName}' må ha nøyaktig {Count} element.
+CountNotEqualTo.One	'{PropertyName}' må ha nøyaktig 1 element.
+CountGreaterThan	'{PropertyName}' må ha høgst {MaxCount} element.
+CountGreaterThan.One	'{PropertyName}' må ha høgst 1 element.
+CountLessThan	'{PropertyName}' må ha minst {MinCount} element.
+CountLessThan.One	'{PropertyName}' må ha minst 1 element.
+CountOutOfRange	'{PropertyName}' må ha mellom {MinCount} og {MaxCount} element.
+ContainsNull	'{PropertyName}' må ikkje innehalde element som er null.
+HasDuplicates	'{PropertyName}' må ikkje innehalde dupliserte element.
+Any	'{PropertyName}' må ikkje innehalde noko element som oppfyller vilkåret.
+None	'{PropertyName}' må innehalde minst eitt element som oppfyller vilkåret.
+ContainsKey	'{PropertyName}' må ikkje innehalde den avviste nøkkelen.
+ContainsKey.Value	'{PropertyName}' må ikkje innehalde nøkkelen {Key}.
+NotContainsKey	'{PropertyName}' må innehalde den påkravde nøkkelen.
+NotContainsKey.Value	'{PropertyName}' må innehalde nøkkelen {Key}.
+
+# Enums
+NotDefined	'{PropertyName}' må vere ein definert verdi i {Type}.
+HasFlag	'{PropertyName}' må ikkje ha flagget {Flag}.
+NotHasFlag	'{PropertyName}' må ha flagget {Flag}.
+
+# Dates and times
+Before	'{PropertyName}' må ikkje vere før {ComparisonValue}.
+After	'{PropertyName}' må ikkje vere etter {ComparisonValue}.
+InPast	'{PropertyName}' må ikkje liggje i fortida.
+InFuture	'{PropertyName}' må ikkje liggje i framtida.
+NotUtc	'{PropertyName}' må vere i UTC.
+Weekend	'{PropertyName}' må vere ein kvardag (måndag til fredag).
+Weekday	'{PropertyName}' må vere ein dag i helga (laurdag eller sundag).
+HasTimeOfDay	'{PropertyName}' må ikkje innehalde eit klokkeslett.
+OlderThan	'{PropertyName}' må ikkje liggje meir enn {MaxAge} tilbake i tid.
+NewerThan	'{PropertyName}' må liggje minst {MinAge} tilbake i tid.
+
+# Uri and IPAddress
+Relative	'{PropertyName}' må vere ein absolutt URI.
+NotHttps	'{PropertyName}' må vere ein absolutt HTTPS-URL.
+NotHttpOrHttps	'{PropertyName}' må vere ein absolutt HTTP- eller HTTPS-URL.
+NotScheme	'{PropertyName}' må bruke eitt av desse URI-skjemaa: {Schemes}.
+Loopback	'{PropertyName}' må ikkje vere ei loopback-adresse.
+Private	'{PropertyName}' må ikkje vere ei privat eller link-local-adresse.
+NotIPv4	'{PropertyName}' må vere ei IPv4-adresse.
+NotIPv6	'{PropertyName}' må vere ei IPv6-adresse.
+
+# Streams and types
+NotReadable	'{PropertyName}' må støtte lesing.
+NotWritable	'{PropertyName}' må støtte skriving.
+NotSeekable	'{PropertyName}' må støtte søking.
+NotAssignableTo	'{PropertyName}' må kunne tilordnast typen {Type}.
+Abstract	'{PropertyName}' må ikkje vere ein abstrakt type.
+Interface	'{PropertyName}' må ikkje vere eit grensesnitt.

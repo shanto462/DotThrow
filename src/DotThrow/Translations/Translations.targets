@@ -1,0 +1,78 @@
+<Project>
+
+  <!--
+    Built-in translations of the default message templates.
+
+    Source of truth: one UTF-8 text file per culture in this folder (de.txt, pt-BR.txt, ...).
+    Each line is "Key<TAB>Template"; lines that start with # and empty lines are ignored.
+    The translations are machine-assisted; native review is welcome.
+
+    At build time each file is cleaned (comments and empty lines removed, LF line endings),
+    compressed with Deflate and embedded as the manifest resource "DotThrow.Translations.<culture>".
+    Internal/Translations.cs loads a culture lazily the first time a message needs it. The
+    compressed files live in obj only; they are never committed. The inline task needs no tools
+    beyond MSBuild, so it works the same on Windows, macOS and Linux.
+  -->
+
+  <!-- IntermediateOutputPath is defined after the project body, so it is used only inside targets. -->
+  <ItemGroup>
+    <DotThrowTranslation Include="$(MSBuildThisFileDirectory)*.txt" />
+  </ItemGroup>
+
+  <UsingTask TaskName="DotThrowCompressTranslations" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)/Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <Sources ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+      <OutputDirectory ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.IO.Compression" />
+      <Using Namespace="System.Text" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+        Directory.CreateDirectory(OutputDirectory);
+        foreach (var source in Sources)
+        {
+            var text = new StringBuilder();
+            foreach (var raw in File.ReadAllLines(source.ItemSpec, Encoding.UTF8))
+            {
+                var line = raw.TrimEnd('\r');
+                if (line.Length > 0 && line[0] != '#')
+                {
+                    text.Append(line).Append('\n');
+                }
+            }
+
+            var bytes = new UTF8Encoding(false).GetBytes(text.ToString());
+            var target = Path.Combine(OutputDirectory, Path.GetFileName(source.ItemSpec) + ".deflate");
+            using (var output = File.Create(target))
+            using (var deflate = new DeflateStream(output, CompressionLevel.Optimal))
+            {
+                deflate.Write(bytes, 0, bytes.Length);
+            }
+        }
+      ]]></Code>
+    </Task>
+  </UsingTask>
+
+  <!-- Compresses only when a text file (or this file) changed. -->
+  <Target Name="_DotThrowCompressTranslations"
+          Inputs="@(DotThrowTranslation);$(MSBuildThisFileFullPath)"
+          Outputs="@(DotThrowTranslation->'$(IntermediateOutputPath)translations/%(Filename)%(Extension).deflate')">
+    <DotThrowCompressTranslations Sources="@(DotThrowTranslation)" OutputDirectory="$(IntermediateOutputPath)translations/" />
+  </Target>
+
+  <!--
+    Embeds the compressed files. The ".txt.deflate" names keep MSBuild from reading "de" as a
+    satellite culture; the logical name is what Translations.cs asks for.
+  -->
+  <Target Name="_DotThrowEmbedTranslations" BeforeTargets="PrepareForBuild" DependsOnTargets="_DotThrowCompressTranslations">
+    <ItemGroup>
+      <EmbeddedResource Include="@(DotThrowTranslation->'$(IntermediateOutputPath)translations/%(Filename)%(Extension).deflate')"
+                        LogicalName="DotThrow.Translations.%(DotThrowTranslation.Filename)"
+                        WithCulture="false"
+                        Type="Non-Resx" />
+      <FileWrites Include="@(DotThrowTranslation->'$(IntermediateOutputPath)translations/%(Filename)%(Extension).deflate')" />
+    </ItemGroup>
+  </Target>
+
+</Project>

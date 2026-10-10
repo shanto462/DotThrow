@@ -1,0 +1,146 @@
+# Chinese Traditional (zh-Hant). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' 不能為 null。
+NotNull	'{PropertyName}' 必須為 null。
+Default	'{PropertyName}' 不能為預設值。
+Empty	'{PropertyName}' 不能為空。
+Empty.Guid	'{PropertyName}' 不能是空的 GUID。
+NotEmpty	'{PropertyName}' 必須為空。
+EqualTo	'{PropertyName}' 不能等於被拒絕的值。
+EqualTo.Value	'{PropertyName}' 不能等於 {ComparisonValue}。
+NotEqualTo	'{PropertyName}' 必須等於所需的值。
+NotEqualTo.Value	'{PropertyName}' 必須等於 {ComparisonValue}。
+OneOf	'{PropertyName}' 不能是被拒絕的值之一。
+NotOneOf	'{PropertyName}' 必須是允許的值之一。
+Condition	'{PropertyName}' 無效。
+Condition.If	'{PropertyName}' 不能符合條件：{Condition}。
+Condition.IfNot	'{PropertyName}' 必須符合條件：{Condition}。
+Type	'{PropertyName}' 不能是 {Type} 型別。
+NotType	'{PropertyName}' 必須是 {Type} 型別。
+True	'{PropertyName}' 必須為 false。
+False	'{PropertyName}' 必須為 true。
+Must	'{PropertyName}' 無效。
+Invalid	'{PropertyName}' 無效。
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' 必須小於或等於 {ComparisonValue}。
+GreaterThanOrEqualTo	'{PropertyName}' 必須小於 {ComparisonValue}。
+LessThan	'{PropertyName}' 必須大於或等於 {ComparisonValue}。
+LessThanOrEqualTo	'{PropertyName}' 必須大於 {ComparisonValue}。
+OutOfRange	'{PropertyName}' 必須介於 {From} 與 {To} 之間。
+OutOfRangeExclusive	'{PropertyName}' 必須介於 {From} 與 {To} 之間（不含邊界值）。
+InRange	'{PropertyName}' 不能介於 {From} 與 {To} 之間。
+Negative	'{PropertyName}' 不能為負數。
+NegativeOrZero	'{PropertyName}' 必須大於 0。
+Positive	'{PropertyName}' 不能大於 0。
+PositiveOrZero	'{PropertyName}' 必須小於 0。
+Zero	'{PropertyName}' 不能為 0。
+NaN	'{PropertyName}' 必須是數字，不能是 NaN。
+Infinity	'{PropertyName}' 必須是有限的數字。
+NotFinite	'{PropertyName}' 必須是有限的數字。
+Odd	'{PropertyName}' 必須是偶數。
+Even	'{PropertyName}' 必須是奇數。
+NotMultipleOf	'{PropertyName}' 必須是 {Divisor} 的倍數。
+NotPowerOfTwo	'{PropertyName}' 必須是 2 的乘冪。
+NotInteger	'{PropertyName}' 必須是整數。
+PrecisionScaleExceeded	'{PropertyName}' 總共最多只能有 {ExpectedPrecision} 位數，其中小數部分最多 {ExpectedScale} 位。實際為整數部分 {Digits} 位，小數部分 {ActualScale} 位。
+
+# Strings
+WhiteSpace	'{PropertyName}' 不能為空或只包含空白字元。
+LongerThan	'{PropertyName}' 最多只能有 {MaxLength} 個字元。
+ShorterThan	'{PropertyName}' 必須至少有 {MinLength} 個字元。
+LengthNotEqualTo	'{PropertyName}' 必須剛好有 {Length} 個字元。
+LengthOutOfRange	'{PropertyName}' 的長度必須介於 {MinLength} 到 {MaxLength} 個字元之間。
+Contains	'{PropertyName}' 不能包含被拒絕的項目。
+Contains.Value	'{PropertyName}' 不能包含 {Value}。
+NotContains	'{PropertyName}' 必須包含所需的項目。
+NotContains.Value	'{PropertyName}' 必須包含 {Value}。
+StartsWith	'{PropertyName}' 不能以 {Value} 開頭。
+NotStartsWith	'{PropertyName}' 必須以 {Value} 開頭。
+EndsWith	'{PropertyName}' 不能以 {Value} 結尾。
+NotEndsWith	'{PropertyName}' 必須以 {Value} 結尾。
+Matches	'{PropertyName}' 不能符合模式 {Pattern}。
+NotMatches	'{PropertyName}' 必須符合模式 {Pattern}。
+NotEmailAddress	'{PropertyName}' 必須是有效的電子郵件地址。
+NotJson	'{PropertyName}' 必須是有效的 JSON。
+NotXml	'{PropertyName}' 必須是格式正確的 XML。
+NotUri	'{PropertyName}' 必須是有效的 URI。
+NotUri.Absolute	'{PropertyName}' 必須是有效的絕對 URI。
+NotUri.Relative	'{PropertyName}' 必須是有效的相對 URI。
+NotHttpUrl	'{PropertyName}' 必須是使用 HTTP 或 HTTPS 的絕對 URL。
+NotParsable	'{PropertyName}' 必須是 {Type} 型別的有效值。
+AllUpperCase	'{PropertyName}' 不能全部是大寫字母。
+AllLowerCase	'{PropertyName}' 不能全部是小寫字母。
+NotTrimmed	'{PropertyName}' 不能以空白字元開頭或結尾。
+ContainsWhiteSpace	'{PropertyName}' 不能包含空白字元。
+ContainsControlCharacters	'{PropertyName}' 不能包含控制字元。
+ContainsAny	'{PropertyName}' 不能包含任何被拒絕的字元。
+ContainsAnyExcept	'{PropertyName}' 只能包含允許的字元。
+NotAscii	'{PropertyName}' 只能包含 ASCII 字元。
+NotDigits	'{PropertyName}' 只能包含數字 0 到 9。
+NotLettersOrDigits	'{PropertyName}' 只能包含字母或數字。
+NotHex	'{PropertyName}' 必須是十六進位字串。
+NotBase64	'{PropertyName}' 必須是有效的 Base64 字串。
+NotGuid	'{PropertyName}' 必須是有效的 GUID。
+NotIPAddress	'{PropertyName}' 必須是有效的 IP 位址。
+NotSlug	'{PropertyName}' 必須是由小寫字母、數字和單一連字號組成的 slug。
+NotVersion	'{PropertyName}' 必須是有效的版本號碼。
+NotCreditCardNumber	'{PropertyName}' 必須是有效的信用卡號碼。
+NotEnumName	'{PropertyName}' 必須是列舉 {Type} 中已定義的名稱。
+NotFileName	'{PropertyName}' 必須是有效的檔案名稱。
+
+# Collections and dictionaries
+CountEqualTo	'{PropertyName}' 不能剛好有 {Count} 個項目。
+CountEqualTo.One	'{PropertyName}' 不能剛好有 1 個項目。
+CountNotEqualTo	'{PropertyName}' 必須剛好有 {Count} 個項目。
+CountNotEqualTo.One	'{PropertyName}' 必須剛好有 1 個項目。
+CountGreaterThan	'{PropertyName}' 最多只能有 {MaxCount} 個項目。
+CountGreaterThan.One	'{PropertyName}' 最多只能有 1 個項目。
+CountLessThan	'{PropertyName}' 必須至少有 {MinCount} 個項目。
+CountLessThan.One	'{PropertyName}' 必須至少有 1 個項目。
+CountOutOfRange	'{PropertyName}' 的項目數量必須介於 {MinCount} 到 {MaxCount} 之間。
+ContainsNull	'{PropertyName}' 不能包含 null 項目。
+HasDuplicates	'{PropertyName}' 不能包含重複的項目。
+Any	'{PropertyName}' 不能包含任何符合條件的項目。
+None	'{PropertyName}' 必須至少包含一個符合條件的項目。
+ContainsKey	'{PropertyName}' 不能包含被拒絕的索引鍵。
+ContainsKey.Value	'{PropertyName}' 不能包含索引鍵 {Key}。
+NotContainsKey	'{PropertyName}' 必須包含所需的索引鍵。
+NotContainsKey.Value	'{PropertyName}' 必須包含索引鍵 {Key}。
+
+# Enums
+NotDefined	'{PropertyName}' 必須是列舉 {Type} 中已定義的值。
+HasFlag	'{PropertyName}' 不能包含旗標 {Flag}。
+NotHasFlag	'{PropertyName}' 必須包含旗標 {Flag}。
+
+# Dates and times
+Before	'{PropertyName}' 不能早於 {ComparisonValue}。
+After	'{PropertyName}' 不能晚於 {ComparisonValue}。
+InPast	'{PropertyName}' 不能是過去的時間。
+InFuture	'{PropertyName}' 不能是未來的時間。
+NotUtc	'{PropertyName}' 必須是 UTC 時間。
+Weekend	'{PropertyName}' 必須是平日（週一至週五）。
+Weekday	'{PropertyName}' 必須是週末（週六或週日）。
+HasTimeOfDay	'{PropertyName}' 不能包含時間部分。
+OlderThan	'{PropertyName}' 不能是超過 {MaxAge} 之前的時間。
+NewerThan	'{PropertyName}' 必須是至少 {MinAge} 之前的時間。
+
+# Uri and IPAddress
+Relative	'{PropertyName}' 必須是絕對 URI。
+NotHttps	'{PropertyName}' 必須是使用 HTTPS 的絕對 URL。
+NotHttpOrHttps	'{PropertyName}' 必須是使用 HTTP 或 HTTPS 的絕對 URL。
+NotScheme	'{PropertyName}' 必須使用下列其中一種 URI 配置：{Schemes}。
+Loopback	'{PropertyName}' 不能是回送位址。
+Private	'{PropertyName}' 不能是私人位址或連結本機位址。
+NotIPv4	'{PropertyName}' 必須是 IPv4 位址。
+NotIPv6	'{PropertyName}' 必須是 IPv6 位址。
+
+# Streams and types
+NotReadable	'{PropertyName}' 必須支援讀取。
+NotWritable	'{PropertyName}' 必須支援寫入。
+NotSeekable	'{PropertyName}' 必須支援搜尋。
+NotAssignableTo	'{PropertyName}' 必須可指派給型別 {Type}。
+Abstract	'{PropertyName}' 不能是抽象型別。
+Interface	'{PropertyName}' 不能是介面。

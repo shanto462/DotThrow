@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+    <!-- .NET Framework runs only on Windows. Set DotThrowNetFx=true to compile it elsewhere. net472 tests the net462 build. -->
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('Windows')) Or '$(DotThrowNetFx)' == 'true'">$(TargetFrameworks);net472</TargetFrameworks>
+    <RootNamespace>DotThrow.DependencyInjection.Tests</RootNamespace>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <!-- Run through VSTest (xunit.runner.visualstudio), so coverlet.collector works with dotnet test. -->
+    <IsTestingPlatformApplication>false</IsTestingPlatformApplication>
+  </PropertyGroup>
+
+  <!--
+    Asset leg: run the net8.0 tests against the netstandard2.0 build of the package, for example
+    dotnet test -f net8.0 -p:DotThrowAssetTfm=netstandard2.0
+    The package has no netstandard2.1 build, so netstandard2.1 uses its netstandard2.0 build (as an
+    app on netstandard2.1 would) together with the netstandard2.1 build of DotThrow.
+  -->
+  <PropertyGroup Condition="'$(DotThrowAssetTfm)' != ''">
+    <DotThrowDIAssetTfm>netstandard2.0</DotThrowDIAssetTfm>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(DotThrowAssetTfm)' == ''">
+    <ProjectReference Include="..\..\src\DotThrow.DependencyInjection\DotThrow.DependencyInjection.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(DotThrowAssetTfm)' != ''">
+    <ProjectReference Include="..\..\src\DotThrow\DotThrow.csproj" SetTargetFramework="TargetFramework=$(DotThrowAssetTfm)" />
+    <ProjectReference Include="..\..\src\DotThrow.DependencyInjection\DotThrow.DependencyInjection.csproj" SetTargetFramework="TargetFramework=$(DotThrowDIAssetTfm)" />
+  </ItemGroup>
+
+</Project>

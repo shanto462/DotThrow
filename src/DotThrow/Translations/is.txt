@@ -1,0 +1,146 @@
+# Icelandic (is). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' má ekki vera null.
+NotNull	'{PropertyName}' verður að vera null.
+Default	'{PropertyName}' má ekki vera sjálfgefna gildið.
+Empty	'{PropertyName}' má ekki vera tómt.
+Empty.Guid	'{PropertyName}' má ekki vera tómt GUID.
+NotEmpty	'{PropertyName}' verður að vera tómt.
+EqualTo	'{PropertyName}' má ekki vera jafnt óleyfilega gildinu.
+EqualTo.Value	'{PropertyName}' má ekki vera jafnt og {ComparisonValue}.
+NotEqualTo	'{PropertyName}' verður að vera jafnt tilskilda gildinu.
+NotEqualTo.Value	'{PropertyName}' verður að vera jafnt og {ComparisonValue}.
+OneOf	'{PropertyName}' má ekki vera eitt af óleyfilegu gildunum.
+NotOneOf	'{PropertyName}' verður að vera eitt af leyfilegu gildunum.
+Condition	'{PropertyName}' er ekki gilt.
+Condition.If	'{PropertyName}' má ekki uppfylla skilyrðið: {Condition}.
+Condition.IfNot	'{PropertyName}' verður að uppfylla skilyrðið: {Condition}.
+Type	'{PropertyName}' má ekki vera af taginu {Type}.
+NotType	'{PropertyName}' verður að vera af taginu {Type}.
+True	'{PropertyName}' verður að vera false.
+False	'{PropertyName}' verður að vera true.
+Must	'{PropertyName}' er ekki gilt.
+Invalid	'{PropertyName}' er ekki gilt.
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' verður að vera minna en eða jafnt og {ComparisonValue}.
+GreaterThanOrEqualTo	'{PropertyName}' verður að vera minna en {ComparisonValue}.
+LessThan	'{PropertyName}' verður að vera meira en eða jafnt og {ComparisonValue}.
+LessThanOrEqualTo	'{PropertyName}' verður að vera meira en {ComparisonValue}.
+OutOfRange	'{PropertyName}' verður að vera á bilinu {From} til {To}.
+OutOfRangeExclusive	'{PropertyName}' verður að vera á bilinu {From} til {To} (endagildin ekki meðtalin).
+InRange	'{PropertyName}' má ekki vera á bilinu {From} til {To}.
+Negative	'{PropertyName}' má ekki vera neikvætt.
+NegativeOrZero	'{PropertyName}' verður að vera meira en 0.
+Positive	'{PropertyName}' má ekki vera meira en 0.
+PositiveOrZero	'{PropertyName}' verður að vera minna en 0.
+Zero	'{PropertyName}' má ekki vera 0.
+NaN	'{PropertyName}' verður að vera tala, ekki NaN.
+Infinity	'{PropertyName}' verður að vera endanleg tala.
+NotFinite	'{PropertyName}' verður að vera endanleg tala.
+Odd	'{PropertyName}' verður að vera slétt tala.
+Even	'{PropertyName}' verður að vera oddatala.
+NotMultipleOf	'{PropertyName}' verður að vera margfeldi af {Divisor}.
+NotPowerOfTwo	'{PropertyName}' verður að vera veldi af tveimur.
+NotInteger	'{PropertyName}' verður að vera heiltala.
+PrecisionScaleExceeded	Heildarfjöldi tölustafa í '{PropertyName}' má í mesta lagi vera {ExpectedPrecision} og fjöldi aukastafa í mesta lagi {ExpectedScale}. Fjöldi tölustafa á undan kommu: {Digits}, fjöldi aukastafa: {ActualScale}.
+
+# Strings
+WhiteSpace	'{PropertyName}' má ekki vera tómt eða aðeins innihalda bilstafi.
+LongerThan	Fjöldi stafa í '{PropertyName}' má í mesta lagi vera {MaxLength}.
+ShorterThan	Fjöldi stafa í '{PropertyName}' verður að vera að minnsta kosti {MinLength}.
+LengthNotEqualTo	Fjöldi stafa í '{PropertyName}' verður að vera nákvæmlega {Length}.
+LengthOutOfRange	Fjöldi stafa í '{PropertyName}' verður að vera á bilinu {MinLength} til {MaxLength}.
+Contains	'{PropertyName}' má ekki innihalda óleyfilega atriðið.
+Contains.Value	'{PropertyName}' má ekki innihalda {Value}.
+NotContains	'{PropertyName}' verður að innihalda tilskilda atriðið.
+NotContains.Value	'{PropertyName}' verður að innihalda {Value}.
+StartsWith	'{PropertyName}' má ekki byrja á {Value}.
+NotStartsWith	'{PropertyName}' verður að byrja á {Value}.
+EndsWith	'{PropertyName}' má ekki enda á {Value}.
+NotEndsWith	'{PropertyName}' verður að enda á {Value}.
+Matches	'{PropertyName}' má ekki samsvara mynstrinu {Pattern}.
+NotMatches	'{PropertyName}' verður að samsvara mynstrinu {Pattern}.
+NotEmailAddress	'{PropertyName}' verður að vera gilt netfang.
+NotJson	'{PropertyName}' verður að vera gilt JSON.
+NotXml	'{PropertyName}' verður að vera vel mótað XML.
+NotUri	'{PropertyName}' verður að vera gilt URI.
+NotUri.Absolute	'{PropertyName}' verður að vera gilt og algilt URI.
+NotUri.Relative	'{PropertyName}' verður að vera gilt og afstætt URI.
+NotHttpUrl	'{PropertyName}' verður að vera algilt HTTP- eða HTTPS-URL.
+NotParsable	'{PropertyName}' verður að vera gilt gildi af taginu {Type}.
+AllUpperCase	'{PropertyName}' má ekki eingöngu innihalda hástafi.
+AllLowerCase	'{PropertyName}' má ekki eingöngu innihalda lágstafi.
+NotTrimmed	'{PropertyName}' má ekki byrja eða enda á bilstaf.
+ContainsWhiteSpace	'{PropertyName}' má ekki innihalda bilstafi.
+ContainsControlCharacters	'{PropertyName}' má ekki innihalda stýristafi.
+ContainsAny	'{PropertyName}' má ekki innihalda neinn af óleyfilegu stöfunum.
+ContainsAnyExcept	'{PropertyName}' má aðeins innihalda leyfilegu stafina.
+NotAscii	'{PropertyName}' má aðeins innihalda ASCII-stafi.
+NotDigits	'{PropertyName}' má aðeins innihalda tölustafina 0 til 9.
+NotLettersOrDigits	'{PropertyName}' má aðeins innihalda bókstafi eða tölustafi.
+NotHex	'{PropertyName}' verður að vera strengur í sextándakerfi.
+NotBase64	'{PropertyName}' verður að vera gildur Base64-strengur.
+NotGuid	'{PropertyName}' verður að vera gilt GUID.
+NotIPAddress	'{PropertyName}' verður að vera gilt IP-vistfang.
+NotSlug	'{PropertyName}' verður að vera slug úr lágstöfum, tölustöfum og stökum bandstrikum.
+NotVersion	'{PropertyName}' verður að vera gilt útgáfunúmer.
+NotCreditCardNumber	'{PropertyName}' verður að vera gilt kreditkortanúmer.
+NotEnumName	'{PropertyName}' verður að vera skilgreint heiti í {Type}.
+NotFileName	'{PropertyName}' verður að vera gilt skráarheiti.
+
+# Collections and dictionaries
+CountEqualTo	'{PropertyName}' má ekki innihalda nákvæmlega {Count} atriði.
+CountEqualTo.One	'{PropertyName}' má ekki innihalda nákvæmlega 1 atriði.
+CountNotEqualTo	'{PropertyName}' verður að innihalda nákvæmlega {Count} atriði.
+CountNotEqualTo.One	'{PropertyName}' verður að innihalda nákvæmlega 1 atriði.
+CountGreaterThan	'{PropertyName}' má í mesta lagi innihalda {MaxCount} atriði.
+CountGreaterThan.One	'{PropertyName}' má í mesta lagi innihalda 1 atriði.
+CountLessThan	'{PropertyName}' verður að innihalda að minnsta kosti {MinCount} atriði.
+CountLessThan.One	'{PropertyName}' verður að innihalda að minnsta kosti 1 atriði.
+CountOutOfRange	'{PropertyName}' verður að innihalda á bilinu {MinCount} til {MaxCount} atriði.
+ContainsNull	'{PropertyName}' má ekki innihalda atriði sem eru null.
+HasDuplicates	'{PropertyName}' má ekki innihalda tvítekin atriði.
+Any	'{PropertyName}' má ekki innihalda neitt atriði sem uppfyllir skilyrðið.
+None	'{PropertyName}' verður að innihalda að minnsta kosti eitt atriði sem uppfyllir skilyrðið.
+ContainsKey	'{PropertyName}' má ekki innihalda óleyfilega lykilinn.
+ContainsKey.Value	'{PropertyName}' má ekki innihalda lykilinn {Key}.
+NotContainsKey	'{PropertyName}' verður að innihalda tilskilda lykilinn.
+NotContainsKey.Value	'{PropertyName}' verður að innihalda lykilinn {Key}.
+
+# Enums
+NotDefined	'{PropertyName}' verður að vera skilgreint gildi í {Type}.
+HasFlag	'{PropertyName}' má ekki hafa flaggið {Flag}.
+NotHasFlag	'{PropertyName}' verður að hafa flaggið {Flag}.
+
+# Dates and times
+Before	'{PropertyName}' má ekki vera á undan {ComparisonValue}.
+After	'{PropertyName}' má ekki vera á eftir {ComparisonValue}.
+InPast	'{PropertyName}' má ekki vera í fortíðinni.
+InFuture	'{PropertyName}' má ekki vera í framtíðinni.
+NotUtc	'{PropertyName}' verður að vera í UTC.
+Weekend	'{PropertyName}' verður að vera virkur dagur (frá mánudegi til föstudags).
+Weekday	'{PropertyName}' verður að vera helgardagur (laugardagur eða sunnudagur).
+HasTimeOfDay	'{PropertyName}' má ekki innihalda tíma dags.
+OlderThan	'{PropertyName}' má ekki vera lengra en {MaxAge} aftur í tímann.
+NewerThan	'{PropertyName}' verður að vera að minnsta kosti {MinAge} aftur í tímann.
+
+# Uri and IPAddress
+Relative	'{PropertyName}' verður að vera algilt URI.
+NotHttps	'{PropertyName}' verður að vera algilt HTTPS-URL.
+NotHttpOrHttps	'{PropertyName}' verður að vera algilt HTTP- eða HTTPS-URL.
+NotScheme	'{PropertyName}' verður að nota eitt af þessum URI-skemum: {Schemes}.
+Loopback	'{PropertyName}' má ekki vera loopback-vistfang.
+Private	'{PropertyName}' má ekki vera einka- eða link-local-vistfang.
+NotIPv4	'{PropertyName}' verður að vera IPv4-vistfang.
+NotIPv6	'{PropertyName}' verður að vera IPv6-vistfang.
+
+# Streams and types
+NotReadable	'{PropertyName}' verður að styðja lestur.
+NotWritable	'{PropertyName}' verður að styðja ritun.
+NotSeekable	'{PropertyName}' verður að styðja tilfærslu á staðsetningu.
+NotAssignableTo	Það verður að vera hægt að úthluta '{PropertyName}' til tagsins {Type}.
+Abstract	'{PropertyName}' má ekki vera óhlutbundið tag.
+Interface	'{PropertyName}' má ekki vera viðmót.
