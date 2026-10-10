@@ -54,4 +54,24 @@
   <!-- Built-in translations: Translations/*.txt, compressed and embedded at build time. -->
   <Import Project="Translations/Translations.targets" />
 
+  <!--
+    Roslyn analyzers and code fixes ship inside this package (analyzers/dotnet/cs), so users get
+    them without another install. They are built once (netstandard2.0) and added to the package
+    from the netstandard2.0 build; the library itself never references them.
+  -->
+  <ItemGroup>
+    <ProjectReference Include="..\DotThrow.Analyzers.CodeFixes\DotThrow.Analyzers.CodeFixes.csproj" ReferenceOutputAssembly="false" PrivateAssets="all" />
+  </ItemGroup>
+  <PropertyGroup>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);AddDotThrowAnalyzersToPackage</TargetsForTfmSpecificContentInPackage>
+  </PropertyGroup>
+  <Target Name="AddDotThrowAnalyzersToPackage" Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <MSBuild Projects="..\DotThrow.Analyzers\DotThrow.Analyzers.csproj;..\DotThrow.Analyzers.CodeFixes\DotThrow.Analyzers.CodeFixes.csproj" Targets="GetTargetPath" RemoveProperties="TargetFramework;RuntimeIdentifier;SelfContained">
+      <Output TaskParameter="TargetOutputs" ItemName="_DotThrowAnalyzerAssembly" />
+    </MSBuild>
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="@(_DotThrowAnalyzerAssembly)" PackagePath="analyzers/dotnet/cs" />
+    </ItemGroup>
+  </Target>
+
 </Project>
