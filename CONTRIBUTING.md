@@ -117,6 +117,30 @@ So on such a CPU the script runs the `net9.0` leg as x64 through emulation by de
 
 To try the leg natively anyway, pass `--net9-native`. The script then sets `DOTNET_INTERNAL_ThreadSuspendInjection=0`, which removes the most common trigger (the signal the GC uses to suspend threads). It does not cover other signals, for example a caught `NullReferenceException`, so some tests still crash, and a thread in a tight loop can block the GC (the hang timeout stops such a run).
 
+## Fuzz tests
+
+`tests/DotThrow.Tests/Fuzzing` holds property-based fuzz tests written with [FsCheck](https://fscheck.github.io/FsCheck/). Each property runs a check on many random inputs and states what must always hold: a check throws only the documented exception, with the right parameter name and error code; collect mode never throws and records at most one failure per chain; throw mode and collect mode agree; and the format checks give the same answer as the BCL parser (`Guid.TryParse`, `Convert.FromBase64String`, `IPAddress`, `System.Text.Json`) or as a second implementation of the documented rule. The inputs are random text with the characters that break parsers (control characters, nulls, lone surrogates, bidi and zero-width characters) and text built from the pieces of each format (email addresses, URIs, JSON, XML, IP addresses, message templates, rule definitions), with a few random edits. The JSON rule definitions also build and run real `DynamicValidator<T>` instances.
+
+The fuzz tests are part of the normal test run and take a few seconds there. They have the trait `Category=Fuzz`, so you can run only them:
+
+```sh
+dotnet test tests/DotThrow.Tests -c Release -f net10.0 --filter "Category=Fuzz"
+```
+
+For a deep run, set `DOTTHROW_FUZZ_ITERATIONS` to the number of cases per property (a normal run uses 1000; the few slow properties run a fixed share of it). The `Fuzz` workflow does this every week, and you can start it by hand with your own number:
+
+```sh
+DOTTHROW_FUZZ_ITERATIONS=50000 dotnet test tests/DotThrow.Tests -c Release -f net10.0 --filter "Category=Fuzz"
+```
+
+When a property fails, FsCheck shrinks the input to a small one and the test message shows the seed, the original input and the shrunk input. To replay the failure, copy the numbers from the line `Replay directly at failing step with (6955468475102380717,9578494888614701779,2)` and run the same test with them:
+
+```sh
+DOTTHROW_FUZZ_REPLAY=6955468475102380717,9578494888614701779,2 dotnet test tests/DotThrow.Tests -c Release -f net10.0 --filter "FullyQualifiedName~NotEmailAddress_follows_the_documented_rules"
+```
+
+Then add a normal test with the shrunk input next to the other tests of that check, so the case stays covered, and fix the bug.
+
 ## Commit messages
 
 This project uses [Conventional Commits](https://www.conventionalcommits.org/). Start each commit message, and the pull request title, with a type:
@@ -141,6 +165,8 @@ Add `!` after the type for a breaking change, for example `feat!: rename IfCount
 4. Run the checks above.
 5. Open a pull request to `main` and fill in the template.
 6. Wait for review. The maintainer may ask for changes.
+
+New features and bug fixes must come with automated tests in `tests/`. A pull request that adds major new functionality without tests is not merged.
 
 ## Branch rules
 
