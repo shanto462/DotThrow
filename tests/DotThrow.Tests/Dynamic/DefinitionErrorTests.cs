@@ -145,4 +145,32 @@ public sealed class DefinitionErrorTests
             e => Assert.StartsWith("Rules[1].Checks[0]: check 'NotEnumName' on 'Text': the type 'Status' is not known; register it with PropertyMap.AddType", e, StringComparison.Ordinal),
             e => Assert.StartsWith("Rules[2].Checks[0]: check 'NotAssignableTo' on 'Kind': the type 'Money' is not known", e, StringComparison.Ordinal));
     }
+
+    // Fuzzing fix: Uri threw IndexOutOfRangeException instead of UriFormatException for a file or
+    // UNC host made only of bidi control characters ("file://\u202E", "\\\\\u200F" on .NET 10),
+    // and the exception escaped the build and CheckArguments.Parse. Such text is now a normal
+    // definition error. (.NET Framework's Uri may read the text differently, so there the test
+    // only checks that no other exception escapes.)
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void A_uri_argument_that_Uri_cannot_read_is_a_definition_error(bool reflection)
+    {
+        var definition = RuleSetDefinition.FromJson("""
+            { "rules": [
+              { "property": "Link", "checks": [ { "check": "EqualTo", "value": "file://\u202E" } ] },
+              { "property": "Text", "when": { "property": "Link", "equalTo": "\\\\\u200F" }, "checks": [ "Null" ] } ] }
+            """);
+        var exception = Record.Exception(() => reflection ? new DynamicValidator<Sample>(definition) : new DynamicValidator<Sample>(definition, Maps.Sample()));
+        Assert.True(exception is null or RuleDefinitionException, exception?.ToString());
+        var parse = Record.Exception(() => CheckArguments.Parse<Uri>("file://\u202E"));
+        Assert.True(parse is null or FormatException, parse?.ToString());
+#if NET
+        Assert.Collection(
+            Assert.IsType<RuleDefinitionException>(exception).Errors,
+            e => Assert.Equal("Rules[0].Checks[0]: check 'EqualTo' on 'Link': 'Value' value 'file://\u202E' is not a valid Uri", e),
+            e => Assert.Equal("Rules[1].When: 'EqualTo' value '\\\\\u200F' is not a valid Uri", e));
+        Assert.Equal("'file://\u202E' is not a valid Uri.", Assert.IsType<FormatException>(parse).Message);
+#endif
+    }
 }

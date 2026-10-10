@@ -13,6 +13,12 @@ and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   format character outside the Basic Multilingual Plane, such as the invisible
   tag characters U+E0000 to U+E007F. Both now fail, like the other control and
   format characters. Found by the new fuzz tests.
+- Dynamic rules: a `Uri` argument or condition value that `Uri` cannot read
+  because of a runtime bug, such as `file://` followed only by a bidi control
+  character, threw `IndexOutOfRangeException` from the `DynamicValidator<T>`
+  constructor, `Update` and `CheckArguments.Parse<Uri>`. It is now a normal
+  definition error (`FormatException` from `CheckArguments.Parse`). Found by
+  the new fuzz tests.
 
 ## [2.0.1] - 2026-10-10
 
