@@ -20,7 +20,7 @@ namespace DotThrow;
 /// orderValidator.For(x =&gt; x.Payment, payments);
 /// </code>
 /// </example>
-public sealed class PolymorphicValidator<T> : IValidator<T>, IChildValidator<T>
+public sealed class PolymorphicValidator<T> : IValidator<T>, IChildValidator<T>, IAsyncRuleInfo
 {
     private readonly object _gate = new();
     private Dictionary<Type, Entry> _entries = [];
@@ -130,6 +130,24 @@ public sealed class PolymorphicValidator<T> : IValidator<T>, IChildValidator<T>
     Task<ValidationReport> IValidator.ValidateAsync(object instance, ValidationOptions? options, CancellationToken cancellationToken) =>
         ValidateAsync(Cast(instance), options, cancellationToken);
 
+    bool IAsyncRuleInfo.HasAsyncRules(HashSet<object> visited)
+    {
+        if (!visited.Add(this))
+        {
+            return false;
+        }
+
+        foreach (var entry in Volatile.Read(ref _entries).Values)
+        {
+            if (entry.NeedsAsync(visited))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     void IChildValidator<T>.RunAsChild(T instance, in ChildScope scope) => Find(instance)?.Run(instance, scope);
 
     Task IChildValidator<T>.RunAsChildAsync(T instance, ChildScope scope) => Find(instance)?.RunAsync(instance, scope) ?? Task.CompletedTask;
@@ -180,9 +198,9 @@ public sealed class PolymorphicValidator<T> : IValidator<T>, IChildValidator<T>
             ClassCascade = options?.ClassCascade,
             Depth = options?.Depth ?? 0,
         };
-        if (options?.ItemsOrNull is { } items)
+        if (options is not null)
         {
-            copy.ShareItems(items);
+            copy.UseItemsOf(options);
         }
 
         return copy;
@@ -197,6 +215,8 @@ public sealed class PolymorphicValidator<T> : IValidator<T>, IChildValidator<T>
         public abstract ValidationReport Validate(T instance, ValidationOptions? options);
 
         public abstract Task<ValidationReport> ValidateAsync(T instance, ValidationOptions? options, CancellationToken cancellationToken);
+
+        public abstract bool NeedsAsync(HashSet<object> visited);
     }
 
     private sealed class Entry<TDerived>(
@@ -236,6 +256,8 @@ public sealed class PolymorphicValidator<T> : IValidator<T>, IChildValidator<T>
                 : Task.FromResult(new ValidationReport());
         }
 
+        public override bool NeedsAsync(HashSet<object> visited) => AsyncRules.OfChild(validator, factory is not null, visited);
+
         private IValidator<TDerived>? Pick(ValidationContext? parent, TDerived value) => validator ?? factory!(parent, value);
     }
 
@@ -252,5 +274,7 @@ public sealed class PolymorphicValidator<T> : IValidator<T>, IChildValidator<T>
 
         public override Task<ValidationReport> ValidateAsync(T instance, ValidationOptions? options, CancellationToken cancellationToken) =>
             validator.ValidateAsync(instance!, WithGroups(options, groups), cancellationToken);
+
+        public override bool NeedsAsync(HashSet<object> visited) => AsyncRules.OfChild(validator, picked: false, visited);
     }
 }

@@ -82,8 +82,9 @@ public abstract class ValidationContext
     public IReadOnlyList<string> Groups => GroupsRequested ? Array.AsReadOnly(SelectedGroups) : DefaultGroupsView;
 
     /// <summary>
-    /// Gets data shared by every rule of the run, child validators included. It starts with
-    /// <see cref="ValidationOptions.Items"/>. FluentValidation calls it root context data.
+    /// Gets data shared by every rule of the run, child validators included. It starts with a
+    /// copy of <see cref="ValidationOptions.Items"/>; items added here stay in this run.
+    /// FluentValidation calls it root context data.
     /// </summary>
     public IDictionary<string, object?> Items => _run.Items ??= new Dictionary<string, object?>(StringComparer.Ordinal);
 
@@ -302,12 +303,6 @@ public abstract class ValidationContext
             report.GroupsExecuted = executed is null ? Array.Empty<string>() : [.. executed];
         }
 
-        // Items created by the rules go back to the caller's options, as documented.
-        if (run.Options is { ItemsOrNull: null } options && run.Items is { } items)
-        {
-            options.ShareItems(items);
-        }
-
         report.Run = null;
         run.Clear();
         _conditionResults?.Clear();
@@ -373,23 +368,28 @@ public abstract class ValidationContext
                 "The object graph may have a cycle, or validators include each other. Raise ValidatorDefaults.MaxDepth for deeper data.");
         }
 
-        if ((Depth & 3) != 0)
+        // Every level checks the stack, so a deep graph fails with a clear exception instead of
+        // a stack overflow, which ends the process.
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP
+        if (!RuntimeHelpers.TryEnsureSufficientExecutionStack())
         {
-            return;
+            throw OutOfStack(null);
         }
-
+#else
         try
         {
             RuntimeHelpers.EnsureSufficientExecutionStack();
         }
         catch (InsufficientExecutionStackException exception)
         {
-            // Little stack is left, so the message names only the last segment.
-            throw new InvalidOperationException(
-                $"Validation ran out of stack space at '{_segment}' ({Depth} validators deep). The object graph may be too deep or have a cycle.",
-                exception);
+            throw OutOfStack(exception);
         }
+#endif
     }
+
+    // Little stack is left, so the message names only the last segment.
+    private InvalidOperationException OutOfStack(Exception? inner) =>
+        new($"Validation ran out of stack space at '{_segment}' ({Depth} validators deep). The object graph may be too deep or have a cycle.", inner);
 }
 
 /// <summary>
@@ -433,12 +433,11 @@ public sealed class ValidationContext<T> : ValidationContext
             report,
             options?.Groups ?? groups,
             options?.Properties,
-            options?.ItemsOrNull,
+            options?.ItemsForRun(),
             options?.ClassCascade,
             options?.RuleSelector,
             isAsync,
             cancellationToken);
-        context.Run.Options = options;
         context.StartDepth(options?.Depth ?? 0);
         return context;
     }

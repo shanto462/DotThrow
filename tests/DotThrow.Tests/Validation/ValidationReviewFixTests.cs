@@ -102,14 +102,21 @@ public sealed class ValidationReviewFixTests : IDisposable
     }
 
     [Fact]
-    public void Items_written_by_rules_reach_the_caller()
+    public void Items_written_by_rules_stay_in_their_run()
     {
-        var validator = new Validator<Person>().Custom((_, context) => context.Items["seen"] = true);
+        var seenBefore = new List<bool>();
+        var validator = new Validator<Person>().Custom((_, context) =>
+        {
+            seenBefore.Add(context.Items.ContainsKey("seen"));
+            context.Items["seen"] = true;
+        });
         var options = new ValidationOptions();
 
         validator.Validate(new Person(), options);
+        validator.Validate(new Person(), options);
 
-        Assert.True(options.Items.ContainsKey("seen"));
+        Assert.Equal([false, false], seenBefore);
+        Assert.False(options.Items.ContainsKey("seen"));
     }
 
     private sealed class LimitValidator : Validator<Person>

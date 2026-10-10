@@ -12,7 +12,7 @@ public static class ValidatorDefaults
     private static int _maxDepth = DefaultMaxDepth;
     private static string _propertyChainSeparator = ".";
 
-    private const int DefaultMaxDepth = 256;
+    private const int DefaultMaxDepth = 10_000;
 
     /// <summary>
     /// Gets or sets the rule cascade used when neither the rule nor the validator sets one.
@@ -78,8 +78,10 @@ public static class ValidatorDefaults
     /// <summary>
     /// Gets or sets how deep child and included validators may nest in one run. A deeper run
     /// throws an <see cref="InvalidOperationException"/>, which usually means the object graph
-    /// has a cycle or validators include each other. The default is 256. Running out of stack space
-    /// before that also throws an <see cref="InvalidOperationException"/>.
+    /// has a cycle or validators include each other. The default is 10,000. Every level also
+    /// checks the stack (<see cref="System.Runtime.CompilerServices.RuntimeHelpers.EnsureSufficientExecutionStack"/>),
+    /// so a run that would overflow the stack before that throws an
+    /// <see cref="InvalidOperationException"/> instead of crashing the process.
     /// </summary>
     /// <exception cref="ArgumentOutOfRangeException">The value is less than 1.</exception>
     public static int MaxDepth

@@ -28,8 +28,9 @@ internal sealed class RunState
     // ValidationOptions.RuleSelector.
     public IRuleSelector? RuleSelector;
 
-    // The options the run started with, so items created during the run can go back to them.
-    public ValidationOptions? Options;
+    // The rule message rendered for the failed check that is being added right now (see
+    // ValidationReport.RenderCheckMessage), taken by Rule<T>.AddFailure.
+    public string? RuleMessage;
 
     // Message arguments added with ValidationContext.AppendArgument by the running rule.
     public Dictionary<string, object?>? Arguments;
@@ -53,7 +54,7 @@ internal sealed class RunState
         IsAsync = false;
         CancellationToken = default;
         RuleSelector = null;
-        Options = null;
+        RuleMessage = null;
         ClearArguments();
     }
 }

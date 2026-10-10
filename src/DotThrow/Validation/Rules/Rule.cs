@@ -169,6 +169,28 @@ internal abstract class Rule<T> : FailureSink
         return (Cascade ?? Owner.RuleCascade) == CascadeMode.Stop;
     }
 
+    // True when running this rule may need ValidateAsync (see ValidatorDescriptor.HasAsyncRules).
+    public virtual bool NeedsAsync(HashSet<object> visited) =>
+        IsAsync || HasAsyncCondition || this is IEachRuleInfo { HasAsyncFilter: true } || AsyncRules.Of(Dependents, visited);
+
+    public override string? RenderMessage<TValue, TArgs>(in RuleFrame frame, string name, TValue value, TArgs args)
+    {
+        if (MessageProvider is not null || Message is null)
+        {
+            return null;
+        }
+
+        var context = (ValidationContext<T>)frame.Context!;
+        return RuleMessages.Render(
+            Message,
+            name,
+            FailurePath(context, frame.Index, frame.Item, name),
+            value,
+            frame.Index,
+            context.Run.Arguments is { Count: > 0 } appended ? appended : null,
+            args);
+    }
+
     // Creates the failure with the rule options applied.
     public void AddFailure(ValidationReport report, ValidationContext<T> context, int index, object? item, string name, string message, string errorCode, object? value)
     {
@@ -183,7 +205,8 @@ internal abstract class Rule<T> : FailureSink
         }
         else if (Message is not null)
         {
-            text = RuleMessages.Format(Message, name, path, value, index, arguments);
+            // A failed check already rendered the rule message with its own arguments.
+            text = context.Run.RuleMessage ?? RuleMessages.Format(Message, name, path, value, index, arguments);
         }
         else
         {

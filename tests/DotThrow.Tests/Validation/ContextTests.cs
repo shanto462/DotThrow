@@ -8,7 +8,7 @@ namespace DotThrow.Tests.Validation;
 public sealed class ContextTests
 {
     [Fact]
-    public void Items_flow_to_child_validators_and_back_to_the_caller()
+    public void Items_flow_to_child_validators_and_a_shared_object_carries_data_back()
     {
         var address = new Validator<Address>().Custom((a, context) =>
         {
@@ -18,15 +18,21 @@ public sealed class ContextTests
             }
 
             context.Items["seen"] = context.PropertyPath;
+            ((List<string>)context.Items["log"]!).Add(context.PropertyPath);
         });
         var validator = new Validator<Person>().For(x => x.Address, address);
+        var log = new List<string>();
         var options = new ValidationOptions();
         options.Items["country"] = "NL";
+        options.Items["log"] = log;
 
         var report = validator.Validate(new Person { Address = Address.Valid() }, options);
 
         Assert.Equal(["Address.PostalCode"], Names.Of(report));
-        Assert.Equal("Address", options.Items["seen"]);
+
+        // Each run copies Items, so keys added by rules stay in the run; a shared object carries data out.
+        Assert.False(options.Items.ContainsKey("seen"));
+        Assert.Equal(["Address"], log);
     }
 
     [Fact]

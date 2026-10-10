@@ -5,6 +5,11 @@ internal abstract class FailureSink
 {
     // Adds the failure with the rule options applied. Returns true when the chain must stop.
     public abstract bool OnCheckFailure(ValidationReport report, in RuleFrame frame, string name, string message, string errorCode, object? value);
+
+    // The rule message (WithMessage) for a failed check, rendered with the check's arguments,
+    // or null to use the check's own message.
+    public virtual string? RenderMessage<TValue, TArgs>(in RuleFrame frame, string name, TValue value, TArgs args)
+        where TArgs : struct, IMessageArgs => null;
 }
 
 // What a failed check needs to know about the running rule. A struct stored in the report,

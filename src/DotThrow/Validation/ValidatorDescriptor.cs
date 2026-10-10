@@ -40,11 +40,12 @@ public enum RuleKind
 /// </summary>
 public sealed class ValidatorDescriptor
 {
-    internal ValidatorDescriptor(Type validatorType, Type modelType, IReadOnlyList<RuleDescriptor> rules)
+    internal ValidatorDescriptor(Type validatorType, Type modelType, IReadOnlyList<RuleDescriptor> rules, bool hasAsyncRules)
     {
         ValidatorType = validatorType;
         ModelType = modelType;
         Rules = rules;
+        HasAsyncRules = hasAsyncRules;
     }
 
     /// <summary>Gets the type of the validator.</summary>
@@ -57,11 +58,13 @@ public sealed class ValidatorDescriptor
     public IReadOnlyList<RuleDescriptor> Rules { get; }
 
     /// <summary>
-    /// Gets a value indicating whether a rule of this validator (dependent rules included) is
-    /// async or has an async condition or filter, so the validator needs <c>ValidateAsync</c>.
-    /// Rules of child and included validators are not looked at.
+    /// Gets a value indicating whether a rule of this validator is async or has an async
+    /// condition or filter, so the validator needs <c>ValidateAsync</c>. Dependent rules and the
+    /// rules of child, collection item, included and polymorphic validators count too (each
+    /// validator once, so cycles are fine). A validator picked per object (a provider or a
+    /// factory) counts as async, because it is known only during the run.
     /// </summary>
-    public bool HasAsyncRules => AnyAsync(Rules);
+    public bool HasAsyncRules { get; }
 
     /// <summary>Gets the rules with the given property path, for example <c>"Address.City"</c>.</summary>
     /// <param name="path">The property path, relative to the validated object.</param>
@@ -71,19 +74,6 @@ public sealed class ValidatorDescriptor
         var result = new List<RuleDescriptor>();
         Collect(Rules, path, result);
         return result;
-    }
-
-    private static bool AnyAsync(IReadOnlyList<RuleDescriptor> rules)
-    {
-        foreach (var rule in rules)
-        {
-            if (rule.IsAsync || rule.HasAsyncCondition || AnyAsync(rule.DependentRules))
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private static void Collect(IReadOnlyList<RuleDescriptor> rules, string path, List<RuleDescriptor> result)

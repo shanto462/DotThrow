@@ -37,7 +37,7 @@ namespace DotThrow;
 /// ValidationReport report = validator.Validate(signUp);
 /// </code>
 /// </example>
-public partial class Validator<T> : IValidator<T>, IChildValidator<T>, IIncludeGraph
+public partial class Validator<T> : IValidator<T>, IChildValidator<T>, IIncludeGraph, IAsyncRuleInfo
 {
     private readonly object _gate = new();
     private readonly bool _callsPreValidate;

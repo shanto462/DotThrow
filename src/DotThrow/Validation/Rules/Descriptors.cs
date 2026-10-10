@@ -49,3 +49,37 @@ internal interface IEachRuleInfo
 {
     bool HasAsyncFilter { get; }
 }
+
+// Validators that can say whether a run needs ValidateAsync, child validators included.
+// visited holds the validators already looked at, so cycles end.
+internal interface IAsyncRuleInfo
+{
+    bool HasAsyncRules(HashSet<object> visited);
+}
+
+internal static class AsyncRules
+{
+    public static bool Of<T>(Rule<T>[]? rules, HashSet<object> visited)
+    {
+        if (rules is null)
+        {
+            return false;
+        }
+
+        foreach (var rule in rules)
+        {
+            if (rule.NeedsAsync(visited))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // A child validator: a known validator is looked at; one picked per object is not known
+    // before the run, so it counts as async. A hand-written IValidator<T> runs through its own
+    // Validate or ValidateAsync, so it never makes a sync run fail.
+    public static bool OfChild(object? validator, bool picked, HashSet<object> visited) =>
+        picked || (validator is IAsyncRuleInfo info && info.HasAsyncRules(visited));
+}

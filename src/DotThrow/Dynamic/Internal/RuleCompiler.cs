@@ -97,6 +97,8 @@ internal static class RuleCompiler
             context.Error(location + ".Name", "the name is empty");
         }
 
+        CheckMessage(rule.Message, context, location + ".Message");
+
         var entry = path.Length == 0 ? source.Root : source.Find(path);
         if (entry is null)
         {
@@ -268,6 +270,19 @@ internal static class RuleCompiler
         return null;
     }
 
+    // A message is checked once, when the validator is built: a placeholder format that no value
+    // can use (such as "{ComparisonValue:Q}") is a definition error, not a surprise at run time.
+    public static bool CheckMessage(string? message, BuildContext context, string location)
+    {
+        if (message is null || DotThrow.Internal.MessageTemplate.TryValidate(message, out var error))
+        {
+            return true;
+        }
+
+        context.Error(location, error);
+        return false;
+    }
+
     private static void UnknownProperty<T>(string path, PropertySource<T> source, BuildContext context, string location)
     {
         if (source.Problem(path) is { } problem)
@@ -329,6 +344,11 @@ internal static class CheckCompiler
         if (definition.ErrorCode is { } code && string.IsNullOrWhiteSpace(code))
         {
             context.Error(location + ".ErrorCode", "the error code is empty");
+            return null;
+        }
+
+        if (!RuleCompiler.CheckMessage(definition.Message, context, location + ".Message"))
+        {
             return null;
         }
 

@@ -127,7 +127,7 @@ public sealed class CascadeTests : IDisposable
 
         Assert.Equal(CascadeMode.Stop, ValidatorDefaults.RuleCascade);
         Assert.Equal(CascadeMode.Continue, ValidatorDefaults.ClassCascade);
-        Assert.Equal(256, ValidatorDefaults.MaxDepth);
+        Assert.Equal(10_000, ValidatorDefaults.MaxDepth);
         Assert.Throws<ArgumentOutOfRangeException>(() => ValidatorDefaults.MaxDepth = 0);
     }
 }

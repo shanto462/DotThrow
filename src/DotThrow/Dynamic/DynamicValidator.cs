@@ -42,7 +42,7 @@ namespace DotThrow.Dynamic;
 /// var report = validator.Validate(new Person { Email = "ada@example.com", Age = 36 });
 /// </code>
 /// </example>
-public sealed class DynamicValidator<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : IValidator<T>, IChildValidator<T>
+public sealed class DynamicValidator<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : IValidator<T>, IChildValidator<T>, IAsyncRuleInfo
 {
     private readonly object _gate = new();
     private readonly PropertySource<T> _source;
@@ -162,7 +162,13 @@ public sealed class DynamicValidator<[DynamicallyAccessedMembers(DynamicallyAcce
 
     /// <summary>Describes the rules that run now, for tools, documentation and tests.</summary>
     /// <returns>A snapshot of the rules.</returns>
-    public ValidatorDescriptor Describe() => new(GetType(), typeof(T), Current.Describe().Rules);
+    public ValidatorDescriptor Describe()
+    {
+        var current = Current.Describe();
+        return new(GetType(), typeof(T), current.Rules, current.HasAsyncRules);
+    }
+
+    bool IAsyncRuleInfo.HasAsyncRules(HashSet<object> visited) => visited.Add(this) && ((IAsyncRuleInfo)Current).HasAsyncRules(visited);
 
     /// <inheritdoc/>
     public bool CanValidate(Type type)

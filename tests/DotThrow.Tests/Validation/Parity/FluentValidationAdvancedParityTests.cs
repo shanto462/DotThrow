@@ -217,7 +217,9 @@ public sealed class FluentValidationAdvancedParityTests
                 context.AppendArgument("Limit", 2);
                 context.AddFailure("Lines", "At most {Limit} lines.");
             })
-            .For(x => x.Number, n => n.IfNullOrEmpty(), rule => rule.WithMessage("{PropertyName} at {PropertyPath} is '{PropertyValue}'."))
+            // DotThrow quotes text values itself (the same as in its check messages), so the
+            // template has no quotes around {PropertyValue} to give FluentValidation's text.
+            .For(x => x.Number, n => n.IfNullOrEmpty(), rule => rule.WithMessage("{PropertyName} at {PropertyPath} is {PropertyValue}."))
             .ForEach(x => x.Lines, l => l.IfNull(), rule => rule.WithMessage("Line {CollectionIndex} is missing."));
 
         var order = new Order { Number = "", Lines = [new Line(), null] };

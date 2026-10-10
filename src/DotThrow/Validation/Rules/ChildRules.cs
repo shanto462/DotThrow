@@ -38,6 +38,9 @@ internal sealed class ChildRule<T, TProperty> : Rule<T>
 
     public override Type ChildValidatorType => _validatorType;
 
+    public override bool NeedsAsync(HashSet<object> visited) =>
+        base.NeedsAsync(visited) || AsyncRules.OfChild(Validator, _provider is not null, visited);
+
     public override void InheritGroups(string[] groups)
     {
         base.InheritGroups(groups);
@@ -109,6 +112,9 @@ internal sealed class EachChildRule<T, TItem> : Rule<T>, IEachRule<TItem>, IEach
     }
 
     public IValidator<TItem>? Validator { get; }
+
+    public override bool NeedsAsync(HashSet<object> visited) =>
+        base.NeedsAsync(visited) || AsyncRules.OfChild(Validator, _provider is not null, visited);
 
     public Func<TItem, bool>? Filter { get; set; }
 
@@ -323,6 +329,9 @@ internal sealed class IncludeRule<T> : Rule<T>
     public IValidator<T>? Validator { get; }
 
     public override Type ChildValidatorType => _validatorType;
+
+    public override bool NeedsAsync(HashSet<object> visited) =>
+        base.NeedsAsync(visited) || AsyncRules.OfChild(Validator, _provider is not null, visited);
 
     protected override void Run(ValidationContext<T> context)
     {

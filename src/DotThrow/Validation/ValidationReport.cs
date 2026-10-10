@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 using DotThrow.Internal;
@@ -25,12 +26,15 @@ namespace DotThrow;
 /// </example>
 public sealed class ValidationReport
 {
-    private List<ValidationFailure>? _failures;
+    private FailureList? _failures;
 
     /// <summary>Gets a value indicating whether no check failed. Failures of every severity count.</summary>
     public bool IsValid => Count == 0;
 
-    /// <summary>Gets the failures, in the order the checks ran.</summary>
+    /// <summary>
+    /// Gets the failures, in the order the checks ran. It is read-only: use
+    /// <see cref="Add(ValidationFailure)"/> to add failures.
+    /// </summary>
     public IReadOnlyList<ValidationFailure> Failures => (IReadOnlyList<ValidationFailure>?)_failures ?? Array.Empty<ValidationFailure>();
 
     /// <summary>
@@ -113,8 +117,8 @@ public sealed class ValidationReport
         }
 
         // Copy first, so adding a report to itself does not change the list while reading it.
-        var failures = ReferenceEquals(other, this) ? source.ToArray() : (IReadOnlyList<ValidationFailure>)source;
-        var list = _failures ??= new List<ValidationFailure>(failures.Count);
+        var failures = ReferenceEquals(other, this) ? source.List.ToArray() : (IReadOnlyList<ValidationFailure>)source.List;
+        var list = (_failures ??= new FailureList(failures.Count)).List;
         for (var i = 0; i < failures.Count; i++)
         {
             list.Add(failures[i].WithPrefix(prefix ?? string.Empty));
@@ -144,7 +148,7 @@ public sealed class ValidationReport
         var grouped = new Dictionary<string, List<string>>(StringComparer.Ordinal);
         if (_failures is not null)
         {
-            foreach (var failure in _failures)
+            foreach (var failure in _failures.List)
             {
                 if (!grouped.TryGetValue(failure.Name, out var messages))
                 {
@@ -201,7 +205,7 @@ public sealed class ValidationReport
         var text = new StringBuilder("Validation failed with ")
             .Append(_failures.Count)
             .Append(_failures.Count == 1 ? " error:" : " errors:");
-        foreach (var failure in _failures)
+        foreach (var failure in _failures.List)
         {
             text.AppendLine().Append(" - ").Append(failure);
         }
@@ -219,7 +223,29 @@ public sealed class ValidationReport
             return true;
         }
 
-        return sink.OnCheckFailure(this, run.Frame, name, message, errorCode, attemptedValue) || alwaysStop;
+        try
+        {
+            return sink.OnCheckFailure(this, run.Frame, name, message, errorCode, attemptedValue) || alwaysStop;
+        }
+        finally
+        {
+            run.RuleMessage = null;
+        }
+    }
+
+    // The message of a failed check in collect mode. Inside a rule with WithMessage it is the
+    // rule message, rendered with the check's arguments ({MaxLength}, {ComparisonValue}...) the
+    // same way as check messages; otherwise the check's own message.
+    internal string RenderCheckMessage<TValue, TArgs>(string? custom, string code, string? key, string name, TValue value, TArgs args)
+        where TArgs : struct, IMessageArgs
+    {
+        if (Run is { } run && run.Frame.Sink is { } sink && sink.RenderMessage(run.Frame, name, value, args) is { } text)
+        {
+            run.RuleMessage = text;
+            return text;
+        }
+
+        return Messages.Render(custom, code, key, name, value, args);
     }
 
     // Adds a failure created by a validator rule, after the global hook.
@@ -233,5 +259,12 @@ public sealed class ValidationReport
         AddCore(failure);
     }
 
-    private void AddCore(ValidationFailure failure) => (_failures ??= []).Add(failure);
+    private void AddCore(ValidationFailure failure) => (_failures ??= new FailureList(4)).List.Add(failure);
+
+    // The failures: a read-only view for callers (Failures cannot be cast back to a list and
+    // changed), and the list behind it for the report. One object, so the report stays small.
+    private sealed class FailureList(int capacity) : ReadOnlyCollection<ValidationFailure>(new List<ValidationFailure>(capacity))
+    {
+        public List<ValidationFailure> List => (List<ValidationFailure>)Items;
+    }
 }

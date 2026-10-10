@@ -206,7 +206,8 @@ internal sealed class StringFamily() : ComparableFamily<string>(static text => t
         return true;
     }
 
-    // Patterns come from data, so a slow match stops after this time (RegexMatchTimeoutException).
+    // Patterns come from data, so a slow match stops after this time. The guard then fails the
+    // check with its own code and message (fail closed), as for code rules.
     private static readonly TimeSpan PatternTimeout = TimeSpan.FromSeconds(1);
 
     // The pattern is compiled once, when the rule is built; a bad pattern is a definition error.

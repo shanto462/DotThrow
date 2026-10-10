@@ -14,8 +14,9 @@ namespace DotThrow;
 /// This is DotThrow's version of FluentValidation's <c>ValidationStrategy</c>.
 /// </summary>
 /// <remarks>
-/// Options are read at the start of a run. <see cref="Items"/> is shared with the rules and
-/// may change during the run, so do not share one options object between runs on several threads.
+/// Options are read at the start of a run, and each run copies <see cref="Items"/> (a shallow
+/// copy), so one options object can be used for many runs, also on several threads at once, as
+/// long as nothing changes it while runs start. Items added by rules stay in their run.
 /// </remarks>
 /// <example>
 /// <code>
@@ -29,6 +30,10 @@ namespace DotThrow;
 public class ValidationOptions
 {
     private IDictionary<string, object?>? _items;
+
+    // True when _items belongs to a running parent run (a hand-written child validator gets
+    // the parent's items), so the child run uses it instead of a copy.
+    private bool _sharedItems;
 
     /// <summary>
     /// Gets or sets the groups to run. <see langword="null"/> or empty runs the rules in
@@ -71,13 +76,18 @@ public class ValidationOptions
     public IRuleSelector? RuleSelector { get; set; }
 
     /// <summary>
-    /// Gets data shared with every rule of the run, child validators included, through
-    /// <see cref="ValidationContext.Items"/>. Rules may also add items, and the caller can
-    /// read them after the run.
+    /// Gets data for every rule of a run, child validators included, through
+    /// <see cref="ValidationContext.Items"/>. Each run starts with a shallow copy, so items that
+    /// rules add or remove do not change these options or other runs. To get data out of a run,
+    /// put a mutable object here (for example a list) and let the rules fill it.
     /// </summary>
     public IDictionary<string, object?> Items => _items ??= new Dictionary<string, object?>(StringComparer.Ordinal);
 
-    internal IDictionary<string, object?>? ItemsOrNull => _items;
+    // The items a run starts with: a copy of Items, the parent's items for a child run, or null.
+    internal IDictionary<string, object?>? ItemsForRun() =>
+        _items is not { Count: > 0 } items ? (_sharedItems ? _items : null)
+        : _sharedItems ? items
+        : new Dictionary<string, object?>(items, StringComparer.Ordinal);
 
     // How deep the run that created these options is (child runs of hand-written validators).
     internal int Depth { get; set; }
@@ -120,7 +130,19 @@ public class ValidationOptions
         return this;
     }
 
-    internal void ShareItems(IDictionary<string, object?> items) => _items = items;
+    // A child run of a parent run uses the parent's items (same run, same data).
+    internal void ShareItems(IDictionary<string, object?> items)
+    {
+        _items = items;
+        _sharedItems = true;
+    }
+
+    // Takes the items of other options with their sharing mode (copied per run, or shared).
+    internal void UseItemsOf(ValidationOptions other)
+    {
+        _items = other._items;
+        _sharedItems = other._sharedItems;
+    }
 
     private protected static string[] Append(IReadOnlyList<string>? current, string[] more)
     {

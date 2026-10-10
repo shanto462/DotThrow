@@ -119,7 +119,13 @@ public partial class Validator<T>
 
     /// <summary>Describes the rules of this validator, for tools, documentation and tests.</summary>
     /// <returns>A snapshot of the rules.</returns>
-    public ValidatorDescriptor Describe() => new(GetType(), typeof(T), Descriptors.Of(Volatile.Read(ref _rules)));
+    public ValidatorDescriptor Describe()
+    {
+        var rules = Volatile.Read(ref _rules);
+        return new(GetType(), typeof(T), Descriptors.Of(rules), ((IAsyncRuleInfo)this).HasAsyncRules(new HashSet<object>()));
+    }
+
+    bool IAsyncRuleInfo.HasAsyncRules(HashSet<object> visited) => visited.Add(this) && AsyncRules.Of(Volatile.Read(ref _rules), visited);
 
     ValidationReport IValidator.Validate(object instance, ValidationOptions? options) => Validate(Cast(instance), options);
 

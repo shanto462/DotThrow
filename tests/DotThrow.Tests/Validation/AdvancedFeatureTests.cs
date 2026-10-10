@@ -116,9 +116,10 @@ public sealed class AdvancedFeatureTests
                     context.AddFailure("Lines", "An order can have at most {Limit} lines, not {Count}.");
                 }
             })
-            .For(x => x.Number, n => n.IfNullOrEmpty(), rule => rule.WithMessage("{PropertyName} at {PropertyPath} is '{PropertyValue}'."))
+            .For(x => x.Number, n => n.IfNullOrEmpty(), rule => rule.WithMessage("{PropertyName} at {PropertyPath} is {PropertyValue}."))
             .ForEach(x => x.Lines, l => l.IfNull(), rule => rule.WithMessage("Line {CollectionIndex} is missing."));
 
+        // Text values are quoted by DotThrow, as in check messages, so the template has no quotes.
         var result = validator.TestValidate(new Order { Number = "", Lines = [new Line(), null, new Line()] });
 
         result.ShouldHaveValidationErrorFor("Lines").WithErrorMessage("An order can have at most 2 lines, not {Count}.").WithMessageArgument("Limit", 2);

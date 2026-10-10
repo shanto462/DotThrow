@@ -145,12 +145,13 @@ public sealed class ApiSurfaceTests
     {
         var validator = new Validator<Box>()
             .For(x => x.Name, n => n.IfNotNull(), rule => rule.WithMessage("Plain text."))
-            .For(x => x.Missing, e => e.IfNull(), rule => rule.WithMessage("Got '{PropertyValue}'."))
-            .For(x => x.Content, a => a.IfNotNull(), rule => rule.WithMessage("Got '{PropertyValue}'."));
+            .For(x => x.Missing, e => e.IfNull(), rule => rule.WithMessage("Got {PropertyValue}."))
+            .For(x => x.Content, a => a.IfNotNull(), rule => rule.WithMessage("Got [{PropertyValue}]."));
 
         var report = validator.Validate(new Box { Name = "Ada", Content = new Nameless() });
 
-        Assert.Equal(["Plain text.", "Got ''.", "Got ''."], Names.Messages(report));
+        // Rule messages format values like check messages: null is "null", a null ToString is empty.
+        Assert.Equal(["Plain text.", "Got null.", "Got []."], Names.Messages(report));
     }
 
     [Fact]
