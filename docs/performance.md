@@ -109,7 +109,7 @@ failures for 1,024 invalid orders in both libraries).
 - .NET SDK 10.0.401, .NET 10.0.12, Arm64 RyuJIT
 - BenchmarkDotNet 0.15.8, in-process toolchain, 1 launch, 8 warm-up and 20 measured
   iterations
-- DotThrow 2.0.0 (branch `feat/v2`), Ardalis.GuardClauses 5.0.0,
+- DotThrow 2.0.0 (2.0.1 has the same code), Ardalis.GuardClauses 5.0.0,
   CommunityToolkit.Diagnostics 8.4.2, FluentValidation 12.1.1, Throw 1.4.0
 - Run on 2026-10-10. Other work (builds and a Docker test run) used the machine at the
   same time, so absolute times may be a little high; the full reports show the error of
