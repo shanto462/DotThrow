@@ -13,8 +13,7 @@ namespace DotThrow.DependencyInjection;
 /// {
 ///     o.Checks = new CheckRegistry().Add&lt;string&gt;("NotReserved", (name, _) =&gt; name.IfOneOf("admin", "root"));
 ///     o.CodeRules = v =&gt; v.For(x =&gt; x.Password, p =&gt; p.IfNullOrEmpty().IfShorterThan(12));
-///     o.OnReloadError = (error, services) =&gt;
-///         services.GetRequiredService&lt;ILogger&lt;SignUp&gt;&gt;().LogError(error, "The SignUp rules were not reloaded.");
+///     o.OnReloadError = (error, services) =&gt; services.GetRequiredService&lt;RulesHealth&gt;().Failed(error.Errors);
 /// });
 /// </code>
 /// </example>
@@ -31,10 +30,12 @@ public sealed class DynamicValidatorOptions<T>
     public Action<Validator<T>>? CodeRules { get; set; }
 
     /// <summary>
-    /// Gets or sets what happens when changed configuration has errors. The old rules stay in use.
-    /// The callback gets every error (<see cref="RuleDefinitionException.Errors"/>) and the root
-    /// service provider, for example to resolve a logger. When it is <see langword="null"/>, the
-    /// error is written with <see cref="System.Diagnostics.Trace.TraceError(string)"/>.
+    /// Gets or sets a callback for changed configuration with errors. The old rules stay in use.
+    /// It gets every error (<see cref="RuleDefinitionException.Errors"/>) and the root service provider.
+    /// The failure is also logged as an error through <c>ILogger&lt;DynamicValidator&lt;T&gt;&gt;</c> when
+    /// logging is registered; with neither logging nor this callback it goes to
+    /// <see cref="System.Diagnostics.Trace.TraceError(string)"/>. A reload that does not change the section
+    /// (another section changed, or the same values were saved again) rebuilds and reports nothing.
     /// </summary>
     public Action<RuleDefinitionException, IServiceProvider>? OnReloadError { get; set; }
 

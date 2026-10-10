@@ -143,3 +143,35 @@ public sealed class Address
 {
     public string? City { get; set; }
 }
+
+public sealed class Item
+{
+    public string? Title { get; set; }
+
+    public int Count { get; set; }
+}
+
+// Three validators for one model: a base, a stricter derived one, and an unrelated one.
+public class ItemValidator : Validator<Item>
+{
+    public ItemValidator()
+    {
+        For(x => x.Title, title => title.IfNullOrEmpty());
+    }
+}
+
+public sealed class StrictItemValidator : ItemValidator
+{
+    public StrictItemValidator()
+    {
+        For(x => x.Count, count => count.IfLessThan(1));
+    }
+}
+
+public sealed class ExtraItemValidator : Validator<Item>
+{
+    public ExtraItemValidator()
+    {
+        For(x => x.Count, count => count.IfGreaterThan(1000));
+    }
+}

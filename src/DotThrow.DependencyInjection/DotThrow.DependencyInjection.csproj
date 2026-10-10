@@ -35,6 +35,12 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Options" />
+    <!--
+      Logs dynamic rule reloads that fail (the old rules stay), so the failure is visible in app logs
+      by default. Every host and ASP.NET Core app already has this package (8.0.2 is the version
+      Microsoft.Extensions.Hosting 8.0.1 uses).
+    -->
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using DotThrow.AspNetCore.Internal;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -32,15 +33,20 @@ public static class ValidationReportProblemExtensions
     /// </summary>
     /// <param name="report">The report.</param>
     /// <param name="options">Which extensions to add, or <see langword="null"/> for none.</param>
+    /// <param name="keyPolicy">
+    /// The <c>DictionaryKeyPolicy</c> of the app's JSON options, so the extension keys match the keys of
+    /// <c>errors</c> (for example <c>JsonNamingPolicy.CamelCase</c>), or <see langword="null"/> to keep the
+    /// failure names. <c>WithValidation&lt;T&gt;()</c> passes it for you.
+    /// </param>
     /// <returns>The result.</returns>
-    public static ValidationProblem ToValidationProblem(this ValidationReport report, ValidationProblemOptions? options = null)
+    public static ValidationProblem ToValidationProblem(this ValidationReport report, ValidationProblemOptions? options = null, JsonNamingPolicy? keyPolicy = null)
     {
         report.Throw().IfNull();
         Dictionary<string, object?>? extensions = null;
         if (options is { IncludeErrorCodes: true } or { IncludeSeverities: true })
         {
             extensions = new Dictionary<string, object?>(StringComparer.Ordinal);
-            ProblemExtensions.Add(extensions, report.Failures, options, asJson: true);
+            ProblemExtensions.Add(extensions, report.Failures, options, asJson: true, keyPolicy);
         }
 
         return TypedResults.ValidationProblem(report.ToDictionary(), extensions: extensions);
@@ -53,19 +59,24 @@ public static class ValidationReportProblemExtensions
     /// </summary>
     /// <param name="report">The report.</param>
     /// <param name="options">Which extensions to add, or <see langword="null"/> for none.</param>
+    /// <param name="keyPolicy">
+    /// The <c>DictionaryKeyPolicy</c> of the app's JSON options, so the extension keys match the keys of
+    /// <c>errors</c>, or <see langword="null"/> to keep the failure names.
+    /// </param>
     /// <returns>The problem details.</returns>
-    public static HttpValidationProblemDetails ToProblemDetails(this ValidationReport report, ValidationProblemOptions? options = null)
+    public static HttpValidationProblemDetails ToProblemDetails(this ValidationReport report, ValidationProblemOptions? options = null, JsonNamingPolicy? keyPolicy = null)
     {
         report.Throw().IfNull();
         var details = new HttpValidationProblemDetails(report.ToDictionary()) { Status = StatusCodes.Status400BadRequest };
-        ProblemExtensions.Add(details.Extensions, report.Failures, options, asJson: true);
+        ProblemExtensions.Add(details.Extensions, report.Failures, options, asJson: true, keyPolicy);
         return details;
     }
 
     /// <summary>
     /// Creates an MVC <see cref="MvcValidationProblemDetails"/> with status 400, for controllers
     /// (<c>return BadRequest(report.ToValidationProblemDetails());</c>). Extension values are
-    /// <c>Dictionary&lt;string, string[]&gt;</c>, which every MVC output formatter can write.
+    /// <c>Dictionary&lt;string, string[]&gt;</c>, which every MVC output formatter can write; the formatter
+    /// applies its dictionary key policy to them and to <c>errors</c> alike.
     /// </summary>
     /// <param name="report">The report.</param>
     /// <param name="options">Which extensions to add, or <see langword="null"/> for none.</param>

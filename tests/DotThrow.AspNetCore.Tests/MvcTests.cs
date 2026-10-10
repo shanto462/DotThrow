@@ -53,6 +53,25 @@ public sealed class MvcTests
     }
 
     [Fact]
+    public async Task Extension_keys_follow_the_mvc_dictionary_key_policy()
+    {
+        await using var app = await StartAsync(
+            mvc => mvc.AddDotThrowValidation().AddJsonOptions(o => o.JsonSerializerOptions.DictionaryKeyPolicy = System.Text.Json.JsonNamingPolicy.CamelCase),
+            services => services.Configure<ValidationProblemOptions>(o =>
+            {
+                o.IncludeErrorCodes = true;
+                o.IncludeSeverities = true;
+            }));
+
+        var json = await TestApp.ReadJsonAsync(await app.PostAsync("/mvc/api/sign-up", Invalid));
+        var errors = TestApp.ReadMap(json, "errors").Keys.OrderBy(k => k, StringComparer.Ordinal).ToList();
+
+        Assert.Equal(["email", "name"], errors);
+        Assert.Equal(errors, TestApp.ReadMap(json, "errorCodes").Keys.OrderBy(k => k, StringComparer.Ordinal));
+        Assert.Equal(errors, TestApp.ReadMap(json, "severities").Keys.OrderBy(k => k, StringComparer.Ordinal));
+    }
+
+    [Fact]
     public async Task Attribute_groups_and_skip_replace_the_global_settings()
     {
         await using var app = await StartAsync(mvc => mvc.AddDotThrowValidation());

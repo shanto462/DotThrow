@@ -117,3 +117,21 @@ internal static class Expected
         throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "No failure named {0}.", name));
     }
 }
+
+public interface INamed
+{
+    string? Name { get; }
+}
+
+public sealed class Named(string? name) : INamed
+{
+    public string? Name { get; } = name;
+}
+
+public sealed class NamedValidator : Validator<INamed>
+{
+    public NamedValidator()
+    {
+        For(x => x.Name, name => name.IfNullOrWhiteSpace());
+    }
+}

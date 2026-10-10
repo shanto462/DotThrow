@@ -9,6 +9,7 @@ using DotThrow.Dynamic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Xunit;
 
@@ -98,6 +99,69 @@ public sealed class DynamicValidatorTests
         Assert.Same(provider.GetRequiredService<DynamicValidator<Contact>>(), seen!.GetRequiredService<DynamicValidator<Contact>>());
         Assert.False(validator.Validate(longName).IsValid);
         Assert.Equal("10", provider.GetRequiredService<DynamicValidator<Contact>>().Definition.Rules[0].Checks[1].Value);
+    }
+
+    [Fact]
+    public void Reloads_are_logged_and_unchanged_sections_are_skipped()
+    {
+        var values = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase) { ["Other:Setting"] = "1" };
+        foreach (var pair in Flat(NameRules))
+        {
+            values["Validation:Contact:" + pair.Key] = pair.Value;
+        }
+
+        var configuration = new ConfigurationBuilder().AddInMemoryCollection(values).Build();
+        var section = configuration.GetSection("Validation:Contact");
+        var logs = new CollectingLoggerProvider();
+        var reported = 0;
+        using var provider = Provider(services => services
+            .AddLogging(logging => logging.AddProvider(logs))
+            .AddDynamicValidator<Contact>(section, o => o.OnReloadError = (_, _) => reported++));
+        var validator = provider.GetRequiredService<DynamicValidator<Contact>>();
+        var first = validator.Definition;
+
+        // Another section changes, or nothing changes: no rebuild, nothing logged.
+        configuration["Other:Setting"] = "2";
+        configuration.Reload();
+        configuration.Reload();
+        Assert.Same(first, validator.Definition);
+        Assert.Empty(logs.Entries);
+
+        // A good change is applied and logged.
+        configuration["Validation:Contact:rules:0:checks:1:value"] = "20";
+        configuration.Reload();
+        Assert.NotSame(first, validator.Definition);
+        var reloaded = Assert.Single(logs.Entries);
+        Assert.Equal(LogLevel.Information, reloaded.Level);
+        Assert.Equal("DotThrow.Dynamic.DynamicValidator", reloaded.Category.Split('<')[0]);
+
+        // A bad change is logged as an error once, even when other sections keep changing.
+        configuration["Validation:Contact:rules:0:checks:1:check"] = "LongerThen";
+        configuration.Reload();
+        configuration["Other:Setting"] = "3";
+        configuration.Reload();
+        var failed = Assert.Single(logs.Entries, e => e.Level == LogLevel.Error);
+        Assert.IsType<RuleDefinitionException>(failed.Exception);
+        Assert.True(Has(failed.Message, "were not reloaded; the old rules stay in use"));
+        Assert.Equal(1, reported);
+        Assert.Equal("20", validator.Definition.Rules[0].Checks[1].Value);
+    }
+
+    [Fact]
+    public void A_throwing_reload_handler_is_logged()
+    {
+        var configuration = new ConfigurationBuilder().AddInMemoryCollection(Flat(NameRules)).Build();
+        var logs = new CollectingLoggerProvider();
+        using var provider = Provider(services => services
+            .AddLogging(logging => logging.AddProvider(logs))
+            .AddDynamicValidator<Contact>(configuration, o => o.OnReloadError = (_, _) => throw new InvalidOperationException("handler failed")));
+        _ = provider.GetRequiredService<IValidator<Contact>>();
+
+        configuration["rules:0:checks:1:check"] = "NoSuchCheck";
+        configuration.Reload();
+
+        Assert.Contains(logs.Entries, e => e.Level == LogLevel.Error && e.Exception is InvalidOperationException && Has(e.Message, "OnReloadError"));
+        Assert.Contains(logs.Entries, e => e.Level == LogLevel.Error && e.Exception is RuleDefinitionException);
     }
 
     [Fact]
@@ -455,6 +519,45 @@ public sealed class DynamicValidatorTests
             lock (_messages)
             {
                 _messages.Add(message ?? string.Empty);
+            }
+        }
+    }
+}
+
+// Keeps every log entry, for tests that check what was logged.
+internal sealed class CollectingLoggerProvider : ILoggerProvider
+{
+    private readonly List<(string Category, LogLevel Level, string Message, Exception? Exception)> _entries = [];
+
+    public IReadOnlyList<(string Category, LogLevel Level, string Message, Exception? Exception)> Entries
+    {
+        get
+        {
+            lock (_entries)
+            {
+                return [.. _entries];
+            }
+        }
+    }
+
+    public ILogger CreateLogger(string categoryName) => new Logger(this, categoryName);
+
+    public void Dispose()
+    {
+    }
+
+    private sealed class Logger(CollectingLoggerProvider provider, string category) : ILogger
+    {
+        public IDisposable? BeginScope<TState>(TState state)
+            where TState : notnull => null;
+
+        public bool IsEnabled(LogLevel logLevel) => true;
+
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+        {
+            lock (provider._entries)
+            {
+                provider._entries.Add((category, logLevel, formatter(state, exception), exception));
             }
         }
     }

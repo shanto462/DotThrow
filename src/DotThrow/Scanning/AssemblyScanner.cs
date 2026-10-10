@@ -13,8 +13,20 @@ namespace DotThrow.Scanning;
 /// The DependencyInjection package uses it to register validators; it also works on its own.
 /// </summary>
 /// <remarks>
+/// <para>
+/// Results come in a fixed order: a validator class comes after its base classes (fewer base
+/// classes first), then by full type name. Dependency injection registers them in this order, so
+/// when several validators exist for one model, a single <see cref="IValidator{T}"/> resolves to the
+/// last one: a derived validator wins over its base. All of them stay available as a list.
+/// </para>
+/// <para>
+/// Types that cannot be loaded (for example because an assembly they depend on is missing) are
+/// skipped, so scanning <c>AppDomain.CurrentDomain.GetAssemblies()</c> works.
+/// </para>
+/// <para>
 /// Scanning uses reflection over all types of an assembly, so trimming may remove validators
 /// that are only found this way. In trimmed or native AOT apps, register validators explicitly.
+/// </para>
 /// </remarks>
 /// <example>
 /// <code>
@@ -100,24 +112,66 @@ public sealed class AssemblyScanner : IEnumerable<AssemblyScanResult>
     /// <inheritdoc/>
     public IEnumerator<AssemblyScanResult> GetEnumerator()
     {
+        var found = new List<Found>();
         foreach (var type in _types)
         {
-            if (type is null || type.IsAbstract || type.IsInterface || type.IsGenericTypeDefinition)
+            if (type is not null)
             {
-                continue;
+                Inspect(type, found);
+            }
+        }
+
+        // Base classes before derived classes, then by name: the order does not depend on metadata order.
+        found.Sort(static (a, b) =>
+        {
+            var order = a.Depth.CompareTo(b.Depth);
+            if (order == 0)
+            {
+                order = string.CompareOrdinal(a.Name, b.Name);
             }
 
-            foreach (var interfaceType in type.GetInterfaces())
-            {
-                if (interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(IValidator<>))
-                {
-                    yield return new AssemblyScanResult(interfaceType, type);
-                }
-            }
+            return order == 0 ? a.Index.CompareTo(b.Index) : order;
+        });
+
+        foreach (var item in found)
+        {
+            yield return item.Result;
         }
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    // Adds the validator interfaces of one type. A type that cannot be loaded (a base type or an
+    // interface from a missing assembly) is skipped.
+    private static void Inspect(Type type, List<Found> found)
+    {
+        try
+        {
+            if (type.IsAbstract || type.IsInterface || type.IsGenericTypeDefinition)
+            {
+                return;
+            }
+
+            var depth = 0;
+            for (var current = type.BaseType; current is not null; current = current.BaseType)
+            {
+                depth++;
+            }
+
+            var name = type.FullName ?? type.Name;
+            foreach (var interfaceType in type.GetInterfaces())
+            {
+                if (interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(IValidator<>))
+                {
+                    found.Add(new Found(depth, name, found.Count, new AssemblyScanResult(interfaceType, type)));
+                }
+            }
+        }
+        catch (Exception exception) when (IsLoadFailure(exception))
+        {
+            // Skip the type.
+        }
+    }
 
     private static Type[] TypesOf(Assembly assembly, bool includeInternalTypes)
     {
@@ -129,9 +183,31 @@ public sealed class AssemblyScanner : IEnumerable<AssemblyScanResult>
 
         if (!includeInternalTypes)
         {
-            return assembly.GetExportedTypes();
+            try
+            {
+                return assembly.GetExportedTypes();
+            }
+            catch (Exception exception) when (IsLoadFailure(exception))
+            {
+                // A public type depends on a missing assembly: keep the public types that load.
+                var visible = new List<Type>();
+                foreach (var type in LoadableTypes(assembly))
+                {
+                    if (IsVisible(type))
+                    {
+                        visible.Add(type);
+                    }
+                }
+
+                return [.. visible];
+            }
         }
 
+        return LoadableTypes(assembly);
+    }
+
+    private static Type[] LoadableTypes(Assembly assembly)
+    {
         try
         {
             return assembly.GetTypes();
@@ -150,6 +226,37 @@ public sealed class AssemblyScanner : IEnumerable<AssemblyScanResult>
 
             return [.. loaded];
         }
+        catch (Exception exception) when (IsLoadFailure(exception))
+        {
+            return Type.EmptyTypes;
+        }
+    }
+
+    private static bool IsVisible(Type type)
+    {
+        try
+        {
+            return type.IsVisible;
+        }
+        catch (Exception exception) when (IsLoadFailure(exception))
+        {
+            return false;
+        }
+    }
+
+    private static bool IsLoadFailure(Exception exception) =>
+        exception is ReflectionTypeLoadException or TypeLoadException or System.IO.FileNotFoundException
+            or System.IO.FileLoadException or BadImageFormatException;
+
+    private readonly struct Found(int depth, string name, int index, AssemblyScanResult result)
+    {
+        public int Depth { get; } = depth;
+
+        public string Name { get; } = name;
+
+        public int Index { get; } = index;
+
+        public AssemblyScanResult Result { get; } = result;
     }
 }
 

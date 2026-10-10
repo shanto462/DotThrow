@@ -11,7 +11,8 @@ validators:
 
 Targets netstandard2.0, .NET Framework 4.6.2, .NET 8, .NET 9 and .NET 10. It depends on
 `DotThrow`, `Microsoft.Extensions.Configuration.Abstractions`,
-`Microsoft.Extensions.DependencyInjection.Abstractions` and `Microsoft.Extensions.Options`.
+`Microsoft.Extensions.DependencyInjection.Abstractions`, `Microsoft.Extensions.Logging.Abstractions`
+and `Microsoft.Extensions.Options`.
 
 ## Install
 
@@ -44,6 +45,16 @@ services.AddValidator(sp => new OrderValidator(sp.GetRequiredService<IStockServi
 Each validator class is registered the same way FluentValidation does it: as every
 `IValidator<T>` it implements and as the class itself. Then ask for `IValidator<SignUp>` in a
 constructor or a minimal API handler.
+
+When several classes validate the same model, all of them are registered, so
+`IEnumerable<IValidator<T>>` gets every one. A single `IValidator<T>` resolves to the last one
+registered. Scanning registers in a fixed order: a class after its base classes, then by full type
+name. So `StrictOrderValidator : OrderValidator` wins over `OrderValidator`, but between two unrelated
+validators the winner only depends on their names. Keep one validator per model, or leave the others
+out with the scanning `filter`.
+
+Types that cannot be loaded (an assembly they need is missing) are skipped, so
+`AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies())` works.
 
 Assembly scanning uses reflection and is marked `[RequiresUnreferencedCode]`. In trimmed and Native
 AOT apps use `AddValidator`.
@@ -128,16 +139,17 @@ builder.Services.AddDynamicValidator(
     {
         o.Checks = new CheckRegistry().Add<string>("NotReserved", (email, _) => email.IfOneOf("admin@example.com"));
         o.CodeRules = v => v.For(x => x.Password, p => p.IfNullOrEmpty().IfShorterThan(12));
-        o.OnReloadError = (error, services) =>
-            services.GetRequiredService<ILogger<SignUp>>().LogError(error, "The SignUp rules were not reloaded.");
+        o.OnReloadError = (error, services) => services.GetRequiredService<RulesHealth>().Failed(error.Errors);
     });
 ```
 
 - The validator is a singleton `IValidator<T>` and `DynamicValidator<T>`. One per type: a second
   call for the same type replaces the first.
-- When the configuration changes (for example `reloadOnChange: true` on a JSON file), the rules are
-  read again and swapped in one step. Rules with errors are not used: the old rules stay, and
-  `OnReloadError` gets every error (without it, they go to `Trace.TraceError`).
+- When the section changes (for example `reloadOnChange: true` on a JSON file), the rules are read
+  again and swapped in one step. Changes to other sections, or saving the same values again, do
+  nothing. Rules with errors are not used: the old rules stay, the failure is logged as an error
+  through `ILogger<DynamicValidator<T>>`, and `OnReloadError` (if set) gets every error. Without
+  logging and without `OnReloadError`, the failure goes to `Trace.TraceError`.
 - A definition with errors fails when the validator is first resolved, and also when the host starts
   (`ValidateOnStart`, on by default), with every error and its place, for example
   `Rules[0].Checks[1].Chek (Validation:SignUp:rules:0:checks:1:chek): unknown key (did you mean 'check'?).`

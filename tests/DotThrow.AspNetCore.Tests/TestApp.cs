@@ -44,8 +44,17 @@ internal sealed class TestApp : IAsyncDisposable
         configureServices(builder);
 
         var app = builder.Build();
-        configureApp(app);
-        await app.StartAsync(Token);
+        try
+        {
+            configureApp(app);
+            await app.StartAsync(Token);
+        }
+        catch
+        {
+            await app.DisposeAsync();
+            throw;
+        }
+
         return new TestApp(app);
     }
 
@@ -78,5 +87,44 @@ internal sealed class TestApp : IAsyncDisposable
     {
         Client.Dispose();
         await App.DisposeAsync();
+    }
+}
+
+// Keeps every log entry, for tests that check what was logged.
+internal sealed class CollectingLoggerProvider : ILoggerProvider
+{
+    private readonly List<(string Category, LogLevel Level, string Message)> _entries = [];
+
+    public IReadOnlyList<(string Category, LogLevel Level, string Message)> Entries
+    {
+        get
+        {
+            lock (_entries)
+            {
+                return [.. _entries];
+            }
+        }
+    }
+
+    public ILogger CreateLogger(string categoryName) => new Logger(this, categoryName);
+
+    public void Dispose()
+    {
+    }
+
+    private sealed class Logger(CollectingLoggerProvider provider, string category) : ILogger
+    {
+        public IDisposable? BeginScope<TState>(TState state)
+            where TState : notnull => null;
+
+        public bool IsEnabled(LogLevel logLevel) => true;
+
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+        {
+            lock (provider._entries)
+            {
+                provider._entries.Add((category, logLevel, formatter(state, exception)));
+            }
+        }
     }
 }

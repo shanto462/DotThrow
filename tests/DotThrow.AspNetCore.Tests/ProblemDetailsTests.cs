@@ -11,6 +11,8 @@ public sealed class ProblemDetailsTests
 {
     private static readonly ValidationProblemOptions All = new() { IncludeErrorCodes = true, IncludeSeverities = true };
 
+    private static readonly JsonSerializerOptions CamelKeys = new() { DictionaryKeyPolicy = JsonNamingPolicy.CamelCase };
+
     private static ValidationReport Report() => new ValidationReport()
         .Add(new ValidationFailure("Email", "'Email' is not an email address.", ErrorCodes.NotEmailAddress, Severity.Error, attemptedValue: "secret-value"))
         .Add(new ValidationFailure("Email", "'Email' is too long.", ErrorCodes.LongerThan, Severity.Warning))
@@ -29,6 +31,20 @@ public sealed class ProblemDetailsTests
         Assert.Equal(
             """{"Email":["Error","Warning"],"":["Info"]}""",
             Assert.IsType<JsonElement>(result.ProblemDetails.Extensions["severities"]).GetRawText());
+    }
+
+    [Fact]
+    public void Key_policy_renames_the_extension_keys()
+    {
+        var result = Report().ToValidationProblem(All, JsonNamingPolicy.CamelCase);
+        var details = Report().ToProblemDetails(All, JsonNamingPolicy.CamelCase);
+
+        Assert.Equal("""{"email":["NotEmailAddress","LongerThan"],"":["EmptyOrder"]}""", ((JsonElement)result.ProblemDetails.Extensions["errorCodes"]!).GetRawText());
+        Assert.Equal("""{"email":["Error","Warning"],"":["Info"]}""", ((JsonElement)details.Extensions["severities"]!).GetRawText());
+
+        // The serializer applies the same policy to "errors", so the three dictionaries line up.
+        var text = JsonSerializer.Serialize(details, CamelKeys);
+        Assert.Contains("\"errors\":{\"email\":", text, StringComparison.Ordinal);
     }
 
     [Fact]

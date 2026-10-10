@@ -16,7 +16,9 @@ internal static class ProblemExtensions
     // the framework's own problem details JSON metadata covers, so Native AOT apps need no extra
     // JsonSerializerContext entries. Without it they are Dictionary<string, string[]> (MVC, where
     // Newtonsoft.Json or XML formatters may write the response).
-    internal static void Add(IDictionary<string, object?> extensions, IReadOnlyList<ValidationFailure> failures, ValidationProblemOptions? options, bool asJson)
+    // keyPolicy: the DictionaryKeyPolicy of the JSON options that write the response. It is applied
+    // here because a JsonElement is written as it is, while "errors" gets the policy from the serializer.
+    internal static void Add(IDictionary<string, object?> extensions, IReadOnlyList<ValidationFailure> failures, ValidationProblemOptions? options, bool asJson, JsonNamingPolicy? keyPolicy = null)
     {
         if (options is null || failures.Count == 0)
         {
@@ -26,13 +28,13 @@ internal static class ProblemExtensions
         if (options.IncludeErrorCodes)
         {
             var codes = Group(failures, static failure => failure.ErrorCode);
-            extensions[ErrorCodesKey] = asJson ? ToJson(codes) : codes;
+            extensions[ErrorCodesKey] = asJson ? ToJson(codes, keyPolicy) : codes;
         }
 
         if (options.IncludeSeverities)
         {
             var severities = Group(failures, static failure => SeverityName(failure.Severity));
-            extensions[SeveritiesKey] = asJson ? ToJson(severities) : severities;
+            extensions[SeveritiesKey] = asJson ? ToJson(severities, keyPolicy) : severities;
         }
     }
 
@@ -68,7 +70,7 @@ internal static class ProblemExtensions
         return result;
     }
 
-    private static JsonElement ToJson(Dictionary<string, string[]> values)
+    private static JsonElement ToJson(Dictionary<string, string[]> values, JsonNamingPolicy? keyPolicy)
     {
         var buffer = new ArrayBufferWriter<byte>();
         using (var writer = new Utf8JsonWriter(buffer))
@@ -76,7 +78,7 @@ internal static class ProblemExtensions
             writer.WriteStartObject();
             foreach (var pair in values)
             {
-                writer.WriteStartArray(pair.Key);
+                writer.WriteStartArray(keyPolicy is null ? pair.Key : keyPolicy.ConvertName(pair.Key));
                 foreach (var value in pair.Value)
                 {
                     writer.WriteStringValue(value);

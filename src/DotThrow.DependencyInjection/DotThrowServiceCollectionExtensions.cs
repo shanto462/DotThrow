@@ -20,6 +20,14 @@ namespace Microsoft.Extensions.DependencyInjection;
 /// twice adds nothing new) and as the class itself (with <c>TryAdd</c>).
 /// </para>
 /// <para>
+/// When several classes validate the same model, all are registered (<c>IEnumerable&lt;IValidator&lt;T&gt;&gt;</c>)
+/// and a single <see cref="IValidator{T}"/> resolves to the last one registered. Scanning registers a
+/// class after its base classes, then by full type name, so a derived validator wins over its base;
+/// between unrelated validators only the names decide. Keep one validator per model, or leave the
+/// others out with the <c>filter</c>.
+/// Types that cannot be loaded (an assembly they need is missing) are skipped.
+/// </para>
+/// <para>
 /// Assembly scanning uses reflection, so trimming may remove validator types that only scanning
 /// finds. In trimmed and Native AOT apps use <see cref="AddValidator{TModel, TValidator}(IServiceCollection, ServiceLifetime)"/>.
 /// </para>

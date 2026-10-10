@@ -57,10 +57,21 @@ An invalid request never reaches the handler. The answer is a 400 `application/p
 }
 ```
 
-The filter finds the handler parameter of type `T` once, when the endpoints are built (at the
-first request). A handler without such a parameter, or a missing `IValidator<T>` registration,
-fails right there, so the mistake shows up at once instead of on the first invalid request. A parameter whose type derives from `T` is validated too; an optional
-argument that the request did not send is skipped.
+The filter finds the handler parameters of type `T` once, when the endpoints are built. A parameter
+whose type derives from `T` is validated too. Parameters from services (`[FromServices]`,
+`[FromKeyedServices]`, or a registered service type without a binding attribute) are never
+validated, and an optional argument that the request did not send is skipped. When several
+arguments are validated, the answer has all their failures, named after the parameter
+(`"first.Value"`, `"second.Value"`).
+
+Setup mistakes (a handler without a `T` parameter from the request, no `IValidator<T>`
+registered, JSON options that cannot write a validation problem) never break other endpoints:
+ASP.NET Core builds the endpoints at the first request, the mistake is logged as an error, and only
+that endpoint answers 500. To stop the app at startup instead, with every mistake listed:
+
+```csharp
+builder.Services.ValidateEndpointsOnStart();
+```
 
 More forms:
 
@@ -129,7 +140,8 @@ builder.Services.Configure<ValidationProblemOptions>(o =>
 });
 ```
 
-Both filters then add two extensions, keyed and ordered like `errors`:
+Both filters then add two extensions, keyed and ordered like `errors` (keys follow the JSON
+options' `DictionaryKeyPolicy`, the same as `errors`):
 
 ```json
 "errorCodes": { "Email": ["NotEmailAddress"] },
@@ -158,11 +170,12 @@ ValidationProblemDetails mvcDetails = report.ToValidationProblemDetails(); // MV
   generator (`PublishAot`). Register validators with `AddValidator<TModel, TValidator>()`, not
   assembly scanning.
 - Call `builder.Services.AddProblemDetails()`. It gives the app's JSON options the metadata that
-  every `ValidationProblem` result needs in Native AOT. Without it building the endpoints fails
-  with a clear message (instead of answering 500 to every invalid request), unless you set a
-  `ResultFactory`.
+  every `ValidationProblem` result needs in Native AOT. Without it the endpoint is a setup mistake
+  (see above) unless you set a `ResultFactory`, instead of answering 500 only to invalid requests.
 - The `errorCodes` and `severities` extensions are written as JSON elements, so they need no
-  entries in your `JsonSerializerContext`. `ToValidationProblemDetails()` (MVC) uses
+  entries in your `JsonSerializerContext`. When you call `ToValidationProblem()` or
+  `ToProblemDetails()` yourself with a `DictionaryKeyPolicy`, pass it as `keyPolicy` so the keys
+  match `errors`. `ToValidationProblemDetails()` (MVC) uses
   dictionaries instead, which every MVC formatter can write.
 - MVC itself does not support Native AOT, so the MVC filter does not either.
 

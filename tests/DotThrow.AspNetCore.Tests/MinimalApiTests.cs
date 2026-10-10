@@ -9,8 +9,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Metadata;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace DotThrow.AspNetCore.Tests;
@@ -205,8 +207,34 @@ public sealed partial class MinimalApiTests
         Assert.Equal(HttpStatusCode.BadRequest, (await app.PostAsync("/items", new Item())).StatusCode);
         Assert.Equal(HttpStatusCode.OK, (await app.PostAsync("/items", new Item { Title = "Pen" })).StatusCode);
         Assert.Equal(HttpStatusCode.OK, (await app.GetAsync("/codes?first=ab&second=cd")).StatusCode);
-        Assert.Equal(HttpStatusCode.BadRequest, (await app.GetAsync("/codes?first=ab&second=long")).StatusCode);
-        Assert.Equal(HttpStatusCode.BadRequest, (await app.GetAsync("/codes?first=long&second=ab")).StatusCode);
+        Assert.Equal(["second.Value"], TestApp.ReadMap(await TestApp.ReadJsonAsync(await app.GetAsync("/codes?first=ab&second=long")), "errors").Keys);
+        Assert.Equal(["first.Value"], TestApp.ReadMap(await TestApp.ReadJsonAsync(await app.GetAsync("/codes?first=long&second=ab")), "errors").Keys);
+
+        // Every argument is validated and the failures come in one answer.
+        Assert.Equal(["first.Value", "second.Value"], TestApp.ReadMap(await TestApp.ReadJsonAsync(await app.GetAsync("/codes?first=long&second=long")), "errors").Keys);
+    }
+
+    [Fact]
+    public async Task Extension_keys_follow_the_dictionary_key_policy_like_errors()
+    {
+        await using var app = await TestApp.StartAsync(
+            builder =>
+            {
+                builder.Services.AddValidator<SignUp, SignUpValidator>();
+                builder.Services.Configure<ValidationProblemOptions>(o =>
+                {
+                    o.IncludeErrorCodes = true;
+                    o.IncludeSeverities = true;
+                });
+                builder.Services.ConfigureHttpJsonOptions(o => o.SerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase);
+            },
+            app => app.MapPost("/sign-up", (SignUp request) => TypedResults.Ok()).WithValidation<SignUp>());
+
+        var json = await TestApp.ReadJsonAsync(await app.PostAsync("/sign-up", Invalid));
+
+        Assert.Equal(["name", "email"], TestApp.ReadMap(json, "errors").Keys);
+        Assert.Equal(["name", "email"], TestApp.ReadMap(json, "errorCodes").Keys);
+        Assert.Equal(["name", "email"], TestApp.ReadMap(json, "severities").Keys);
     }
 
     [Fact]
@@ -221,40 +249,100 @@ public sealed partial class MinimalApiTests
     }
 
     [Fact]
-    public async Task A_handler_without_the_argument_fails_when_the_endpoint_is_built()
+    public async Task A_setup_mistake_breaks_only_its_endpoint_and_is_logged()
     {
+        var logs = new CollectingLoggerProvider();
         await using var app = await TestApp.StartAsync(
-            builder => builder.Services.AddValidator<SignUp, SignUpValidator>(),
-            app => app.MapGet("/ping", () => "pong").WithValidation<SignUp>());
+            builder =>
+            {
+                builder.Logging.AddProvider(logs);
+                builder.Services.AddValidator<SignUp, SignUpValidator>();
+            },
+            app =>
+            {
+                app.MapGet("/ok", () => "ok");
+                app.MapGet("/bad", () => "x").WithValidation<SignUp>();
+            });
 
-        var exception = Assert.Throws<InvalidOperationException>(app.Endpoints);
-        Assert.Contains("has no parameter of type SignUp", exception.Message, StringComparison.Ordinal);
+        Assert.Equal("ok", await (await app.GetAsync("/ok")).Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+        var bad = await app.GetAsync("/bad");
+        Assert.Equal(HttpStatusCode.InternalServerError, bad.StatusCode);
+        Assert.Contains("has no parameter of type SignUp", await bad.Content.ReadAsStringAsync(TestContext.Current.CancellationToken), StringComparison.Ordinal);
+        Assert.Equal("ok", await (await app.GetAsync("/ok")).Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+        Assert.Contains(logs.Entries, e => e.Level == LogLevel.Error && e.Category == "DotThrow.AspNetCore.EndpointValidation" && e.Message.Contains("has no parameter of type SignUp", StringComparison.Ordinal));
     }
 
     [Fact]
-    public async Task A_missing_validator_registration_fails_when_the_endpoint_is_built()
+    public async Task ValidateEndpointsOnStart_stops_the_host_with_every_mistake()
     {
-        await using var app = await TestApp.StartAsync(
-            builder => { },
-            app => app.MapPost("/sign-up", (SignUp request) => TypedResults.Ok()).WithValidation<SignUp>());
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => TestApp.StartAsync(
+            builder =>
+            {
+                builder.Services.ValidateEndpointsOnStart();
+                builder.Services.AddValidator<Code, CodeValidator>();
+            },
+            app =>
+            {
+                app.MapGet("/ok", () => "ok");
+                app.MapGet("/ping", () => "pong").WithValidation<Code>();
+                app.MapPost("/sign-up", (SignUp request) => TypedResults.Ok()).WithValidation<SignUp>();
+            }));
 
-        var exception = Assert.Throws<InvalidOperationException>(app.Endpoints);
+        Assert.StartsWith("Endpoint validation is not set up correctly:", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("has no parameter of type Code", exception.Message, StringComparison.Ordinal);
         Assert.Contains("needs an IValidator<SignUp> service", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
-    public async Task Source_generated_json_without_problem_details_fails_when_the_endpoint_is_built()
+    public async Task ValidateEndpointsOnStart_lets_a_correct_app_start()
+    {
+        await using var app = await TestApp.StartAsync(
+            builder => builder.Services.ValidateEndpointsOnStart().ValidateEndpointsOnStart().AddValidator<SignUp, SignUpValidator>(),
+            app => app.MapPost("/sign-up", (SignUp request) => TypedResults.Ok()).WithValidation<SignUp>());
+
+        Assert.Equal(HttpStatusCode.BadRequest, (await app.PostAsync("/sign-up", Invalid)).StatusCode);
+        Assert.Throws<ArgumentNullException>("services", () => ((IServiceCollection)null!).ValidateEndpointsOnStart());
+    }
+
+    [Fact]
+    public async Task Source_generated_json_without_problem_details_is_a_setup_mistake()
+    {
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => TestApp.StartAsync(
+            builder =>
+            {
+                builder.Services.ValidateEndpointsOnStart();
+                builder.Services.AddValidator<Code, CodeValidator>();
+                builder.Services.ConfigureHttpJsonOptions(o => o.SerializerOptions.TypeInfoResolver = JsonTypeInfoResolver.Combine());
+            },
+            app => app.MapGet("/code", (Code code) => code.Value).WithValidation<Code>()));
+
+        Assert.Contains("AddProblemDetails()", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Arguments_from_services_are_never_validated()
     {
         await using var app = await TestApp.StartAsync(
             builder =>
             {
-                builder.Services.AddValidator<Code, CodeValidator>();
-                builder.Services.ConfigureHttpJsonOptions(o => o.SerializerOptions.TypeInfoResolver = JsonTypeInfoResolver.Combine());
+                var invalid = new SignUp { Name = " ", Email = "x" };
+                builder.Services.AddSingleton(invalid);
+                builder.Services.AddKeyedSingleton("defaults", invalid);
+                builder.Services.AddSingleton<INamed>(new Named(" "));
+                builder.Services.AddValidator<SignUp, SignUpValidator>();
+                builder.Services.AddValidator<INamed, NamedValidator>();
             },
-            app => app.MapGet("/code", (Code code) => code.Value).WithValidation<Code>());
+            app =>
+            {
+                app.MapPost("/sign-up", ([FromBody] SignUp request, [FromServices] SignUp shared, [FromKeyedServices("defaults")] SignUp keyed) => TypedResults.Ok())
+                    .WithValidation<SignUp>();
+                app.MapGroup("/named").WithValidation<INamed>().MapGet("/", (INamed named, string? q) => named.Name);
+            });
 
-        var exception = Assert.Throws<InvalidOperationException>(app.Endpoints);
-        Assert.Contains("AddProblemDetails()", exception.Message, StringComparison.Ordinal);
+        Assert.Equal(HttpStatusCode.OK, (await app.PostAsync("/sign-up", Valid)).StatusCode);
+        var json = await TestApp.ReadJsonAsync(await app.PostAsync("/sign-up", Invalid));
+        Assert.Equal(new SignUpValidator().Validate(Invalid).ToDictionary(), TestApp.ReadMap(json, "errors"));
+        Assert.Equal(HttpStatusCode.OK, (await app.GetAsync("/named?q=1")).StatusCode);
     }
 
     [Fact]

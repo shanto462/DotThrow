@@ -22,8 +22,9 @@ public sealed class EndpointValidationOptions<T>
 {
     /// <summary>
     /// Gets or sets the validator. When it is <see langword="null"/> (the default), the filter resolves
-    /// <see cref="IValidator{T}"/> from the request services, and building the endpoint fails when
-    /// none is registered.
+    /// <see cref="IValidator{T}"/> from the request services; when none is registered, the endpoint
+    /// answers 500 and the mistake is logged (or the host does not start, with
+    /// <c>ValidateEndpointsOnStart()</c>).
     /// </summary>
     public IValidator<T>? Validator { get; set; }
 
