@@ -160,7 +160,7 @@ Releases are made by the maintainer:
 
 The release workflow then checks that the tag matches the version, runs every test project, packs every package with `eng/pack.sh`, writes `SHA256SUMS` for all files, and creates a signed build provenance attestation for them. It pushes the packages to NuGet.org (the core `DotThrow` package first) with [trusted publishing](https://learn.microsoft.com/nuget/nuget-org/trusted-publishing), so no long-lived API key is stored anywhere, and creates the GitHub Release with the notes from `CHANGELOG.md`. A version with a dash, for example `2.1.0-preview.1`, is published as a prerelease.
 
-The tag must point to a commit on `main`; the workflow fails otherwise. Only admins can create `v*` tags (tag ruleset).
+A stable tag (no dash) must point to a commit on `main`; the workflow fails otherwise. A prerelease tag can point to a commit on any branch, so a release candidate can be published from a feature branch before it is merged. Only admins can create `v*` tags (tag ruleset).
 
 A pull request that changes the release workflow or the build inputs, and a manual run of the workflow, do a dry run: they test and pack but publish nothing.
 
@@ -170,10 +170,10 @@ Before the first stable release, and whenever a new package joins the set, rehea
 
 1. Next to `<VersionPrefix>` in `Directory.Build.props`, add `<VersionSuffix>rc.1</VersionSuffix>`. The version is then `2.0.0-rc.1` for every package.
 2. Add a `## [2.0.0-rc.1] - YYYY-MM-DD` section to `CHANGELOG.md`. One line is enough, but the release fails without it.
-3. Merge to `main`, tag the merged commit `v2.0.0-rc.1`, and push the tag.
+3. Tag the commit `v2.0.0-rc.1` and push the tag. A prerelease tag does not have to be on `main`, so this works from the pull request branch too.
 4. Check the result:
    - On NuGet.org, every package has version `2.0.0-rc.1`, marked as prerelease. A version with a dash is always a prerelease on NuGet.
    - Every package has its symbols. `dotnet nuget push` sends the `.snupkg` next to each `.nupkg` on its own, and the job summary lists every pushed package.
    - The GitHub Release `v2.0.0-rc.1` is marked as a pre-release (the workflow passes `--prerelease` for a version with a dash) and has every `.nupkg`, `.snupkg` and `SHA256SUMS`.
    - `gh attestation verify` works for a package from the GitHub Release (see [SECURITY.md](SECURITY.md)).
-5. Raise the suffix for the next candidate (`rc.2`), or remove `<VersionSuffix>` for the stable release.
+5. Remove `<VersionSuffix>` again in the next commit, so the branch builds the stable version, and keep the `2.0.0-rc.1` section in `CHANGELOG.md`. For another candidate, set `rc.2` instead.
