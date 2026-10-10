@@ -2,10 +2,10 @@ name: Release
 
 # A pushed tag like v2.0.0 tests, packs, attests and publishes every package
 # (DotThrow and its companion packages, one shared version) to NuGet.org with
-# trusted publishing (no long-lived API key), and creates a GitHub Release. A
-# manual run (workflow_dispatch), or a pull request that changes this workflow
-# or the build inputs, is a dry run: it tests and packs but does not attest or
-# publish anything.
+# trusted publishing (no long-lived API key), creates a GitHub Release, and copies
+# the packages to GitHub Packages (github-packages.yml). A manual run
+# (workflow_dispatch), or a pull request that changes this workflow or the build
+# inputs, is a dry run: it tests and packs but does not attest or publish anything.
 
 on:
   push:
@@ -13,6 +13,7 @@ on:
   pull_request:
     paths:
       - .github/workflows/release.yml
+      - .github/workflows/github-packages.yml
       - Directory.Build.props
       - Directory.Packages.props
       - src/*/*.csproj
@@ -325,3 +326,15 @@ jobs:
             --verify-tag \
             "${flags[@]}" \
             dist/*
+
+  github-packages:
+    name: Publish to GitHub Packages
+    if: github.event_name == 'push'
+    needs: github-release
+    permissions:
+      contents: read # download the release assets
+      attestations: read # verify the build provenance
+      packages: write # push the packages
+    uses: ./.github/workflows/github-packages.yml
+    with:
+      tag: ${{ github.ref_name }}

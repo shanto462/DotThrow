@@ -1,0 +1,94 @@
+name: GitHub Packages
+
+# Copies the packages of a published GitHub Release to GitHub Packages, so they are listed
+# under "Packages" on the repository page. NuGet.org stays the place to install from.
+# The release workflow calls this after it creates the GitHub Release. A manual run copies
+# the packages of an existing release, for example one made before this workflow existed.
+# Nothing is rebuilt: the packages are the release assets, checked against SHA256SUMS and
+# their build provenance attestation before they are pushed.
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        description: The release tag, for example v2.0.0.
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: The release tag, for example v2.0.0.
+        required: true
+        type: string
+
+permissions: {}
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  push:
+    name: Push to GitHub Packages
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read # download the release assets
+      attestations: read # verify the build provenance
+      packages: write # push the packages
+    env:
+      TAG: ${{ inputs.tag }}
+    steps:
+      - name: Check the tag
+        run: |
+          if ! printf '%s' "$TAG" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+            echo "::error::'$TAG' is not a release tag like v2.0.0"
+            exit 1
+          fi
+      - name: Download release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --dir dist --pattern '*.nupkg' --pattern SHA256SUMS
+      # Only packages built by release.yml for this tag are pushed.
+      - name: Verify checksums and provenance
+        working-directory: dist
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          sha256sum --check --ignore-missing SHA256SUMS
+          for package in *.nupkg; do
+            gh attestation verify "$package" \
+              --repo "$GITHUB_REPOSITORY" \
+              --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/release.yml" \
+              --source-ref "refs/tags/$TAG"
+          done
+      - name: Install .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 10.0.x
+      # GitHub Packages has no symbol server, so only the .nupkg files go. The package
+      # links to this repository through the repository URL in its .nuspec.
+      # --skip-duplicate makes a rerun safe.
+      - name: Push packages
+        env:
+          GITHUB_PACKAGES_TOKEN: ${{ github.token }}
+        run: |
+          for package in dist/*.nupkg; do
+            dotnet nuget push "$package" \
+              --api-key "$GITHUB_PACKAGES_TOKEN" \
+              --source "https://nuget.pkg.github.com/$GITHUB_REPOSITORY_OWNER/index.json" \
+              --no-symbols \
+              --skip-duplicate
+          done
+          {
+            echo '## GitHub Packages'
+            echo
+            for package in dist/*.nupkg; do
+              echo "- Pushed $(basename "$package")"
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
