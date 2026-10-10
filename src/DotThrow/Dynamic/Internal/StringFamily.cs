@@ -225,7 +225,8 @@ internal sealed class StringFamily() : ComparableFamily<string>(static text => t
         }
         catch (Exception exception) when (exception is ArgumentException or NotSupportedException)
         {
-            args.Error($"'{pattern}' is not a valid regular expression ({exception.Message})");
+            // The regex parser's own message differs between .NET Framework and .NET (D36).
+            args.Error($"'{pattern}' is not a valid regular expression");
             return null;
         }
     }

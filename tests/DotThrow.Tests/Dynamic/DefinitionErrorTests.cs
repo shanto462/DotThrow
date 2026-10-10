@@ -51,7 +51,7 @@ public sealed class DefinitionErrorTests
                 "Rules[2].Checks[1]: check 'OutOfRange' on 'Number': 'Min' is greater than 'Max'",
                 "Rules[2].Checks[2]: check 'GreaterThan' on 'Number': does not use the 'Min' argument",
                 "Rules[3].Checks[0]: check 'Must' on 'Text': needs code (a lambda), so it cannot come from a definition; register a custom check in a CheckRegistry",
-                "Rules[3].Checks[1]: check 'Matches' on 'Text': '(' is not a valid regular expression (Invalid pattern '(' at offset 1. Not enough )'s.)",
+                "Rules[3].Checks[1]: check 'Matches' on 'Text': '(' is not a valid regular expression",
                 "Rules[4].Severity: 'Fatal' is not a severity (use Error, Warning or Info)",
                 "Rules[4].Cascade: 'Sometimes' is not a cascade mode (use Stop or Continue)",
                 "Rules[4].ErrorCode: the error code is empty",

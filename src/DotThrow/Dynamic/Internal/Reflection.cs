@@ -54,7 +54,7 @@ internal sealed class ReflectionSource<T> : PropertySource<T>
                 catch (Exception exception) when (exception is ArgumentException or NotSupportedException or TypeLoadException or InvalidOperationException or MemberAccessException)
                 {
                     // A property type reflection cannot work with; the build reports it.
-                    _problems[path] = $"'{path}' cannot be read by the reflection constructor ({exception.Message}); use a PropertyMap";
+                    _problems[path] = $"'{path}' cannot be read by the reflection constructor ({exception.GetType().Name}); use a PropertyMap";
                     entry = null;
                 }
 
