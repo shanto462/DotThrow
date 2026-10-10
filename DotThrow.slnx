@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/DotThrow/DotThrow.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/DotThrow.Tests/DotThrow.Tests.csproj" />
+  </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/DotThrow.Samples/DotThrow.Samples.csproj" />
+  </Folder>
+  <Folder Name="/benchmarks/">
+    <Project Path="benchmarks/DotThrow.Benchmarks/DotThrow.Benchmarks.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <title>DotThrow</title>
+  <!-- A white dot thrown to the right, on a .NET purple rounded square. -->
+  <rect width="128" height="128" rx="28" fill="#512BD4"/>
+  <circle cx="82" cy="64" r="26" fill="#FFFFFF"/>
+  <rect x="28" y="43" width="20" height="10" rx="5" fill="#FFFFFF"/>
+  <rect x="16" y="59" width="32" height="10" rx="5" fill="#FFFFFF"/>
+  <rect x="28" y="75" width="20" height="10" rx="5" fill="#FFFFFF"/>
+</svg>

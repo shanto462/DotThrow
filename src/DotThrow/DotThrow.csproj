@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net8.0;net10.0</TargetFrameworks>
+    <RootNamespace>DotThrow</RootNamespace>
+    <Version>2.0.0</Version>
+
+    <IsPackable>true</IsPackable>
+    <PackageId>DotThrow</PackageId>
+    <Title>DotThrow</Title>
+    <Description>Fluent guard clauses and validation for .NET. One chain of checks either throws the right exception with the parameter name filled in, or collects every error into a report. Zero dependencies, zero allocations on the happy path, AOT and trimming safe.</Description>
+    <PackageTags>guard;guard-clauses;validation;validator;argument-validation;exceptions;throw;fluent;preconditions;defensive-programming</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReleaseNotes>https://github.com/shanto462/DotThrow/blob/main/CHANGELOG.md</PackageReleaseNotes>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EnablePackageValidation>true</EnablePackageValidation>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\assets\icon.png" Pack="true" PackagePath="\" Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="DotThrow.Tests" />
+  </ItemGroup>
+
+</Project>
