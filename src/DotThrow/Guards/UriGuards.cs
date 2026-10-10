@@ -167,7 +167,10 @@ public static partial class GuardExtensions
             return true;
         }
 
+        // Uri.IsLoopback is false for "LOCALHOST" or "LocalHost" on .NET 8 and earlier, so the
+        // host name is checked here too, the same way on every runtime.
         return uri.HostNameType == UriHostNameType.Dns
-            && uri.Host.EndsWith(".localhost", StringComparison.OrdinalIgnoreCase);
+            && (string.Equals(uri.Host, "localhost", StringComparison.OrdinalIgnoreCase)
+                || uri.Host.EndsWith(".localhost", StringComparison.OrdinalIgnoreCase));
     }
 }
