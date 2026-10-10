@@ -73,7 +73,7 @@ internal static class ValueText
             Func<string, Int128> p => p(text),
             Func<string, UInt128> p => p(text),
 #endif
-            _ => throw new FormatException($"A {type.Name} cannot be written as text."),
+            _ => throw new TextFormatException($"A {type.Name} cannot be written as text."),
         };
     }
 
@@ -130,7 +130,7 @@ internal static class ValueText
     {
         [typeof(string)] = (Func<string, string>)(static text => text),
         [typeof(bool)] = (Func<string, bool>)(static text => bool.Parse(text.Trim())),
-        [typeof(char)] = (Func<string, char>)(static text => text.Length == 1 ? text[0] : throw new FormatException("A char needs exactly one character.")),
+        [typeof(char)] = (Func<string, char>)(static text => text.Length == 1 ? text[0] : throw new TextFormatException("A char needs exactly one character.")),
         [typeof(byte)] = (Func<string, byte>)(static text => byte.Parse(text, NumberStyles.Integer, Invariant)),
         [typeof(sbyte)] = (Func<string, sbyte>)(static text => sbyte.Parse(text, NumberStyles.Integer, Invariant)),
         [typeof(short)] = (Func<string, short>)(static text => short.Parse(text, NumberStyles.Integer, Invariant)),

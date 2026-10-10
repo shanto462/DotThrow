@@ -223,7 +223,7 @@ internal sealed class CheckArgs
         catch (Exception exception) when (exception is FormatException or OverflowException or ArgumentException)
 #pragma warning restore CA1031
         {
-            Error($"'{name}' value '{text}' is not a valid {TypeText.Of(typeof(T))} ({exception.Message})");
+            Error($"'{name}' value '{text}' is not a valid {TypeText.Of(typeof(T))}{TextFormatException.DetailOf(exception)}");
             return false;
         }
     }

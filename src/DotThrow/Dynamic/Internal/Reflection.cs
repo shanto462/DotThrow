@@ -328,7 +328,7 @@ internal sealed class ConverterParser<TValue>
             var converter = TypeDescriptor.GetConverter(typeof(TValue));
             Parse = text => converter.CanConvertFrom(typeof(string))
                 ? (TValue)converter.ConvertFromString(null, CultureInfo.InvariantCulture, text)!
-                : throw new FormatException($"{typeof(TValue).Name} has no Parse method or TypeConverter for text.");
+                : throw new TextFormatException($"{typeof(TValue).Name} has no Parse method or TypeConverter for text.");
         }
     }
 

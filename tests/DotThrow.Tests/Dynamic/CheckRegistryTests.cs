@@ -88,7 +88,7 @@ public sealed class CheckRegistryTests
             errors,
             e => Assert.Equal("Rules[0].Checks[0]: check 'Between' on 'Text': is a custom check for int, not for string", e),
             e => Assert.Equal("Rules[1].Checks[0]: check 'Strict' on 'Number': 'Value' is required.", e),
-            e => Assert.StartsWith("Rules[1].Checks[1]: check 'Strict' on 'Number': The input string 'x' was not in a correct format.", e, StringComparison.Ordinal));
+            e => Assert.Equal("Rules[1].Checks[1]: check 'Strict' on 'Number': 'x' is not a valid int.", e));
     }
 
     [Fact]

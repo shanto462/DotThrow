@@ -165,7 +165,7 @@ internal class PropertyEntry<T, TValue>(string path, Func<T, TValue?> getter) : 
         catch (Exception exception) when (exception is FormatException or OverflowException or ArgumentException)
 #pragma warning restore CA1031
         {
-            context.Error(location, $"'{name}' value '{text}' is not a valid {TypeText.Of(typeof(TValue))} ({exception.Message})");
+            context.Error(location, $"'{name}' value '{text}' is not a valid {TypeText.Of(typeof(TValue))}{TextFormatException.DetailOf(exception)}");
             ok = false;
             return default;
         }

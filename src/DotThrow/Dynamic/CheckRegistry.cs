@@ -286,8 +286,23 @@ public sealed class CheckArguments
     public static TValue Parse<TValue>(string text)
     {
         Argument.NotNull(text);
-        return ValueText.Parser<TValue>() is { } parser
-            ? parser(text)
-            : throw new FormatException($"{TypeText.Of(typeof(TValue))} has no text form DotThrow knows.");
+        if (ValueText.Parser<TValue>() is not { } parser)
+        {
+            throw new FormatException($"{TypeText.Of(typeof(TValue))} has no text form DotThrow knows.");
+        }
+
+        try
+        {
+            return parser(text);
+        }
+        catch (TextFormatException exception)
+        {
+            throw new FormatException(exception.Message);
+        }
+        catch (Exception exception) when (exception is FormatException or OverflowException or ArgumentException)
+        {
+            // The runtime's own message differs between .NET Framework and .NET; ours does not.
+            throw new FormatException($"'{text}' is not a valid {TypeText.Of(typeof(TValue))}.");
+        }
     }
 }

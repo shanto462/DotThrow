@@ -46,7 +46,7 @@ public sealed class DefinitionErrorTests
                 "Rules[0].Property: 'Txet' is not a property of Sample (did you mean 'Text'?)",
                 "Rules[1].Checks[0]: check 'LongerThn' on 'Text': is not a known check (did you mean 'LongerThan'?)",
                 "Rules[1].Checks[1]: check 'LongerThan' on 'Text': needs the 'Value' argument",
-                "Rules[1].Checks[2]: check 'LongerThan' on 'Text': 'Value' value 'ten' is not a valid int (The input string 'ten' was not in a correct format.)",
+                "Rules[1].Checks[2]: check 'LongerThan' on 'Text': 'Value' value 'ten' is not a valid int",
                 "Rules[2].Checks[0]: check 'NotEmailAddress' on 'Number': does not apply to int; it applies to string",
                 "Rules[2].Checks[1]: check 'OutOfRange' on 'Number': 'Min' is greater than 'Max'",
                 "Rules[2].Checks[2]: check 'GreaterThan' on 'Number': does not use the 'Min' argument",
