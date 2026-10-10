@@ -256,11 +256,18 @@ Each takes an optional `ValidationProblemOptions` to add error codes and severit
 
 ## Dynamic validators
 
-`DotThrow.DependencyInjection` is getting an `AddDynamicValidator<T>(IConfiguration)`
-registration for [dynamic rules](dynamic-rules.md) that reloads with the configuration.
-**This section will describe it when it ships.** Until then, register a
-`DynamicValidator<T>` object with `AddValidator`, and reload it as shown in
-[Hot reload with Update](dynamic-rules.md#hot-reload-with-update).
+`AddDynamicValidator` registers a [dynamic validator](dynamic-rules.md) whose rules come
+from a configuration section, a section path, or a fixed definition, and reloads it when
+the configuration changes:
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDynamicValidator("Validation:SignUp", new PropertyMap<SignUp>().Add(x => x.Name).Add(x => x.Email));
+```
+
+A reload with errors keeps the old rules and goes to `OnReloadError`, and a definition
+with errors stops the app at startup (`ValidateOnStart`, on by default). See
+[Dependency injection with reload](dynamic-rules.md#dependency-injection-with-reload).
 
 ## More
 

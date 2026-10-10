@@ -62,7 +62,7 @@ dotnet add package DotThrow
 | Package | What it has | Targets |
 | --- | --- | --- |
 | `DotThrow` | Guard clauses, collect mode, `Validator<T>`, dynamic rules (`DotThrow.Dynamic`), message templates with 58 built-in languages, test helpers (`DotThrow.Testing`), an assembly scanner (`DotThrow.Scanning`), and Roslyn analyzers with code fixes. No dependencies. | netstandard2.0, netstandard2.1, net462, net8.0, net9.0, net10.0 |
-| [`DotThrow.DependencyInjection`](src/DotThrow.DependencyInjection/README.md) | `AddValidatorsFromAssemblyContaining<T>()`, `AddValidator<TModel, TValidator>()` (trimming safe), and options validation with `ValidateOnStart`. | netstandard2.0, net462, net8.0, net9.0, net10.0 |
+| [`DotThrow.DependencyInjection`](src/DotThrow.DependencyInjection/README.md) | `AddValidatorsFromAssemblyContaining<T>()`, `AddValidator<TModel, TValidator>()` (trimming safe), options validation with `ValidateOnStart`, and dynamic validators from configuration with reload. | netstandard2.0, net462, net8.0, net9.0, net10.0 |
 | [`DotThrow.AspNetCore`](src/DotThrow.AspNetCore/README.md) | `.WithValidation<T>()` for minimal API endpoints and route groups, an MVC filter and `[ValidateWithDotThrow]`, and validation problem helpers. | net8.0, net9.0, net10.0 |
 
 ```shell
@@ -278,7 +278,9 @@ public sealed record Person(string Name, int Age);
 Every error in a definition is reported at once, with hints for misspelled names.
 `Update` swaps the rules at run time and keeps the old ones when the new ones have errors.
 A `PropertyMap<T>` makes it work with Native AOT, and a `CheckRegistry` adds your own
-checks by name. See [dynamic-rules.md](docs/dynamic-rules.md).
+checks by name. With `DotThrow.DependencyInjection`,
+`AddDynamicValidator<T>("Validation:Person")` registers rules from `appsettings.json`
+and reloads them when the file changes. See [dynamic-rules.md](docs/dynamic-rules.md).
 
 ## Analyzers
 

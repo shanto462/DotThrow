@@ -230,50 +230,93 @@ definition without building anything, for example to check a change in an admin 
 
 ## Rules from configuration
 
-A definition binds from `IConfiguration`, for example from `appsettings.json`:
+Rules can live in `appsettings.json` or any other `IConfiguration` source, in the same
+shape as the JSON above:
 
 ```json
 {
   "Validation": {
     "Customer": {
-      "Rules": [
-        { "Property": "Name", "Checks": [ { "Check": "WhiteSpace" }, { "Check": "LongerThan", "Value": "100" } ] },
-        { "Property": "Age", "Checks": [ { "Check": "OutOfRange", "Min": "18", "Max": "130" } ] }
+      "rules": [
+        { "property": "Name", "checks": [ "WhiteSpace", { "check": "LongerThan", "value": 100 } ] },
+        { "property": "Age", "severity": "Warning", "checks": [ { "check": "OutOfRange", "min": 18, "max": 130 } ] }
       ]
     }
   }
 }
 ```
 
+### Dependency injection with reload
+
+`DotThrow.DependencyInjection` registers a dynamic validator as a singleton
+`IValidator<T>` (and `DynamicValidator<T>`), one per type. Pick the source of the rules:
+
+| Source | Reflection | Trimming and Native AOT |
+| --- | --- | --- |
+| A configuration section | `AddDynamicValidator<T>(section)` | `AddDynamicValidator(section, properties)` |
+| A section path of the app's configuration | `AddDynamicValidator<T>("Validation:Customer")` | `AddDynamicValidator("Validation:Customer", properties)` |
+| A fixed definition (code, a database, `FromJson`) | `AddDynamicValidator<T>(definition)` | `AddDynamicValidator(definition, properties)` |
+
+`properties` is a [`PropertyMap<T>`](#native-aot-and-trimming-propertymap).
+
 ```csharp
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDynamicValidator(
+    "Validation:Customer",
+    new PropertyMap<Customer>().Add(x => x.Name).Add(x => x.Age),
+    o =>
+    {
+        o.CodeRules = v => v.For(x => x.Email, email => email.IfNullOrWhiteSpace().IfNotEmailAddress());
+        o.OnReloadError = (error, services) =>
+            services.GetRequiredService<ILogger<Customer>>().LogError(error, "The Customer rules were not reloaded.");
+    });
+```
+
+- **Reload.** When the configuration changes (for example `reloadOnChange: true` on a JSON
+  file), the rules are read again and swapped in one step. A change with errors is not
+  used: the old rules stay, and `OnReloadError` gets every error (without it, they go to
+  `Trace.TraceError`). One bad edit may be reported two or three times, because
+  configuration raises several change notifications for one save. A fixed definition does
+  not reload; call `Update` on the resolved `DynamicValidator<T>`.
+- **ValidateOnStart** (on by default). With a host (Microsoft.Extensions.Hosting 8 or
+  later), a definition with errors stops the app at startup with an
+  `OptionsValidationException` that lists every error. Without a host, the validator is
+  built when it is first resolved.
+- **CodeRules** adds rules written in code, which run before the dynamic rules. The
+  registered `IValidator<T>` is then a `Validator<T>` that includes the dynamic validator;
+  a reload changes only the dynamic part. **Checks** sets a
+  [`CheckRegistry`](#custom-checks-checkregistry).
+- **Null values.** The section is read with `RuleSetConfiguration.Read`, without the
+  configuration binder, so it is safe for trimming and Native AOT and accepts the short form
+  `"WhiteSpace"`. Configuration stores a JSON `null` as an empty string, so a `null` or
+  empty value reads as "not set".
+
+### Without dependency injection
+
+`RuleSetConfiguration.Read(section)` gives you the definition:
+
+```csharp
+using DotThrow.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .Build();
 
-var section = configuration.GetSection("Validation:Customer");
-var definition = section.Get<RuleSetDefinition>() ?? new RuleSetDefinition();
+var definition = RuleSetConfiguration.Read(configuration.GetSection("Validation:Customer"));
 var validator = new DynamicValidator<Customer>(definition);
 ```
-
-In configuration every check is an object (`{ "Check": "WhiteSpace" }`): the configuration
-binder does not read the short form `"WhiteSpace"`.
-
-### Dependency injection with reload
-
-`DotThrow.DependencyInjection` is getting an `AddDynamicValidator<T>(IConfiguration)`
-registration that builds the validator from a configuration section and updates it when
-the configuration reloads. **This subsection will describe it when it ships.** Until then,
-use `Update` as shown in the next section.
 
 ## Hot reload with Update
 
 `Update(definition)` builds the new rules and swaps them in one step. Runs that already
 started finish with the old rules. When the new definition has errors, `Update` throws a
-`RuleDefinitionException` and keeps the old rules; `TryUpdate` returns the errors instead:
+`RuleDefinitionException` and keeps the old rules; `TryUpdate` returns the errors instead.
+`AddDynamicValidator` does this for you; without it, watch the configuration yourself:
 
 ```csharp
+using DotThrow.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 
@@ -281,14 +324,17 @@ var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .Build();
 var section = configuration.GetSection("Validation:Customer");
-var validator = new DynamicValidator<Customer>(section.Get<RuleSetDefinition>() ?? new RuleSetDefinition());
+var validator = new DynamicValidator<Customer>(RuleSetConfiguration.Read(section));
 
 ChangeToken.OnChange(section.GetReloadToken, () =>
 {
-    var changed = section.Get<RuleSetDefinition>() ?? new RuleSetDefinition();
-    if (!validator.TryUpdate(changed, out var errors))
+    try
     {
-        Console.Error.WriteLine("The new rules have errors; the old rules stay: " + string.Join("; ", errors));
+        validator.Update(RuleSetConfiguration.Read(section));
+    }
+    catch (RuleDefinitionException exception)
+    {
+        Console.Error.WriteLine("The old rules stay: " + string.Join("; ", exception.Errors));
     }
 });
 ```
