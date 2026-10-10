@@ -10,7 +10,6 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace DotThrow.Analyzers.CodeFixes;
@@ -144,20 +143,25 @@ public sealed class GeneratedRegexCodeFix : CodeFixProvider
             var name = UniqueName(MethodNameFor(invocation), usedNames);
 
             var (options, message) = OtherArguments(invocation.ArgumentList, pattern);
-            var regexCall = SyntaxFactory.InvocationExpression(SyntaxFactory.IdentifierName(name));
+            var regexCall = SyntaxFactory.ParseExpression(name + "()");
             var arguments = new List<ArgumentSyntax> { SyntaxFactory.Argument(regexCall).WithTriviaFrom(pattern) };
             if (message is not null)
             {
-                arguments.Add(message);
+                arguments.Add(message.WithoutTrivia());
             }
 
-            var newInvocation = invocation.WithArgumentList(invocation.ArgumentList.WithArguments(SyntaxFactory.SeparatedList(arguments)));
+            var newInvocation = invocation.WithArgumentList(SyntaxHelpers.Arguments(arguments).WithTriviaFrom(invocation.ArgumentList));
+
+            // Written out with the document's own end of line and the indentation of the
+            // members, so no formatter runs (it would use the machine's default end of line).
+            var eol = endOfLine.ToFullString();
+            var indentation = MemberIndentation(type);
             var attributeArguments = pattern.Expression.WithoutTrivia().ToString()
                 + (options is null ? string.Empty : ", " + options.Expression.WithoutTrivia());
-            var method = (MemberDeclarationSyntax)SyntaxFactory.ParseMemberDeclaration(
-                "[GeneratedRegex(" + attributeArguments + ")]" + endOfLine.ToFullString()
-                + "private static partial Regex " + name + "();" + endOfLine.ToFullString())!;
-            method = method.WithLeadingTrivia(endOfLine).WithAdditionalAnnotations(Formatter.Annotation);
+            var method = SyntaxFactory.ParseMemberDeclaration(
+                "[GeneratedRegex(" + attributeArguments + ")]" + eol
+                + indentation + "private static partial Regex " + name + "();" + eol)!;
+            method = method.WithLeadingTrivia(SyntaxFactory.ParseLeadingTrivia(eol + indentation));
 
             var newType = type.ReplaceNode(invocation, newInvocation).AddMembers(method);
             root = root.ReplaceNode(type, newType);
@@ -220,10 +224,27 @@ public sealed class GeneratedRegexCodeFix : CodeFixProvider
         }
     }
 
+    // The whitespace before the members of a type: the first member's, or one level deeper
+    // than the closing brace.
+    private static string MemberIndentation(TypeDeclarationSyntax type)
+    {
+        if (type.Members.Count > 0)
+        {
+            var leading = type.Members[0].GetLeadingTrivia();
+            return leading.Count > 0 && leading[leading.Count - 1].IsKind(SyntaxKind.WhitespaceTrivia)
+                ? leading[leading.Count - 1].ToFullString()
+                : string.Empty;
+        }
+
+        var brace = type.CloseBraceToken.LeadingTrivia;
+        var outer = brace.Count > 0 && brace[brace.Count - 1].IsKind(SyntaxKind.WhitespaceTrivia) ? brace[brace.Count - 1].ToFullString() : string.Empty;
+        return outer + "    ";
+    }
+
     // "partial" goes right before the class, struct or record keyword.
     private static TypeDeclarationSyntax AddPartial(TypeDeclarationSyntax type)
     {
-        var partial = SyntaxFactory.Token(SyntaxKind.PartialKeyword).WithTrailingTrivia(SyntaxFactory.Space);
+        var partial = SyntaxHelpers.Plain(SyntaxKind.PartialKeyword).WithTrailingTrivia(SyntaxFactory.Space);
         if (type.Modifiers.Count > 0)
         {
             return type.AddModifiers(partial);

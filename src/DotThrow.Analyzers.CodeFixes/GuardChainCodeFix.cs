@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Simplification;
 
@@ -103,7 +102,7 @@ public sealed class GuardChainCodeFix : CodeFixProvider
             or ElementAccessExpressionSyntax or LiteralExpressionSyntax or ThisExpressionSyntax or ParenthesizedExpressionSyntax))
         {
             // The simplifier removes the parentheses again where they are not needed.
-            replacement = SyntaxFactory.ParenthesizedExpression(replacement).WithAdditionalAnnotations(Simplifier.Annotation);
+            replacement = SyntaxHelpers.Parenthesize(replacement).WithAdditionalAnnotations(Simplifier.Annotation);
         }
 
         return replacement.WithTriviaFrom(chain);

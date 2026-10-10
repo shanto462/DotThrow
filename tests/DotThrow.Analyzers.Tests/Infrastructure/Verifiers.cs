@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -5,6 +7,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
+using Microsoft.CodeAnalysis.Text;
 using Xunit;
 
 namespace DotThrow.Analyzers.Tests.Infrastructure;
@@ -88,11 +91,48 @@ public static class Verify
 
     public static Task CodeFixAsync<TAnalyzer, TCodeFix>(string source, string fixedSource, params DiagnosticResult[] expected)
         where TAnalyzer : DiagnosticAnalyzer, new()
+        where TCodeFix : CodeFixProvider, new() =>
+        CodeFixAsync(() =>
+        {
+            var test = new DotThrowCodeFixTest<TAnalyzer, TCodeFix> { TestCode = source, FixedCode = fixedSource };
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test;
+        });
+
+    /// <summary>
+    /// Runs a code fix test once per line ending: an LF document where the formatting default is
+    /// CRLF (a Windows machine), and a CRLF document where the default is LF. The fixed code must
+    /// keep the document's own line ending everywhere, including the lines a fix adds.
+    /// </summary>
+    public static async Task CodeFixAsync<TAnalyzer, TCodeFix>(Func<DotThrowCodeFixTest<TAnalyzer, TCodeFix>> create)
+        where TAnalyzer : DiagnosticAnalyzer, new()
         where TCodeFix : CodeFixProvider, new()
     {
-        var test = new DotThrowCodeFixTest<TAnalyzer, TCodeFix> { TestCode = source, FixedCode = fixedSource };
-        test.ExpectedDiagnostics.AddRange(expected);
-        return test.RunAsync(TestContext.Current.CancellationToken);
+        foreach (var (document, formatting) in new[] { ("\n", "crlf"), ("\r\n", "lf") })
+        {
+            var test = create();
+            UseLineEnding(test.TestState, document);
+            UseLineEnding(test.FixedState, document);
+            UseLineEnding(test.BatchFixedState, document);
+            test.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", "root = true" + document + document + "[*]" + document + "end_of_line = " + formatting + document));
+            await test.RunAsync(TestContext.Current.CancellationToken);
+        }
+    }
+
+    private static void UseLineEnding(SolutionState state, string endOfLine)
+    {
+        var sources = state.Sources.ToList();
+        state.Sources.Clear();
+        foreach (var (name, text) in sources)
+        {
+            var content = text.ToString().Replace("\r\n", "\n", StringComparison.Ordinal);
+            if (endOfLine != "\n")
+            {
+                content = content.Replace("\n", endOfLine, StringComparison.Ordinal);
+            }
+
+            state.Sources.Add((name, SourceText.From(content, text.Encoding, text.ChecksumAlgorithm)));
+        }
     }
 }
 

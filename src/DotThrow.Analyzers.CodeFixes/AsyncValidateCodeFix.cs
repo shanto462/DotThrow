@@ -106,13 +106,15 @@ public sealed class AsyncValidateCodeFix : CodeFixProvider
         }
 
         var renamed = SyntaxHelpers.WithMethodName(invocation, asyncMethod)
-            .WithArgumentList(invocation.ArgumentList.WithArguments(SyntaxFactory.SeparatedList(arguments)))
+            .WithArgumentList(SyntaxHelpers.Arguments(arguments).WithTriviaFrom(invocation.ArgumentList))
             .WithoutTrivia();
 
-        ExpressionSyntax awaited = SyntaxFactory.AwaitExpression(renamed);
+        ExpressionSyntax awaited = SyntaxFactory.AwaitExpression(
+            SyntaxHelpers.Plain(SyntaxKind.AwaitKeyword).WithTrailingTrivia(SyntaxFactory.Space),
+            renamed);
         if (NeedsParentheses(invocation))
         {
-            awaited = SyntaxFactory.ParenthesizedExpression(awaited);
+            awaited = SyntaxHelpers.Parenthesize(awaited);
         }
 
         return awaited.WithTriviaFrom(invocation);

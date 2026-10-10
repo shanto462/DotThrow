@@ -160,6 +160,32 @@ internal static class SyntaxHelpers
         return false;
     }
 
+    /// <summary>
+    /// Returns a token without elastic trivia. Code fixes never leave elastic trivia or
+    /// formatter annotations behind: the formatter would write the workspace's default end of
+    /// line (CRLF on Windows) into the document, whatever line ending the file uses.
+    /// </summary>
+    public static SyntaxToken Plain(SyntaxKind kind) => SyntaxFactory.Token(SyntaxTriviaList.Empty, kind, SyntaxTriviaList.Empty);
+
+    /// <summary>Returns an argument list "(a, b)" with plain tokens and one space after each comma.</summary>
+    public static ArgumentListSyntax Arguments(System.Collections.Generic.IReadOnlyList<ArgumentSyntax> arguments)
+    {
+        var separators = new SyntaxToken[Math.Max(0, arguments.Count - 1)];
+        for (var i = 0; i < separators.Length; i++)
+        {
+            separators[i] = Plain(SyntaxKind.CommaToken).WithTrailingTrivia(SyntaxFactory.Space);
+        }
+
+        return SyntaxFactory.ArgumentList(
+            Plain(SyntaxKind.OpenParenToken),
+            SyntaxFactory.SeparatedList(arguments, separators),
+            Plain(SyntaxKind.CloseParenToken));
+    }
+
+    /// <summary>Returns "(expression)" with plain tokens.</summary>
+    public static ParenthesizedExpressionSyntax Parenthesize(ExpressionSyntax expression) =>
+        SyntaxFactory.ParenthesizedExpression(Plain(SyntaxKind.OpenParenToken), expression, Plain(SyntaxKind.CloseParenToken));
+
     /// <summary>Returns the method name of a call, or <see langword="null"/>.</summary>
     public static SimpleNameSyntax? MethodName(InvocationExpressionSyntax invocation) =>
         invocation.Expression switch

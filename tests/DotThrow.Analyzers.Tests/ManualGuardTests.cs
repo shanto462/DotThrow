@@ -263,7 +263,7 @@ public sealed class ManualGuardTests
 
     [Fact]
     public Task DT0002_fix_passes_the_name_before_CSharp_10() =>
-        new DotThrowCodeFixTest<ManualGuardAnalyzer, ManualGuardCodeFix>
+        Verify.CodeFixAsync(() => new DotThrowCodeFixTest<ManualGuardAnalyzer, ManualGuardCodeFix>
         {
             LanguageVersion = LanguageVersion.CSharp9,
             TestCode = """
@@ -292,7 +292,7 @@ public sealed class ManualGuardTests
                     }
                 }
                 """,
-        }.RunAsync(TestContext.Current.CancellationToken);
+        });
 
     [Fact]
     public Task DT0002_fix_handles_collections_and_else_if() =>
@@ -374,7 +374,7 @@ public sealed class ManualGuardTests
 
     [Fact]
     public Task DT0002_fix_keeps_nullable_analysis_happy() =>
-        new DotThrowCodeFixTest<ManualGuardAnalyzer, ManualGuardCodeFix>
+        Verify.CodeFixAsync(() => new DotThrowCodeFixTest<ManualGuardAnalyzer, ManualGuardCodeFix>
         {
             // Warnings count too: the fixed code must not add CS8602 or CS8629.
             CompilerDiagnostics = CompilerDiagnostics.Warnings,
@@ -414,7 +414,7 @@ public sealed class ManualGuardTests
                     static string? Read() => null;
                 }
                 """,
-        }.RunAsync(TestContext.Current.CancellationToken);
+        });
 
     [Fact]
     public Task DT0002_reports_and_fixes_coalesce_throw() =>

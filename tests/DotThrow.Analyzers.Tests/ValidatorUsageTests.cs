@@ -355,7 +355,7 @@ public sealed class ValidatorUsageTests
 
     [Fact]
     public Task Top_level_statements() =>
-        new DotThrowCodeFixTest<ValidatorUsageAnalyzer, AsyncValidateCodeFix>
+        Verify.CodeFixAsync(() => new DotThrowCodeFixTest<ValidatorUsageAnalyzer, AsyncValidateCodeFix>
         {
             TestState =
             {
@@ -391,7 +391,7 @@ public sealed class ValidatorUsageTests
                     """ + Validators,
                 },
             },
-        }.RunAsync(TestContext.Current.CancellationToken);
+        });
 
     [Fact]
     public Task Unawaited_task_in_top_level_statements_without_await() =>

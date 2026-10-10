@@ -9,7 +9,6 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace DotThrow.Analyzers.CodeFixes;
@@ -65,7 +64,7 @@ public sealed class ManualGuardCodeFix : CodeFixProvider
                     continue;
                 }
 
-                replacements[coalesce] = Chain(coalesceMatch).WithTriviaFrom(coalesce).WithAdditionalAnnotations(Formatter.Annotation);
+                replacements[coalesce] = SyntaxFactory.ParseExpression(Chain(coalesceMatch)).WithTriviaFrom(coalesce);
                 needsUsing |= !ThrowIsInScope(model, coalesce.SpanStart, coalesceMatch.Value.Type);
                 continue;
             }
@@ -97,50 +96,40 @@ public sealed class ManualGuardCodeFix : CodeFixProvider
 
     // x.Throw().IfNull(); or x.Throw("name").IfOutOfRange(min, max, "message");
     // or x = x.Throw().IfNull(); when nullable analysis must learn that x is not null.
-    private static ExpressionStatementSyntax Replacement(IfStatementSyntax ifStatement, ManualGuardMatch match)
+    // Parsed from text, so it has no elastic trivia for the formatter to fill in.
+    private static StatementSyntax Replacement(IfStatementSyntax ifStatement, ManualGuardMatch match)
     {
-        ExpressionSyntax expression = Chain(match);
+        var expression = Chain(match);
         if (match.Assign)
         {
-            expression = SyntaxFactory.AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, Expression(match.Value), expression);
+            expression = Text(match.Value) + " = " + expression;
         }
 
-        return SyntaxFactory.ExpressionStatement(expression)
+        return SyntaxFactory.ParseStatement(expression + ";")
             .WithLeadingTrivia(ifStatement.GetLeadingTrivia())
-            .WithTrailingTrivia(ifStatement.GetTrailingTrivia())
-            .WithAdditionalAnnotations(Formatter.Annotation);
+            .WithTrailingTrivia(ifStatement.GetTrailingTrivia());
     }
 
-    private static InvocationExpressionSyntax Chain(ManualGuardMatch match)
+    private static string Chain(ManualGuardMatch match)
     {
-        var value = Expression(match.Value);
-        var throwArguments = new List<ArgumentSyntax>();
-        if (match.Name is not null)
-        {
-            throwArguments.Add(SyntaxFactory.Argument(Expression(match.Name)));
-        }
-        else if (match.LiteralName is { } literal)
-        {
-            throwArguments.Add(SyntaxFactory.Argument(
-                SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal(literal))));
-        }
+        var name = match.Name is not null
+            ? Text(match.Name)
+            : match.LiteralName is { } literal
+                ? SyntaxFactory.Literal(literal).Text
+                : string.Empty;
 
-        var checkArguments = match.CheckArguments.Select(argument => SyntaxFactory.Argument(Expression(argument))).ToList();
+        var arguments = match.CheckArguments.Select(Text).ToList();
         if (match.Message is not null)
         {
-            checkArguments.Add(SyntaxFactory.Argument(Expression(match.Message)));
+            arguments.Add(Text(match.Message));
         }
 
-        var throwCall = SyntaxFactory.InvocationExpression(
-            SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, value, SyntaxFactory.IdentifierName("Throw")),
-            SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(throwArguments)));
-        return SyntaxFactory.InvocationExpression(
-            SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, throwCall, SyntaxFactory.IdentifierName(match.Check)),
-            SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(checkArguments)));
+        return Text(match.Value) + ".Throw(" + name + ")." + match.Check + "(" + string.Join(", ", arguments) + ")";
     }
 
-    private static ExpressionSyntax Expression(IOperation operation) =>
-        (operation.ExpressionSyntax() ?? SyntaxFactory.ParseExpression(operation.Syntax.ToString())).WithoutTrivia();
+    // The source text of an expression, without its outer trivia.
+    private static string Text(IOperation operation) =>
+        (operation.ExpressionSyntax() ?? (SyntaxNode)operation.Syntax).WithoutTrivia().ToString();
 
     // Throw() is in scope when DotThrow is imported (or the code is in the DotThrow namespace).
     private static bool ThrowIsInScope(SemanticModel model, int position, ITypeSymbol? type)
