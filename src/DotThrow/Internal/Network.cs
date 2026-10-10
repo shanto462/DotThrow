@@ -41,8 +41,9 @@ internal static class Network
         return bytes[15] == 1;
     }
 
-    // IPv4 10/8, 172.16/12, 192.168/16 (RFC 1918) and 169.254/16 (link-local);
-    // IPv6 fc00::/7 (unique local) and fe80::/10 (link-local).
+    // IPv4 10/8, 172.16/12, 192.168/16 (RFC 1918), 100.64/10 (RFC 6598 shared address
+    // space, carrier-grade NAT) and 169.254/16 (link-local); IPv6 fc00::/7 (unique local)
+    // and fe80::/10 (link-local).
     public static bool IsPrivate(IPAddress address)
     {
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP
@@ -73,5 +74,6 @@ internal static class Network
         first == 10
         || (first == 172 && (second & 0xF0) == 16)
         || (first == 192 && second == 168)
+        || (first == 100 && (second & 0xC0) == 64)
         || (first == 169 && second == 254);
 }

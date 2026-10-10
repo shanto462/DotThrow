@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace DotThrow.Internal;
@@ -16,36 +18,166 @@ internal static class Formats
 #endif
     }
 
+    // An RFC 5321 subset, with the non-ASCII letters and digits of RFC 6531 (internationalized
+    // addresses such as "用户@例子.广告"):
+    // - local part: a dot-atom (letters, digits and !#$%&'*+-/=?^_`{|}~, in dot-separated
+    //   non-empty parts) or a quoted string ("a b", printable ASCII and space, \ escapes);
+    //   at most 64 UTF-8 bytes;
+    // - domain: labels of letters, digits and hyphens (1 to 63 characters, no hyphen at either
+    //   end, at most 253 characters in total), or an address literal [1.2.3.4] or [IPv6:...]
+    //   that must be a valid address;
+    // - at most 254 UTF-8 bytes in total.
+    // No allocation: one pass over the string.
     public static bool IsEmailAddress(string value)
     {
-        var at = value.IndexOf('@');
-        if (at <= 0 || at == value.Length - 1 || value.IndexOf('@', at + 1) >= 0)
+        if (value.Length == 0 || Utf8Length(value, 0, value.Length) > 254)
         {
             return false;
         }
 
-        foreach (var c in value)
+        int at;
+        if (value[0] == '"')
         {
-            if (char.IsWhiteSpace(c) || char.IsControl(c))
+            at = QuotedLocalPartEnd(value);
+            if (at < 0)
+            {
+                return false;
+            }
+        }
+        else
+        {
+            at = value.IndexOf('@');
+            if (at <= 0 || !IsDotAtom(value, 0, at))
             {
                 return false;
             }
         }
 
-        return IsDotSafe(value, 0, at) && IsDotSafe(value, at + 1, value.Length);
+        return Utf8Length(value, 0, at) <= 64 && IsMailDomain(value, at + 1);
     }
 
-    // No dot at the start or end, and no two dots in a row.
-    private static bool IsDotSafe(string value, int start, int end)
+    // The index of the '@' after a quoted local part, or -1.
+    private static int QuotedLocalPartEnd(string value)
     {
-        if (value[start] == '.' || value[end - 1] == '.')
+        var i = 1;
+        while (i < value.Length)
+        {
+            var c = value[i];
+            if (c == '\\')
+            {
+                if (i + 1 >= value.Length || value[i + 1] is < ' ' or > '~')
+                {
+                    return -1;
+                }
+
+                i += 2;
+            }
+            else if (c == '"')
+            {
+                return i + 1 < value.Length && value[i + 1] == '@' ? i + 1 : -1;
+            }
+            else if (c is >= ' ' and <= '~')
+            {
+                i++;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+
+        return -1;
+    }
+
+    private static bool IsDotAtom(string value, int start, int end)
+    {
+        var partLength = 0;
+        for (var i = start; i < end; i++)
+        {
+            var c = value[i];
+            if (c == '.')
+            {
+                if (partLength == 0)
+                {
+                    return false;
+                }
+
+                partLength = 0;
+                continue;
+            }
+
+            if (c < 0x80)
+            {
+                if (!IsAtomText(c))
+                {
+                    return false;
+                }
+            }
+            else if (!IsLetterOrDigit(value, ref i))
+            {
+                return false;
+            }
+
+            partLength++;
+        }
+
+        return partLength > 0;
+    }
+
+    private static bool IsMailDomain(string value, int start)
+    {
+        var end = value.Length;
+        if (start >= end)
         {
             return false;
         }
 
-        for (var i = start + 1; i < end; i++)
+        if (value[start] == '[')
         {
-            if (value[i] == '.' && value[i - 1] == '.')
+            if (value[end - 1] != ']')
+            {
+                return false;
+            }
+
+            const string IPv6Tag = "IPv6:";
+            var inner = start + 1;
+            if (end - 1 - inner > IPv6Tag.Length && string.Compare(value, inner, IPv6Tag, 0, IPv6Tag.Length, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return Text.IsIPv6(value, inner + IPv6Tag.Length, end - 1, allowZone: false);
+            }
+
+            return Text.IsIPv4(value, inner, end - 1);
+        }
+
+        if (end - start > 253)
+        {
+            return false;
+        }
+
+        var labelStart = start;
+        for (var i = start; i <= end; i++)
+        {
+            if (i == end || value[i] == '.')
+            {
+                var length = i - labelStart;
+                if (length is 0 or > 63 || value[labelStart] == '-' || value[i - 1] == '-')
+                {
+                    return false;
+                }
+
+                labelStart = i + 1;
+                continue;
+            }
+
+            var c = value[i];
+            if (c < 0x80)
+            {
+                if (!(c == '-' || c is (>= 'a' and <= 'z') or (>= 'A' and <= 'Z') or (>= '0' and <= '9')))
+                {
+                    return false;
+                }
+            }
+            else if (!IsLetterOrDigit(value, ref i))
             {
                 return false;
             }
@@ -54,13 +186,66 @@ internal static class Formats
         return true;
     }
 
-    public static bool IsXml(string value)
+    private static bool IsAtomText(char c) =>
+        c is (>= 'a' and <= 'z') or (>= 'A' and <= 'Z') or (>= '0' and <= '9')
+            or '!' or '#' or '$' or '%' or '&' or '\'' or '*' or '+' or '-' or '/' or '=' or '?' or '^' or '_' or '`' or '{' or '|' or '}' or '~';
+
+    // A non-ASCII letter or digit; a surrogate pair is read as one character (and `i` moves past it).
+    private static bool IsLetterOrDigit(string value, ref int i)
     {
+        if (char.IsHighSurrogate(value[i]) && i + 1 < value.Length && char.IsLowSurrogate(value[i + 1]))
+        {
+            var result = char.IsLetterOrDigit(value, i);
+            i++;
+            return result;
+        }
+
+        return char.IsLetterOrDigit(value[i]);
+    }
+
+    private static int Utf8Length(string value, int start, int end)
+    {
+        var length = 0;
+        for (var i = start; i < end; i++)
+        {
+            var c = value[i];
+            if (c < 0x80)
+            {
+                length++;
+            }
+            else if (c < 0x800)
+            {
+                length += 2;
+            }
+            else if (char.IsHighSurrogate(c) && i + 1 < end && char.IsLowSurrogate(value[i + 1]))
+            {
+                length += 4;
+                i++;
+            }
+            else
+            {
+                length += 3;
+            }
+        }
+
+        return length;
+    }
+
+    // maxCharacters: 0 for no limit; otherwise a longer text fails at once, and the reader
+    // stops at that many characters in the document (XmlReaderSettings.MaxCharactersInDocument).
+    public static bool IsXml(string value, long maxCharacters = 0)
+    {
+        if (maxCharacters > 0 && value.Length > maxCharacters)
+        {
+            return false;
+        }
+
         var settings = new XmlReaderSettings
         {
             DtdProcessing = DtdProcessing.Prohibit,
             XmlResolver = null,
             ConformanceLevel = ConformanceLevel.Document,
+            MaxCharactersInDocument = maxCharacters,
         };
 
         try
@@ -82,9 +267,11 @@ internal static class Formats
     public static bool IsUri(string value, UriKind kind, [NotNullWhen(true)] out Uri? uri)
     {
         // Rules that hold on every operating system: no empty text, no backslash (RFC 3986
-        // does not allow it, and Uri reads it differently on Windows and Unix), and no
-        // Windows drive path such as C:\temp or C:/temp.
-        if (string.IsNullOrWhiteSpace(value) || Text.ContainsChar(value, '\\') || IsDrivePath(value))
+        // does not allow it, and Uri reads it differently on Windows and Unix), no Windows
+        // drive path such as C:\temp or C:/temp, and only characters a URI may contain as
+        // written. Uri.TryCreate would trim white space and escape the rest (spaces, line
+        // breaks, quotes, angle brackets), which accepts text that is not a URI.
+        if (string.IsNullOrWhiteSpace(value) || Text.ContainsChar(value, '\\') || IsDrivePath(value) || !HasOnlyUriCharacters(value))
         {
             uri = null;
             return false;
@@ -104,6 +291,84 @@ internal static class Formats
         }
 
         return true;
+    }
+
+    // The text of the URI as written: RFC 3986 unreserved and reserved characters, '%' only
+    // as the start of a %XX escape, at most one '#'. Non-ASCII letters, digits, marks and
+    // symbols are allowed as in IRIs (RFC 3987, as browsers show addresses); white space,
+    // control characters and format characters (such as bidi overrides) are not.
+    private static bool HasOnlyUriCharacters(string value)
+    {
+        var fragments = 0;
+        for (var i = 0; i < value.Length; i++)
+        {
+            var c = value[i];
+            if (c < 0x80)
+            {
+                if (c is (>= 'a' and <= 'z') or (>= 'A' and <= 'Z') or (>= '0' and <= '9')
+                    or '-' or '.' or '_' or '~' or ':' or '/' or '?' or '[' or ']' or '@'
+                    or '!' or '$' or '&' or '\'' or '(' or ')' or '*' or '+' or ',' or ';' or '=')
+                {
+                    continue;
+                }
+
+                if (c == '%' && i + 2 < value.Length && IsHexDigit(value[i + 1]) && IsHexDigit(value[i + 2]))
+                {
+                    i += 2;
+                    continue;
+                }
+
+                if (c == '#' && ++fragments == 1)
+                {
+                    continue;
+                }
+
+                return false;
+            }
+
+            if (char.IsWhiteSpace(c) || char.IsControl(c) || CharUnicodeInfo.GetUnicodeCategory(c) == UnicodeCategory.Format)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool IsHexDigit(char c) => c is (>= '0' and <= '9') or (>= 'a' and <= 'f') or (>= 'A' and <= 'F');
+
+    // The outcome of a regular expression check. A match that runs out of time cannot confirm
+    // anything about the value, so the checks treat it as a failure (fail closed).
+    public enum RegexOutcome : byte
+    {
+        NoMatch,
+        Match,
+        TimedOut,
+    }
+
+    public static RegexOutcome Match(string input, string pattern, RegexOptions options, TimeSpan? matchTimeout)
+    {
+        try
+        {
+            var matched = matchTimeout is { } timeout ? Regex.IsMatch(input, pattern, options, timeout) : Regex.IsMatch(input, pattern, options);
+            return matched ? RegexOutcome.Match : RegexOutcome.NoMatch;
+        }
+        catch (RegexMatchTimeoutException)
+        {
+            return RegexOutcome.TimedOut;
+        }
+    }
+
+    public static RegexOutcome Match(string input, Regex regex)
+    {
+        try
+        {
+            return regex.IsMatch(input) ? RegexOutcome.Match : RegexOutcome.NoMatch;
+        }
+        catch (RegexMatchTimeoutException)
+        {
+            return RegexOutcome.TimedOut;
+        }
     }
 
     public static bool IsHttpUrl(string value) =>

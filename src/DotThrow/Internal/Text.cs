@@ -96,51 +96,45 @@ internal static class Text
     }
 
     // Ad-hoc character sets (IfContainsAny and IfContainsAnyExcept with a list or an array).
-    // Up to five characters use the vectorized single-pass span searches of the BCL. A longer
-    // set is checked with a 128-bit ASCII bitmap on the stack, plus a span search for non-ASCII
-    // characters, so the check never depends on the CPU-specific paths that the BCL takes for
-    // long value sets (probabilistic maps and ASCII searchers). For a large set that is used
-    // often, the SearchValues overloads are the fast path.
-    private const int ShortSet = 5;
-
+    // The set is turned into a 128-bit ASCII bitmap on the stack; a non-ASCII character is
+    // looked up in the set with a plain loop. No generic BCL span search is used, because on
+    // some CPUs their generic helpers boxed values on the happy path (IfNotDigits did on Linux
+    // x64). For a large set used often, the SearchValues overloads are the vectorized path.
     public static bool ContainsAny(string value, char[] characters)
     {
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP
-        return ContainsAny(value.AsSpan(), characters);
-#else
-        return value.IndexOfAny(characters) >= 0;
-#endif
-    }
-
-    public static bool ContainsAnyExcept(string value, char[] characters)
-    {
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP
-        return ContainsAnyExcept(value.AsSpan(), characters);
-#else
+        var set = new CharSet(characters);
         foreach (var c in value)
         {
-            if (Array.IndexOf(characters, c) < 0)
+            if (set.Contains(c, characters))
             {
                 return true;
             }
         }
 
         return false;
-#endif
+    }
+
+    public static bool ContainsAnyExcept(string value, char[] characters)
+    {
+        var set = new CharSet(characters);
+        foreach (var c in value)
+        {
+            if (!set.Contains(c, characters))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP
     public static bool ContainsAny(ReadOnlySpan<char> value, ReadOnlySpan<char> characters)
     {
-        if (characters.Length <= ShortSet)
-        {
-            return value.IndexOfAny(characters) >= 0;
-        }
-
-        var map = new AsciiSet(characters);
+        var set = new CharSet(characters);
         foreach (var c in value)
         {
-            if (c < 128 ? map.Contains(c) : map.HasNonAscii && characters.IndexOf(c) >= 0)
+            if (set.Contains(c, characters))
             {
                 return true;
             }
@@ -151,27 +145,10 @@ internal static class Text
 
     public static bool ContainsAnyExcept(ReadOnlySpan<char> value, ReadOnlySpan<char> characters)
     {
-        if (characters.Length <= ShortSet)
-        {
-#if NET8_0_OR_GREATER
-            return value.IndexOfAnyExcept(characters) >= 0;
-#else
-            foreach (var c in value)
-            {
-                if (characters.IndexOf(c) < 0)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-#endif
-        }
-
-        var map = new AsciiSet(characters);
+        var set = new CharSet(characters);
         foreach (var c in value)
         {
-            if (c < 128 ? !map.Contains(c) : !map.HasNonAscii || characters.IndexOf(c) < 0)
+            if (!set.Contains(c, characters))
             {
                 return true;
             }
@@ -179,18 +156,24 @@ internal static class Text
 
         return false;
     }
+#endif
 
-    // The ASCII characters of a set as two 64-bit masks.
-    private readonly struct AsciiSet
+    // The ASCII characters of a set as two 64-bit masks, plus a flag for non-ASCII members.
+    private readonly struct CharSet
     {
         private readonly ulong _low;
         private readonly ulong _high;
+        private readonly bool _hasNonAscii;
 
-        public AsciiSet(ReadOnlySpan<char> characters)
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP
+        public CharSet(ReadOnlySpan<char> characters)
+#else
+        public CharSet(char[] characters)
+#endif
         {
             _low = 0;
             _high = 0;
-            HasNonAscii = false;
+            _hasNonAscii = false;
             foreach (var c in characters)
             {
                 if (c < 64)
@@ -203,16 +186,41 @@ internal static class Text
                 }
                 else
                 {
-                    HasNonAscii = true;
+                    _hasNonAscii = true;
                 }
             }
         }
 
-        public bool HasNonAscii { get; }
-
-        public bool Contains(char c) => c < 64 ? (_low & (1UL << c)) != 0 : (_high & (1UL << (c - 64))) != 0;
-    }
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP
+        public bool Contains(char c, ReadOnlySpan<char> characters)
+#else
+        public bool Contains(char c, char[] characters)
 #endif
+        {
+            if (c < 64)
+            {
+                return (_low & (1UL << c)) != 0;
+            }
+
+            if (c < 128)
+            {
+                return (_high & (1UL << (c - 64))) != 0;
+            }
+
+            if (_hasNonAscii)
+            {
+                foreach (var candidate in characters)
+                {
+                    if (candidate == c)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+    }
 
     public static bool IsAscii(string value)
     {
@@ -379,10 +387,11 @@ internal static class Text
             return false;
         }
 
-        return ContainsChar(value, ':') ? IsIPv6(value) : IsIPv4(value, 0, value.Length);
+        return ContainsChar(value, ':') ? IsIPv6(value, 0, value.Length, allowZone: true) : IsIPv4(value, 0, value.Length);
     }
 
-    private static bool IsIPv4(string value, int start, int end)
+    // Dotted-decimal IPv4 text in value[start..end): four numbers from 0 to 255, no leading zeros.
+    internal static bool IsIPv4(string value, int start, int end)
     {
         var parts = 0;
         var i = start;
@@ -417,35 +426,38 @@ internal static class Text
         }
     }
 
-    private static bool IsIPv6(string value)
+    // IPv6 text in value[start..end): RFC 4291 groups, optionally followed by a zone when
+    // allowZone is true (a zone runs to the end of the string).
+    internal static bool IsIPv6(string value, int start, int end, bool allowZone)
     {
-        var end = value.IndexOf('%');
-        if (end < 0)
+        var zone = value.IndexOf('%', start, end - start);
+        if (zone >= 0)
         {
-            end = value.Length;
-        }
-        else if (!IsZone(value, end + 1))
-        {
-            return false;
+            if (!allowZone || end != value.Length || !IsZone(value, zone + 1))
+            {
+                return false;
+            }
+
+            end = zone;
         }
 
-        if (end < 2)
+        if (end - start < 2)
         {
             return false;
         }
 
         var groups = 0;
         var compressed = false;
-        var i = 0;
-        if (value[0] == ':')
+        var i = start;
+        if (value[start] == ':')
         {
-            if (value[1] != ':')
+            if (value[start + 1] != ':')
             {
                 return false;
             }
 
             compressed = true;
-            i = 2;
+            i = start + 2;
         }
 
         while (i < end)

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace DotThrow.Internal;
@@ -83,6 +84,31 @@ internal sealed class MessageTemplate
         return new MessageTemplate(text, [.. segments]);
     }
 
+    // Checks a template before it is stored or used (MessageTemplates.Set, and dynamic rule
+    // messages at build time). A template is valid unless a placeholder has a format that no
+    // value can use, such as "{ComparisonValue:Q}". Unknown names and stray braces are allowed:
+    // they stay in the message as written. Rendering never throws either way; an invalid
+    // format is written as the placeholder text.
+    internal static bool TryValidate(string template, [NotNullWhen(false)] out string? error)
+    {
+        Argument.NotNull(template);
+        var parsed = ForCustomMessage(template);
+        if (parsed._segments is not null)
+        {
+            foreach (var segment in parsed._segments)
+            {
+                if (segment.Format is { } format && !Placeholders.IsText(segment.Id) && !ValueFormatter.IsKnownFormat(format))
+                {
+                    error = "The format '" + format + "' of the placeholder {" + segment.Name + "} is not valid.";
+                    return false;
+                }
+            }
+        }
+
+        error = null;
+        return true;
+    }
+
     // Renders the message for a guard. {PropertyName} is the guard name, {PropertyValue} the
     // checked value; every other placeholder comes from the check's arguments.
     public string Render<TValue, TArgs>(string name, TValue value, TArgs args)
@@ -105,9 +131,10 @@ internal sealed class MessageTemplate
                     builder.Append(name);
                     break;
                 case Placeholder.PropertyValue when typeof(TValue) != typeof(Unset):
-                    if (!args.TryAppend(builder, segment.Id, segment.Name!, segment.Format))
+                    if (!args.TryAppend(builder, segment.Id, segment.Name!, segment.Format)
+                        && !ValueFormatter.Append(builder, segment.Id, value, segment.Format))
                     {
-                        ValueFormatter.Append(builder, segment.Id, value, segment.Format);
+                        builder.Append(Text, segment.Start, segment.Length);
                     }
 
                     break;

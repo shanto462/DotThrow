@@ -75,17 +75,42 @@ internal static class Collections
         return count;
     }
 
-    // Arrays use Array.IndexOf (vectorized for primitive types), any other ICollection<T>
-    // uses its own Contains (O(1) for HashSet and FrozenSet, with the set's own comparer).
-    // A List<T> with a custom comparer is searched as a span, without an enumerator.
+    // Without a comparer, arrays and lists are searched with a plain loop over their items
+    // (EqualityComparer<T>.Default, which the JIT turns into a direct comparison for value
+    // types), and any other ICollection<T> uses its own Contains (O(1) for HashSet and
+    // FrozenSet, with the set's own comparer). Generic BCL searches such as Array.IndexOf are
+    // not used: on some CPUs their generic helpers boxed the value on the happy path.
     public static bool Contains<T>(IEnumerable<T> source, T item, IEqualityComparer<T>? comparer)
     {
         if (comparer is null)
         {
             if (source is T[] array)
             {
-                return Array.IndexOf(array, item) >= 0;
+                foreach (var candidate in array)
+                {
+                    if (EqualityComparer<T>.Default.Equals(candidate, item))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
             }
+
+#if NET5_0_OR_GREATER
+            if (source is List<T> items)
+            {
+                foreach (var candidate in CollectionsMarshal.AsSpan(items))
+                {
+                    if (EqualityComparer<T>.Default.Equals(candidate, item))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+#endif
 
             if (source is ICollection<T> collection)
             {
@@ -136,8 +161,8 @@ internal static class Collections
 #if NET8_0_OR_GREATER
     // The values of IfOneOf(1, 2, 3) are usually a few constants. Up to four values are
     // compared without a loop, so after inlining the JIT turns the check into plain
-    // comparisons with constants (like a pattern match). Longer lists of common primitive
-    // types use the vectorized MemoryExtensions.Contains; anything else a simple loop.
+    // comparisons with constants (like a pattern match). Longer lists use a plain loop (not
+    // the generic MemoryExtensions.Contains, whose helpers boxed on some CPUs).
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Contains<T>(scoped ReadOnlySpan<T> values, T item, IEqualityComparer<T>? comparer)
     {
@@ -167,26 +192,6 @@ internal static class Collections
 
     private static bool ContainsMany<T>(scoped ReadOnlySpan<T> values, T item)
     {
-        if (typeof(T) == typeof(int) || typeof(T) == typeof(uint))
-        {
-            return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<T, int>(ref MemoryMarshal.GetReference(values)), values.Length).Contains(Unsafe.As<T, int>(ref item));
-        }
-
-        if (typeof(T) == typeof(long) || typeof(T) == typeof(ulong))
-        {
-            return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<T, long>(ref MemoryMarshal.GetReference(values)), values.Length).Contains(Unsafe.As<T, long>(ref item));
-        }
-
-        if (typeof(T) == typeof(char) || typeof(T) == typeof(short) || typeof(T) == typeof(ushort))
-        {
-            return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<T, short>(ref MemoryMarshal.GetReference(values)), values.Length).Contains(Unsafe.As<T, short>(ref item));
-        }
-
-        if (typeof(T) == typeof(byte) || typeof(T) == typeof(sbyte))
-        {
-            return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<T, byte>(ref MemoryMarshal.GetReference(values)), values.Length).Contains(Unsafe.As<T, byte>(ref item));
-        }
-
         foreach (var candidate in values)
         {
             if (EqualityComparer<T>.Default.Equals(candidate, item))
@@ -306,6 +311,35 @@ internal static class Collections
         foreach (var item in source)
         {
             if (!seen.Add(item))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Sets and dictionaries are enumerated with their struct enumerators, so no enumerator
+    // object is allocated.
+    public static bool Any<T>(HashSet<T> source, Func<T, bool> predicate)
+    {
+        foreach (var item in source)
+        {
+            if (predicate(item))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static bool Any<TKey, TValue>(Dictionary<TKey, TValue> source, Func<KeyValuePair<TKey, TValue>, bool> predicate)
+        where TKey : notnull
+    {
+        foreach (var pair in source)
+        {
+            if (predicate(pair))
             {
                 return true;
             }

@@ -11,6 +11,12 @@ public static partial class GuardExtensions
     /// <param name="guard">The guard.</param>
     /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
     /// <returns>The guard.</returns>
+    /// <remarks>
+    /// <c>0.0.0.0</c> and <c>::</c> are the unspecified address, not loopback, so they pass.
+    /// Together with <see cref="IfPrivate(Guard{IPAddress}, string?)"/> this helps against
+    /// server-side request forgery only when you check the address you actually connect to
+    /// (after DNS resolution); it is not complete SSRF protection on its own.
+    /// </remarks>
     public static Guard<IPAddress> IfLoopback(this Guard<IPAddress> guard, string? message = null)
     {
         var address = guard.Value;
@@ -24,10 +30,15 @@ public static partial class GuardExtensions
 
     /// <summary>
     /// Fails when the address is in a private or link-local range: IPv4 <c>10.0.0.0/8</c>,
-    /// <c>172.16.0.0/12</c>, <c>192.168.0.0/16</c> and <c>169.254.0.0/16</c>; IPv6 <c>fc00::/7</c>
-    /// (unique local) and <c>fe80::/10</c> (link-local). Loopback addresses are not in these
-    /// ranges; use <see cref="IfLoopback(Guard{IPAddress}, string?)"/> for them.
+    /// <c>172.16.0.0/12</c>, <c>192.168.0.0/16</c>, <c>100.64.0.0/10</c> (shared address space
+    /// of carrier-grade NAT, RFC 6598) and <c>169.254.0.0/16</c>; IPv6 <c>fc00::/7</c> (unique
+    /// local) and <c>fe80::/10</c> (link-local). Loopback addresses are not in these ranges; use
+    /// <see cref="IfLoopback(Guard{IPAddress}, string?)"/> for them.
     /// </summary>
+    /// <remarks>
+    /// This is not SSRF protection on its own: check the address you actually connect to, after
+    /// DNS resolution, because a public host name can resolve to a private address.
+    /// </remarks>
     /// <param name="guard">The guard.</param>
     /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
     /// <returns>The guard.</returns>

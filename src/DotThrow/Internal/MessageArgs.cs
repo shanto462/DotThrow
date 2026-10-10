@@ -31,8 +31,7 @@ internal readonly struct MessageArgs<TA> : IMessageArgs
     {
         if (id == _idA)
         {
-            ValueFormatter.Append(builder, id, _a, format);
-            return true;
+            return ValueFormatter.Append(builder, id, _a, format);
         }
 
         return false;
@@ -58,14 +57,12 @@ internal readonly struct MessageArgs<TA, TB> : IMessageArgs
     {
         if (id == _idA)
         {
-            ValueFormatter.Append(builder, id, _a, format);
-            return true;
+            return ValueFormatter.Append(builder, id, _a, format);
         }
 
         if (id == _idB)
         {
-            ValueFormatter.Append(builder, id, _b, format);
-            return true;
+            return ValueFormatter.Append(builder, id, _b, format);
         }
 
         return false;
@@ -94,8 +91,7 @@ internal readonly struct MessageArgs<TA, TB, TC> : IMessageArgs
 
         if (id == _idC)
         {
-            ValueFormatter.Append(builder, id, _c, format);
-            return true;
+            return ValueFormatter.Append(builder, id, _c, format);
         }
 
         return false;
@@ -131,8 +127,7 @@ internal readonly struct DictionaryArgs : IMessageArgs
     {
         if (_values is not null && _values.TryGetValue(name, out var value))
         {
-            ValueFormatter.Append(builder, id, value, format);
-            return true;
+            return ValueFormatter.Append(builder, id, value, format);
         }
 
         return false;

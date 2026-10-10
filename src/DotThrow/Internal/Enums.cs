@@ -21,11 +21,33 @@ internal static class Enums
             return (ToBits(value) & ~EnumFlags<TEnum>.AllBits) == 0;
         }
 
-#if NET5_0_OR_GREATER
-        return Enum.IsDefined(value);
-#else
-        return Enum.IsDefined(typeof(TEnum), value);
-#endif
+        // A binary search over the defined values, read once per enum type. Not the generic
+        // Enum.IsDefined<TEnum>: generic BCL helpers boxed on the happy path on some CPUs,
+        // and the non-generic one boxes everywhere.
+        var bits = ToBits(value);
+        var sorted = EnumFlags<TEnum>.SortedBits;
+        var low = 0;
+        var high = sorted.Length - 1;
+        while (low <= high)
+        {
+            var middle = low + ((high - low) >> 1);
+            var candidate = sorted[middle];
+            if (candidate == bits)
+            {
+                return true;
+            }
+
+            if (candidate < bits)
+            {
+                low = middle + 1;
+            }
+            else
+            {
+                high = middle - 1;
+            }
+        }
+
+        return false;
     }
 
     public static bool IsName<TEnum>(string value, bool ignoreCase)
@@ -74,22 +96,41 @@ internal static class Enums
         public static readonly bool Unsigned = Type.GetTypeCode(typeof(TEnum)) == TypeCode.UInt64;
 #endif
 
+        // The raw bits of every defined value, sorted (for the binary search of IsDefined).
+        public static readonly ulong[] SortedBits = ReadBits();
+
         public static readonly ulong AllBits = Combine();
+
+        private static ulong[] ReadBits()
+        {
+#if NET5_0_OR_GREATER
+            var values = Enum.GetValues<TEnum>();
+            var bits = new ulong[values.Length];
+            for (var i = 0; i < values.Length; i++)
+            {
+                bits[i] = ToBits(values[i]);
+            }
+#else
+            var values = Enum.GetValues(typeof(TEnum));
+            var bits = new ulong[values.Length];
+            var index = 0;
+            foreach (TEnum value in values)
+            {
+                bits[index++] = ToBits(value);
+            }
+#endif
+            Array.Sort(bits);
+            return bits;
+        }
 
         private static ulong Combine()
         {
             var bits = 0UL;
-#if NET5_0_OR_GREATER
-            foreach (var value in Enum.GetValues<TEnum>())
+            foreach (var value in SortedBits)
             {
-                bits |= ToBits(value);
+                bits |= value;
             }
-#else
-            foreach (TEnum value in Enum.GetValues(typeof(TEnum)))
-            {
-                bits |= ToBits(value);
-            }
-#endif
+
             return bits;
         }
     }

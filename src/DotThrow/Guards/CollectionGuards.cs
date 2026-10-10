@@ -1345,10 +1345,12 @@ public static partial class GuardExtensions
     /// <param name="predicateExpression">The predicate source text, filled in by the compiler.</param>
     /// <returns>The guard.</returns>
     /// <remarks>
-    /// The compiler cannot infer the item type from the collection type, so give the lambda
-    /// parameter a type: <c>prices.Throw().IfAny((decimal p) =&gt; p &lt; 0)</c>. Arrays and lists
-    /// are walked by index, so the check does not allocate (use a <see langword="static"/>
-    /// lambda to avoid a closure). It stops at the first match.
+    /// This is the fallback for any collection type. Arrays, lists, sets, dictionaries and the
+    /// common collection interfaces have their own overloads, where the lambda needs no type;
+    /// for other types give the lambda parameter a type:
+    /// <c>queue.Throw().IfAny((decimal p) =&gt; p &lt; 0)</c>. Arrays and lists are walked by
+    /// index, so the check does not allocate (use a <see langword="static"/> lambda to avoid a
+    /// closure). It stops at the first match.
     /// </remarks>
     public static Guard<TCollection> IfAny<TCollection, TItem>(
         this Guard<TCollection> guard,
@@ -1376,7 +1378,9 @@ public static partial class GuardExtensions
     /// <param name="predicateExpression">The predicate source text, filled in by the compiler.</param>
     /// <returns>The guard.</returns>
     /// <remarks>
-    /// Give the lambda parameter a type so the compiler can infer the item type:
+    /// This is the fallback for any collection type; arrays, lists, sets, dictionaries and the
+    /// common collection interfaces have their own overloads, where the lambda needs no type.
+    /// For other types give the lambda parameter a type:
     /// <c>roles.Throw().IfNone((string r) =&gt; r == "admin")</c>. It stops at the first match.
     /// </remarks>
     public static Guard<TCollection> IfNone<TCollection, TItem>(
@@ -1385,6 +1389,442 @@ public static partial class GuardExtensions
         string? message = null,
         [CallerArgumentExpression(nameof(predicate))] string? predicateExpression = null)
         where TCollection : IEnumerable<TItem>
+    {
+        Argument.NotNull(predicate);
+        var value = guard.Value;
+        if (guard.IsActive && (value is null || !Collections.Any(value, predicate)))
+        {
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.None, message, Placeholder.Condition, predicateExpression);
+        }
+
+        return guard;
+    }
+
+    /// <summary>Fails when any item in the array matches <paramref name="predicate"/>.</summary>
+    /// <typeparam name="TItem">The item type.</typeparam>
+    /// <param name="guard">The guard.</param>
+    /// <param name="predicate">The condition that rejects an item.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Condition}</c> (the predicate source text).</param>
+    /// <param name="predicateExpression">The predicate source text, filled in by the compiler.</param>
+    /// <returns>The guard.</returns>
+    /// <remarks>The item type comes from the collection type, so the lambda needs no type: <c>x =&gt; x &gt; 5</c>. It stops at the first match.</remarks>
+    public static Guard<TItem[]> IfAny<TItem>(
+        this Guard<TItem[]> guard,
+        Func<TItem, bool> predicate,
+        string? message = null,
+        [CallerArgumentExpression(nameof(predicate))] string? predicateExpression = null)
+    {
+        Argument.NotNull(predicate);
+        var value = guard.Value;
+        if (guard.IsActive && (value is null || Collections.Any(value, predicate)))
+        {
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.Any, message, Placeholder.Condition, predicateExpression);
+        }
+
+        return guard;
+    }
+
+    /// <summary>Fails when no item in the array matches <paramref name="predicate"/> (an empty array fails).</summary>
+    /// <typeparam name="TItem">The item type.</typeparam>
+    /// <param name="guard">The guard.</param>
+    /// <param name="predicate">The condition that at least one item must meet.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Condition}</c> (the predicate source text).</param>
+    /// <param name="predicateExpression">The predicate source text, filled in by the compiler.</param>
+    /// <returns>The guard.</returns>
+    /// <remarks>The item type comes from the collection type, so the lambda needs no type: <c>x =&gt; x &gt; 5</c>. It stops at the first match.</remarks>
+    public static Guard<TItem[]> IfNone<TItem>(
+        this Guard<TItem[]> guard,
+        Func<TItem, bool> predicate,
+        string? message = null,
+        [CallerArgumentExpression(nameof(predicate))] string? predicateExpression = null)
+    {
+        Argument.NotNull(predicate);
+        var value = guard.Value;
+        if (guard.IsActive && (value is null || !Collections.Any(value, predicate)))
+        {
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.None, message, Placeholder.Condition, predicateExpression);
+        }
+
+        return guard;
+    }
+
+    /// <summary>Fails when any item in the list matches <paramref name="predicate"/>.</summary>
+    /// <typeparam name="TItem">The item type.</typeparam>
+    /// <param name="guard">The guard.</param>
+    /// <param name="predicate">The condition that rejects an item.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Condition}</c> (the predicate source text).</param>
+    /// <param name="predicateExpression">The predicate source text, filled in by the compiler.</param>
+    /// <returns>The guard.</returns>
+    /// <remarks>The item type comes from the collection type, so the lambda needs no type: <c>x =&gt; x &gt; 5</c>. It stops at the first match.</remarks>
+    public static Guard<List<TItem>> IfAny<TItem>(
+        this Guard<List<TItem>> guard,
+        Func<TItem, bool> predicate,
+        string? message = null,
+        [CallerArgumentExpression(nameof(predicate))] string? predicateExpression = null)
+    {
+        Argument.NotNull(predicate);
+        var value = guard.Value;
+        if (guard.IsActive && (value is null || Collections.Any(value, predicate)))
+        {
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.Any, message, Placeholder.Condition, predicateExpression);
+        }
+
+        return guard;
+    }
+
+    /// <summary>Fails when no item in the list matches <paramref name="predicate"/> (an empty list fails).</summary>
+    /// <typeparam name="TItem">The item type.</typeparam>
+    /// <param name="guard">The guard.</param>
+    /// <param name="predicate">The condition that at least one item must meet.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Condition}</c> (the predicate source text).</param>
+    /// <param name="predicateExpression">The predicate source text, filled in by the compiler.</param>
+    /// <returns>The guard.</returns>
+    /// <remarks>The item type comes from the collection type, so the lambda needs no type: <c>x =&gt; x &gt; 5</c>. It stops at the first match.</remarks>
+    public static Guard<List<TItem>> IfNone<TItem>(
+        this Guard<List<TItem>> guard,
+        Func<TItem, bool> predicate,
+        string? message = null,
+        [CallerArgumentExpression(nameof(predicate))] string? predicateExpression = null)
+    {
+        Argument.NotNull(predicate);
+        var value = guard.Value;
+        if (guard.IsActive && (value is null || !Collections.Any(value, predicate)))
+        {
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.None, message, Placeholder.Condition, predicateExpression);
+        }
+
+        return guard;
+    }
+
+    /// <summary>Fails when any item in the set matches <paramref name="predicate"/>.</summary>
+    /// <typeparam name="TItem">The item type.</typeparam>
+    /// <param name="guard">The guard.</param>
+    /// <param name="predicate">The condition that rejects an item.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Condition}</c> (the predicate source text).</param>
+    /// <param name="predicateExpression">The predicate source text, filled in by the compiler.</param>
+    /// <returns>The guard.</returns>
+    /// <remarks>The item type comes from the collection type, so the lambda needs no type: <c>x =&gt; x &gt; 5</c>. It stops at the first match.</remarks>
+    public static Guard<HashSet<TItem>> IfAny<TItem>(
+        this Guard<HashSet<TItem>> guard,
+        Func<TItem, bool> predicate,
+        string? message = null,
+        [CallerArgumentExpression(nameof(predicate))] string? predicateExpression = null)
+    {
+        Argument.NotNull(predicate);
+        var value = guard.Value;
+        if (guard.IsActive && (value is null || Collections.Any(value, predicate)))
+        {
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.Any, message, Placeholder.Condition, predicateExpression);
+        }
+
+        return guard;
+    }
+
+    /// <summary>Fails when no item in the set matches <paramref name="predicate"/> (an empty set fails).</summary>
+    /// <typeparam name="TItem">The item type.</typeparam>
+    /// <param name="guard">The guard.</param>
+    /// <param name="predicate">The condition that at least one item must meet.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Condition}</c> (the predicate source text).</param>
+    /// <param name="predicateExpression">The predicate source text, filled in by the compiler.</param>
+    /// <returns>The guard.</returns>
+    /// <remarks>The item type comes from the collection type, so the lambda needs no type: <c>x =&gt; x &gt; 5</c>. It stops at the first match.</remarks>
+    public static Guard<HashSet<TItem>> IfNone<TItem>(
+        this Guard<HashSet<TItem>> guard,
+        Func<TItem, bool> predicate,
+        string? message = null,
+        [CallerArgumentExpression(nameof(predicate))] string? predicateExpression = null)
+    {
+        Argument.NotNull(predicate);
+        var value = guard.Value;
+        if (guard.IsActive && (value is null || !Collections.Any(value, predicate)))
+        {
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.None, message, Placeholder.Condition, predicateExpression);
+        }
+
+        return guard;
+    }
+
+    /// <summary>Fails when any item in the dictionary matches <paramref name="predicate"/>.</summary>
+    /// <typeparam name="TKey">The key type.</typeparam>
+    /// <typeparam name="TValue">The value type.</typeparam>
+    /// <param name="guard">The guard.</param>
+    /// <param name="predicate">The condition that rejects an item.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Condition}</c> (the predicate source text).</param>
+    /// <param name="predicateExpression">The predicate source text, filled in by the compiler.</param>
+    /// <returns>The guard.</returns>
+    /// <remarks>The item type comes from the collection type, so the lambda needs no type: <c>x =&gt; x &gt; 5</c>. It stops at the first match.</remarks>
+    public static Guard<Dictionary<TKey, TValue>> IfAny<TKey, TValue>(
+        this Guard<Dictionary<TKey, TValue>> guard,
+        Func<KeyValuePair<TKey, TValue>, bool> predicate,
+        string? message = null,
+        [CallerArgumentExpression(nameof(predicate))] string? predicateExpression = null)
+        where TKey : notnull
+    {
+        Argument.NotNull(predicate);
+        var value = guard.Value;
+        if (guard.IsActive && (value is null || Collections.Any(value, predicate)))
+        {
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.Any, message, Placeholder.Condition, predicateExpression);
+        }
+
+        return guard;
+    }
+
+    /// <summary>Fails when no item in the dictionary matches <paramref name="predicate"/> (an empty dictionary fails).</summary>
+    /// <typeparam name="TKey">The key type.</typeparam>
+    /// <typeparam name="TValue">The value type.</typeparam>
+    /// <param name="guard">The guard.</param>
+    /// <param name="predicate">The condition that at least one item must meet.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Condition}</c> (the predicate source text).</param>
+    /// <param name="predicateExpression">The predicate source text, filled in by the compiler.</param>
+    /// <returns>The guard.</returns>
+    /// <remarks>The item type comes from the collection type, so the lambda needs no type: <c>x =&gt; x &gt; 5</c>. It stops at the first match.</remarks>
+    public static Guard<Dictionary<TKey, TValue>> IfNone<TKey, TValue>(
+        this Guard<Dictionary<TKey, TValue>> guard,
+        Func<KeyValuePair<TKey, TValue>, bool> predicate,
+        string? message = null,
+        [CallerArgumentExpression(nameof(predicate))] string? predicateExpression = null)
+        where TKey : notnull
+    {
+        Argument.NotNull(predicate);
+        var value = guard.Value;
+        if (guard.IsActive && (value is null || !Collections.Any(value, predicate)))
+        {
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.None, message, Placeholder.Condition, predicateExpression);
+        }
+
+        return guard;
+    }
+
+    /// <summary>Fails when any item in the collection matches <paramref name="predicate"/>.</summary>
+    /// <typeparam name="TItem">The item type.</typeparam>
+    /// <param name="guard">The guard.</param>
+    /// <param name="predicate">The condition that rejects an item.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Condition}</c> (the predicate source text).</param>
+    /// <param name="predicateExpression">The predicate source text, filled in by the compiler.</param>
+    /// <returns>The guard.</returns>
+    /// <remarks>The item type comes from the collection type, so the lambda needs no type: <c>x =&gt; x &gt; 5</c>. It stops at the first match.</remarks>
+    public static Guard<ICollection<TItem>> IfAny<TItem>(
+        this Guard<ICollection<TItem>> guard,
+        Func<TItem, bool> predicate,
+        string? message = null,
+        [CallerArgumentExpression(nameof(predicate))] string? predicateExpression = null)
+    {
+        Argument.NotNull(predicate);
+        var value = guard.Value;
+        if (guard.IsActive && (value is null || Collections.Any(value, predicate)))
+        {
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.Any, message, Placeholder.Condition, predicateExpression);
+        }
+
+        return guard;
+    }
+
+    /// <summary>Fails when no item in the collection matches <paramref name="predicate"/> (an empty collection fails).</summary>
+    /// <typeparam name="TItem">The item type.</typeparam>
+    /// <param name="guard">The guard.</param>
+    /// <param name="predicate">The condition that at least one item must meet.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Condition}</c> (the predicate source text).</param>
+    /// <param name="predicateExpression">The predicate source text, filled in by the compiler.</param>
+    /// <returns>The guard.</returns>
+    /// <remarks>The item type comes from the collection type, so the lambda needs no type: <c>x =&gt; x &gt; 5</c>. It stops at the first match.</remarks>
+    public static Guard<ICollection<TItem>> IfNone<TItem>(
+        this Guard<ICollection<TItem>> guard,
+        Func<TItem, bool> predicate,
+        string? message = null,
+        [CallerArgumentExpression(nameof(predicate))] string? predicateExpression = null)
+    {
+        Argument.NotNull(predicate);
+        var value = guard.Value;
+        if (guard.IsActive && (value is null || !Collections.Any(value, predicate)))
+        {
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.None, message, Placeholder.Condition, predicateExpression);
+        }
+
+        return guard;
+    }
+
+    /// <summary>Fails when any item in the list matches <paramref name="predicate"/>.</summary>
+    /// <typeparam name="TItem">The item type.</typeparam>
+    /// <param name="guard">The guard.</param>
+    /// <param name="predicate">The condition that rejects an item.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Condition}</c> (the predicate source text).</param>
+    /// <param name="predicateExpression">The predicate source text, filled in by the compiler.</param>
+    /// <returns>The guard.</returns>
+    /// <remarks>The item type comes from the collection type, so the lambda needs no type: <c>x =&gt; x &gt; 5</c>. It stops at the first match.</remarks>
+    public static Guard<IList<TItem>> IfAny<TItem>(
+        this Guard<IList<TItem>> guard,
+        Func<TItem, bool> predicate,
+        string? message = null,
+        [CallerArgumentExpression(nameof(predicate))] string? predicateExpression = null)
+    {
+        Argument.NotNull(predicate);
+        var value = guard.Value;
+        if (guard.IsActive && (value is null || Collections.Any(value, predicate)))
+        {
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.Any, message, Placeholder.Condition, predicateExpression);
+        }
+
+        return guard;
+    }
+
+    /// <summary>Fails when no item in the list matches <paramref name="predicate"/> (an empty list fails).</summary>
+    /// <typeparam name="TItem">The item type.</typeparam>
+    /// <param name="guard">The guard.</param>
+    /// <param name="predicate">The condition that at least one item must meet.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Condition}</c> (the predicate source text).</param>
+    /// <param name="predicateExpression">The predicate source text, filled in by the compiler.</param>
+    /// <returns>The guard.</returns>
+    /// <remarks>The item type comes from the collection type, so the lambda needs no type: <c>x =&gt; x &gt; 5</c>. It stops at the first match.</remarks>
+    public static Guard<IList<TItem>> IfNone<TItem>(
+        this Guard<IList<TItem>> guard,
+        Func<TItem, bool> predicate,
+        string? message = null,
+        [CallerArgumentExpression(nameof(predicate))] string? predicateExpression = null)
+    {
+        Argument.NotNull(predicate);
+        var value = guard.Value;
+        if (guard.IsActive && (value is null || !Collections.Any(value, predicate)))
+        {
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.None, message, Placeholder.Condition, predicateExpression);
+        }
+
+        return guard;
+    }
+
+    /// <summary>Fails when any item in the collection matches <paramref name="predicate"/>.</summary>
+    /// <typeparam name="TItem">The item type.</typeparam>
+    /// <param name="guard">The guard.</param>
+    /// <param name="predicate">The condition that rejects an item.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Condition}</c> (the predicate source text).</param>
+    /// <param name="predicateExpression">The predicate source text, filled in by the compiler.</param>
+    /// <returns>The guard.</returns>
+    /// <remarks>The item type comes from the collection type, so the lambda needs no type: <c>x =&gt; x &gt; 5</c>. It stops at the first match.</remarks>
+    public static Guard<IReadOnlyCollection<TItem>> IfAny<TItem>(
+        this Guard<IReadOnlyCollection<TItem>> guard,
+        Func<TItem, bool> predicate,
+        string? message = null,
+        [CallerArgumentExpression(nameof(predicate))] string? predicateExpression = null)
+    {
+        Argument.NotNull(predicate);
+        var value = guard.Value;
+        if (guard.IsActive && (value is null || Collections.Any(value, predicate)))
+        {
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.Any, message, Placeholder.Condition, predicateExpression);
+        }
+
+        return guard;
+    }
+
+    /// <summary>Fails when no item in the collection matches <paramref name="predicate"/> (an empty collection fails).</summary>
+    /// <typeparam name="TItem">The item type.</typeparam>
+    /// <param name="guard">The guard.</param>
+    /// <param name="predicate">The condition that at least one item must meet.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Condition}</c> (the predicate source text).</param>
+    /// <param name="predicateExpression">The predicate source text, filled in by the compiler.</param>
+    /// <returns>The guard.</returns>
+    /// <remarks>The item type comes from the collection type, so the lambda needs no type: <c>x =&gt; x &gt; 5</c>. It stops at the first match.</remarks>
+    public static Guard<IReadOnlyCollection<TItem>> IfNone<TItem>(
+        this Guard<IReadOnlyCollection<TItem>> guard,
+        Func<TItem, bool> predicate,
+        string? message = null,
+        [CallerArgumentExpression(nameof(predicate))] string? predicateExpression = null)
+    {
+        Argument.NotNull(predicate);
+        var value = guard.Value;
+        if (guard.IsActive && (value is null || !Collections.Any(value, predicate)))
+        {
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.None, message, Placeholder.Condition, predicateExpression);
+        }
+
+        return guard;
+    }
+
+    /// <summary>Fails when any item in the list matches <paramref name="predicate"/>.</summary>
+    /// <typeparam name="TItem">The item type.</typeparam>
+    /// <param name="guard">The guard.</param>
+    /// <param name="predicate">The condition that rejects an item.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Condition}</c> (the predicate source text).</param>
+    /// <param name="predicateExpression">The predicate source text, filled in by the compiler.</param>
+    /// <returns>The guard.</returns>
+    /// <remarks>The item type comes from the collection type, so the lambda needs no type: <c>x =&gt; x &gt; 5</c>. It stops at the first match.</remarks>
+    public static Guard<IReadOnlyList<TItem>> IfAny<TItem>(
+        this Guard<IReadOnlyList<TItem>> guard,
+        Func<TItem, bool> predicate,
+        string? message = null,
+        [CallerArgumentExpression(nameof(predicate))] string? predicateExpression = null)
+    {
+        Argument.NotNull(predicate);
+        var value = guard.Value;
+        if (guard.IsActive && (value is null || Collections.Any(value, predicate)))
+        {
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.Any, message, Placeholder.Condition, predicateExpression);
+        }
+
+        return guard;
+    }
+
+    /// <summary>Fails when no item in the list matches <paramref name="predicate"/> (an empty list fails).</summary>
+    /// <typeparam name="TItem">The item type.</typeparam>
+    /// <param name="guard">The guard.</param>
+    /// <param name="predicate">The condition that at least one item must meet.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Condition}</c> (the predicate source text).</param>
+    /// <param name="predicateExpression">The predicate source text, filled in by the compiler.</param>
+    /// <returns>The guard.</returns>
+    /// <remarks>The item type comes from the collection type, so the lambda needs no type: <c>x =&gt; x &gt; 5</c>. It stops at the first match.</remarks>
+    public static Guard<IReadOnlyList<TItem>> IfNone<TItem>(
+        this Guard<IReadOnlyList<TItem>> guard,
+        Func<TItem, bool> predicate,
+        string? message = null,
+        [CallerArgumentExpression(nameof(predicate))] string? predicateExpression = null)
+    {
+        Argument.NotNull(predicate);
+        var value = guard.Value;
+        if (guard.IsActive && (value is null || !Collections.Any(value, predicate)))
+        {
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.None, message, Placeholder.Condition, predicateExpression);
+        }
+
+        return guard;
+    }
+
+    /// <summary>Fails when any item in the sequence matches <paramref name="predicate"/>.</summary>
+    /// <typeparam name="TItem">The item type.</typeparam>
+    /// <param name="guard">The guard.</param>
+    /// <param name="predicate">The condition that rejects an item.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Condition}</c> (the predicate source text).</param>
+    /// <param name="predicateExpression">The predicate source text, filled in by the compiler.</param>
+    /// <returns>The guard.</returns>
+    /// <remarks>The item type comes from the collection type, so the lambda needs no type: <c>x =&gt; x &gt; 5</c>. It stops at the first match.</remarks>
+    public static Guard<IEnumerable<TItem>> IfAny<TItem>(
+        this Guard<IEnumerable<TItem>> guard,
+        Func<TItem, bool> predicate,
+        string? message = null,
+        [CallerArgumentExpression(nameof(predicate))] string? predicateExpression = null)
+    {
+        Argument.NotNull(predicate);
+        var value = guard.Value;
+        if (guard.IsActive && (value is null || Collections.Any(value, predicate)))
+        {
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.Any, message, Placeholder.Condition, predicateExpression);
+        }
+
+        return guard;
+    }
+
+    /// <summary>Fails when no item in the sequence matches <paramref name="predicate"/> (an empty sequence fails).</summary>
+    /// <typeparam name="TItem">The item type.</typeparam>
+    /// <param name="guard">The guard.</param>
+    /// <param name="predicate">The condition that at least one item must meet.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Condition}</c> (the predicate source text).</param>
+    /// <param name="predicateExpression">The predicate source text, filled in by the compiler.</param>
+    /// <returns>The guard.</returns>
+    /// <remarks>The item type comes from the collection type, so the lambda needs no type: <c>x =&gt; x &gt; 5</c>. It stops at the first match.</remarks>
+    public static Guard<IEnumerable<TItem>> IfNone<TItem>(
+        this Guard<IEnumerable<TItem>> guard,
+        Func<TItem, bool> predicate,
+        string? message = null,
+        [CallerArgumentExpression(nameof(predicate))] string? predicateExpression = null)
     {
         Argument.NotNull(predicate);
         var value = guard.Value;

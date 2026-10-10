@@ -12,12 +12,15 @@ namespace DotThrow.Internal;
 // (DateTimeOffset), "14:30:00.5" (TimeOnly). A {Name:format} in a template still wins.
 internal static class ValueFormatter
 {
-    public static void Append<TValue>(StringBuilder builder, Placeholder id, TValue value, string? format)
+    // Returns false, with nothing written, when the format is not valid for the value (for
+    // example "{From:Q}"); the caller then writes the placeholder as it is in the template.
+    // Building a message never throws because of a template.
+    public static bool Append<TValue>(StringBuilder builder, Placeholder id, TValue value, string? format)
     {
         if (value is null)
         {
             builder.Append("null");
-            return;
+            return true;
         }
 
         if (value is string text)
@@ -31,7 +34,7 @@ internal static class ValueFormatter
                 builder.Append('\'').Append(text).Append('\'');
             }
 
-            return;
+            return true;
         }
 
         if (format is null)
@@ -39,35 +42,59 @@ internal static class ValueFormatter
             if (value is DateTime dateTime)
             {
                 AppendDateTime(builder, dateTime);
-                return;
+                return true;
             }
 
             if (value is DateTimeOffset dateTimeOffset)
             {
                 AppendDateTimeOffset(builder, dateTimeOffset);
-                return;
+                return true;
             }
 
 #if NET6_0_OR_GREATER
             if (value is TimeOnly time)
             {
                 AppendTime(builder, time.Ticks);
-                return;
+                return true;
             }
 #endif
 
             format = DefaultFormat(value);
         }
 
+        var length = builder.Length;
+        try
+        {
 #if NET6_0_OR_GREATER
-        // Formats ISpanFormattable values (numbers, dates, Guid...) straight into the builder,
-        // without boxing and without a temporary string.
-        var handler = new StringBuilder.AppendInterpolatedStringHandler(0, 1, builder, CultureInfo.InvariantCulture);
-        handler.AppendFormatted(value, format);
-        builder.Append(CultureInfo.InvariantCulture, ref handler);
+            // Formats ISpanFormattable values (numbers, dates, Guid...) straight into the builder,
+            // without boxing and without a temporary string.
+            var handler = new StringBuilder.AppendInterpolatedStringHandler(0, 1, builder, CultureInfo.InvariantCulture);
+            handler.AppendFormatted(value, format);
+            builder.Append(CultureInfo.InvariantCulture, ref handler);
 #else
-        builder.Append(value is IFormattable formattable ? formattable.ToString(format, CultureInfo.InvariantCulture) : value.ToString());
+            builder.Append(value is IFormattable formattable ? formattable.ToString(format, CultureInfo.InvariantCulture) : value.ToString());
 #endif
+            return true;
+        }
+        catch (FormatException)
+        {
+            builder.Length = length;
+            return false;
+        }
+    }
+
+    // True when the format works for at least one common value type (numbers, dates, times,
+    // Guid). A format such as "Q" fails for all of them, so it can never be right.
+    public static bool IsKnownFormat(string format)
+    {
+        var builder = new StringBuilder();
+        return Append(builder, Placeholder.Value, 1, format)
+            || Append(builder, Placeholder.Value, 1.5, format)
+            || Append(builder, Placeholder.Value, 1.5m, format)
+            || Append(builder, Placeholder.Value, new DateTime(2026, 1, 2, 3, 4, 5, DateTimeKind.Utc), format)
+            || Append(builder, Placeholder.Value, new DateTimeOffset(2026, 1, 2, 3, 4, 5, TimeSpan.Zero), format)
+            || Append(builder, Placeholder.Value, TimeSpan.FromMinutes(90), format)
+            || Append(builder, Placeholder.Value, Guid.Empty, format);
     }
 
     // The typeof checks are constants for the JIT, so a value type pays only for its own branch.

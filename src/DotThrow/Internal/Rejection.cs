@@ -165,6 +165,14 @@ internal static class Rejection
     private static Guard<T> Collect<T, TArgs>(Guard<T> guard, FailureKind kind, string code, string? message, string? key, bool content, TArgs args)
         where TArgs : struct, IMessageArgs =>
         content && guard.Value is null
-            ? guard.Collect(FailureKind.Null, ErrorCodes.Null, Messages.Render(message, ErrorCodes.Null, null, guard.Name, guard.Value, default(NoArgs)))
-            : guard.Collect(kind, code, Messages.Render(message, code, key, guard.Name, guard.Value, args));
+            ? guard.Collect(FailureKind.Null, ErrorCodes.Null, Render(guard.Sink, message, ErrorCodes.Null, null, guard.Name, guard.Value, default(NoArgs)))
+            : guard.Collect(kind, code, Render(guard.Sink, message, code, key, guard.Name, guard.Value, args));
+
+    // In collect mode the report renders the message: inside a Validator<T> rule with
+    // WithMessage, the rule message gets the check's arguments (core-validation).
+    private static string Render<T, TArgs>(object? sink, string? message, string code, string? key, string name, T value, TArgs args)
+        where TArgs : struct, IMessageArgs =>
+        sink is ValidationReport report
+            ? report.RenderCheckMessage(message, code, key, name, value, args)
+            : Messages.Render(message, code, key, name, value, args);
 }

@@ -4,9 +4,10 @@ using System;
 
 namespace DotThrow.Internal;
 
-// Digits of a decimal, for IfPrecisionScaleExceeded. Same numbers as FluentValidation's
-// PrecisionScaleValidator: precision is the number of significant digits of the unscaled
-// integer, scale is the number of decimals, and zero has precision scale + 1.
+// Digits of a decimal, for IfPrecisionScaleExceeded, with the same numbers as
+// FluentValidation 12's PrecisionScaleValidator: scale is the number of decimals as stored
+// (trailing zeros count unless ignoreTrailingZeros), precision is the number of digits of the
+// unscaled integer (0 for zero), and the integer digits are precision - scale.
 internal static class Decimals
 {
     private static readonly decimal[] PowersOfTen = CreatePowersOfTen();
@@ -34,7 +35,10 @@ internal static class Decimals
         }
 
         scale = rawScale - trailingZeros;
-        precision = mantissa == 0m ? scale + 1 : DigitCount(mantissa) - trailingZeros;
+
+        // FluentValidation 12: precision is the number of digits of the unscaled integer, so
+        // zero has precision 0 (0.00m has scale 2 and no integer digits, and passes (2, 2)).
+        precision = mantissa == 0m ? 0 : DigitCount(mantissa) - trailingZeros;
     }
 
     private static int DigitCount(decimal integer)

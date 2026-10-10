@@ -77,6 +77,7 @@ public static class MessageTemplates
     /// <summary>Sets the template for an error code, for one culture or for every culture.</summary>
     /// <param name="key">An error code such as <see cref="ErrorCodes.LongerThan"/>, a variant key such as <c>"CountEqualTo.One"</c>, or your own code.</param>
     /// <param name="template">The template, with placeholders such as <c>{PropertyName}</c>.</param>
+    /// <exception cref="ArgumentException">A placeholder has a format that no value can use, such as <c>{From:Q}</c>.</exception>
     /// <param name="culture">
     /// The culture, for example <c>new CultureInfo("de")</c> (it also serves <c>de-AT</c>), or
     /// <see langword="null"/> (or the invariant culture) for every culture. A template for a
@@ -86,6 +87,11 @@ public static class MessageTemplates
     {
         Argument.NotNullOrEmpty(key);
         Argument.NotNull(template);
+        if (!MessageTemplate.TryValidate(template, out var error))
+        {
+            throw new ArgumentException(error, nameof(template));
+        }
+
         var parsed = MessageTemplate.Parse(template);
         var cultureName = culture?.Name ?? string.Empty;
         lock (WriteLock)

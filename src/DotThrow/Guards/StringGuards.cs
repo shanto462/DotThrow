@@ -279,11 +279,19 @@ public static partial class GuardExtensions
     /// <param name="options">The regular expression options.</param>
     /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Pattern}</c>.</param>
     /// <returns>The guard.</returns>
+    /// <remarks>
+    /// A match that runs out of time (the <c>matchTimeout</c> overloads, a <see cref="Regex"/>
+    /// created with a timeout, or the process-wide <c>REGEX_DEFAULT_MATCH_TIMEOUT</c>) cannot
+    /// confirm anything about the value, so the check fails with its normal error code and
+    /// message (fail closed); <see cref="RegexMatchTimeoutException"/> never escapes. Patterns
+    /// that run on untrusted input should have a timeout: some patterns take exponential time
+    /// on crafted input (ReDoS).
+    /// </remarks>
     public static Guard<string> IfMatches(this Guard<string> guard, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern, RegexOptions options = RegexOptions.None, string? message = null)
     {
         Argument.NotNull(pattern);
         var text = guard.Value;
-        if (guard.IsActive && (text is null || Regex.IsMatch(text, pattern, options)))
+        if (guard.IsActive && (text is null || Formats.Match(text, pattern, options, null) != Formats.RegexOutcome.NoMatch))
         {
             return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.Matches, message, Placeholder.Pattern, pattern);
         }
@@ -296,13 +304,53 @@ public static partial class GuardExtensions
     /// <param name="regex">The rejected pattern, for example one made by the <c>[GeneratedRegex]</c> source generator.</param>
     /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Pattern}</c>.</param>
     /// <returns>The guard.</returns>
+    /// <remarks>
+    /// A match that runs out of time (the <c>matchTimeout</c> overloads, a <see cref="Regex"/>
+    /// created with a timeout, or the process-wide <c>REGEX_DEFAULT_MATCH_TIMEOUT</c>) cannot
+    /// confirm anything about the value, so the check fails with its normal error code and
+    /// message (fail closed); <see cref="RegexMatchTimeoutException"/> never escapes. Patterns
+    /// that run on untrusted input should have a timeout: some patterns take exponential time
+    /// on crafted input (ReDoS).
+    /// </remarks>
     public static Guard<string> IfMatches(this Guard<string> guard, Regex regex, string? message = null)
     {
         Argument.NotNull(regex);
         var text = guard.Value;
-        if (guard.IsActive && (text is null || regex.IsMatch(text)))
+        if (guard.IsActive && (text is null || Formats.Match(text, regex) != Formats.RegexOutcome.NoMatch))
         {
             return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.Matches, message, Placeholder.Pattern, regex.ToString());
+        }
+
+        return guard;
+    }
+
+    /// <summary>Fails when the string matches the regular expression <paramref name="pattern"/> (or the match times out). The match stops after <paramref name="matchTimeout"/>.</summary>
+    /// <param name="guard">The guard.</param>
+    /// <param name="pattern">The regular expression.</param>
+    /// <param name="matchTimeout">The longest time one match may take, for example <c>TimeSpan.FromMilliseconds(100)</c>.</param>
+    /// <param name="options">The regular expression options.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Pattern}</c>.</param>
+    /// <returns>The guard.</returns>
+    /// <remarks>
+    /// A match that runs out of time (the <c>matchTimeout</c> overloads, a <see cref="Regex"/>
+    /// created with a timeout, or the process-wide <c>REGEX_DEFAULT_MATCH_TIMEOUT</c>) cannot
+    /// confirm anything about the value, so the check fails with its normal error code and
+    /// message (fail closed); <see cref="RegexMatchTimeoutException"/> never escapes. Patterns
+    /// that run on untrusted input should have a timeout: some patterns take exponential time
+    /// on crafted input (ReDoS).
+    /// </remarks>
+    public static Guard<string> IfMatches(
+        this Guard<string> guard,
+        [StringSyntax(StringSyntaxAttribute.Regex)] string pattern,
+        TimeSpan matchTimeout,
+        RegexOptions options = RegexOptions.None,
+        string? message = null)
+    {
+        Argument.NotNull(pattern);
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || Formats.Match(text, pattern, options, matchTimeout) != Formats.RegexOutcome.NoMatch))
+        {
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.Matches, message, Placeholder.Pattern, pattern);
         }
 
         return guard;
@@ -314,11 +362,19 @@ public static partial class GuardExtensions
     /// <param name="options">The regular expression options.</param>
     /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Pattern}</c>.</param>
     /// <returns>The guard.</returns>
+    /// <remarks>
+    /// A match that runs out of time (the <c>matchTimeout</c> overloads, a <see cref="Regex"/>
+    /// created with a timeout, or the process-wide <c>REGEX_DEFAULT_MATCH_TIMEOUT</c>) cannot
+    /// confirm anything about the value, so the check fails with its normal error code and
+    /// message (fail closed); <see cref="RegexMatchTimeoutException"/> never escapes. Patterns
+    /// that run on untrusted input should have a timeout: some patterns take exponential time
+    /// on crafted input (ReDoS).
+    /// </remarks>
     public static Guard<string> IfNotMatches(this Guard<string> guard, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern, RegexOptions options = RegexOptions.None, string? message = null)
     {
         Argument.NotNull(pattern);
         var text = guard.Value;
-        if (guard.IsActive && (text is null || !Regex.IsMatch(text, pattern, options)))
+        if (guard.IsActive && (text is null || Formats.Match(text, pattern, options, null) != Formats.RegexOutcome.Match))
         {
             return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.NotMatches, message, Placeholder.Pattern, pattern);
         }
@@ -331,13 +387,53 @@ public static partial class GuardExtensions
     /// <param name="regex">The required pattern, for example one made by the <c>[GeneratedRegex]</c> source generator.</param>
     /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Pattern}</c>.</param>
     /// <returns>The guard.</returns>
+    /// <remarks>
+    /// A match that runs out of time (the <c>matchTimeout</c> overloads, a <see cref="Regex"/>
+    /// created with a timeout, or the process-wide <c>REGEX_DEFAULT_MATCH_TIMEOUT</c>) cannot
+    /// confirm anything about the value, so the check fails with its normal error code and
+    /// message (fail closed); <see cref="RegexMatchTimeoutException"/> never escapes. Patterns
+    /// that run on untrusted input should have a timeout: some patterns take exponential time
+    /// on crafted input (ReDoS).
+    /// </remarks>
     public static Guard<string> IfNotMatches(this Guard<string> guard, Regex regex, string? message = null)
     {
         Argument.NotNull(regex);
         var text = guard.Value;
-        if (guard.IsActive && (text is null || !regex.IsMatch(text)))
+        if (guard.IsActive && (text is null || Formats.Match(text, regex) != Formats.RegexOutcome.Match))
         {
             return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.NotMatches, message, Placeholder.Pattern, regex.ToString());
+        }
+
+        return guard;
+    }
+
+    /// <summary>Fails when the string does not match the regular expression <paramref name="pattern"/> (or the match times out). The match stops after <paramref name="matchTimeout"/>.</summary>
+    /// <param name="guard">The guard.</param>
+    /// <param name="pattern">The regular expression.</param>
+    /// <param name="matchTimeout">The longest time one match may take, for example <c>TimeSpan.FromMilliseconds(100)</c>.</param>
+    /// <param name="options">The regular expression options.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Pattern}</c>.</param>
+    /// <returns>The guard.</returns>
+    /// <remarks>
+    /// A match that runs out of time (the <c>matchTimeout</c> overloads, a <see cref="Regex"/>
+    /// created with a timeout, or the process-wide <c>REGEX_DEFAULT_MATCH_TIMEOUT</c>) cannot
+    /// confirm anything about the value, so the check fails with its normal error code and
+    /// message (fail closed); <see cref="RegexMatchTimeoutException"/> never escapes. Patterns
+    /// that run on untrusted input should have a timeout: some patterns take exponential time
+    /// on crafted input (ReDoS).
+    /// </remarks>
+    public static Guard<string> IfNotMatches(
+        this Guard<string> guard,
+        [StringSyntax(StringSyntaxAttribute.Regex)] string pattern,
+        TimeSpan matchTimeout,
+        RegexOptions options = RegexOptions.None,
+        string? message = null)
+    {
+        Argument.NotNull(pattern);
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || Formats.Match(text, pattern, options, matchTimeout) != Formats.RegexOutcome.Match))
+        {
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.NotMatches, message, Placeholder.Pattern, pattern);
         }
 
         return guard;
@@ -383,7 +479,9 @@ public static partial class GuardExtensions
 
     /// <summary>
     /// Fails when the string is not a well-formed XML document. DTDs are rejected and external
-    /// entities are never resolved, so the check is safe for untrusted input.
+    /// entities are never resolved, so entity attacks (XXE, billion laughs) do not work. This
+    /// overload has no size limit, and parsing allocates several times the size of the text:
+    /// for untrusted input use <see cref="IfNotXml(Guard{string}, long, string?)"/> with a limit.
     /// </summary>
     /// <param name="guard">The guard.</param>
     /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
@@ -392,6 +490,33 @@ public static partial class GuardExtensions
     {
         var text = guard.Value;
         if (guard.IsActive && (text is null || !Formats.IsXml(text)))
+        {
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.NotXml, message);
+        }
+
+        return guard;
+    }
+
+    /// <summary>
+    /// Fails when the string is not a well-formed XML document or is longer than
+    /// <paramref name="maxCharacters"/>. DTDs are rejected and external entities are never
+    /// resolved. Use this overload for untrusted input: parsing allocates several times the
+    /// size of the text, so an unbounded document is a memory risk.
+    /// </summary>
+    /// <param name="guard">The guard.</param>
+    /// <param name="maxCharacters">The largest allowed document, in characters; 0 for no limit.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <returns>The guard.</returns>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxCharacters"/> is negative.</exception>
+    public static Guard<string> IfNotXml(this Guard<string> guard, long maxCharacters, string? message = null)
+    {
+        if (maxCharacters < 0)
+        {
+            Argument.ThrowOutOfRange(nameof(maxCharacters), maxCharacters, "The value must not be negative.");
+        }
+
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || !Formats.IsXml(text, maxCharacters)))
         {
             return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.NotXml, message);
         }
