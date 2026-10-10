@@ -22,6 +22,14 @@ the same checks record every error in a report that you can return from an API.
 dotnet add package DotThrow
 ```
 
+## Packages
+
+The DotThrow packages share one version:
+
+- [DotThrow](https://www.nuget.org/packages/DotThrow) (this package): guard clauses, collect mode, `Validator<T>`, dynamic rules, message translations and analyzers. No dependencies.
+- [DotThrow.DependencyInjection](https://www.nuget.org/packages/DotThrow.DependencyInjection): register validators in dependency injection, validate options classes, and dynamic validators from configuration.
+- [DotThrow.AspNetCore](https://www.nuget.org/packages/DotThrow.AspNetCore): validation for minimal API endpoints and MVC actions, and validation problem helpers.
+
 ## Guard clauses
 
 ```csharp

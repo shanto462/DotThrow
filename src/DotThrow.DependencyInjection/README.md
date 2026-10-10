@@ -20,6 +20,14 @@ and `Microsoft.Extensions.Options`.
 dotnet add package DotThrow.DependencyInjection
 ```
 
+## Packages
+
+The DotThrow packages share one version:
+
+- [DotThrow](https://www.nuget.org/packages/DotThrow): guard clauses, collect mode, `Validator<T>`, dynamic rules, message translations and analyzers. No dependencies.
+- [DotThrow.DependencyInjection](https://www.nuget.org/packages/DotThrow.DependencyInjection) (this package): register validators in dependency injection, validate options classes, and dynamic validators from configuration.
+- [DotThrow.AspNetCore](https://www.nuget.org/packages/DotThrow.AspNetCore): validation for minimal API endpoints and MVC actions, and validation problem helpers.
+
 ## Register validators
 
 ```csharp
@@ -171,4 +179,3 @@ take the same arguments. The filter gets a `DotThrow.Scanning.AssemblyScanResult
 - [DotThrow on GitHub](https://github.com/shanto462/DotThrow)
 - [Validation guide](https://github.com/shanto462/DotThrow/blob/main/docs/validation.md)
 - [Changelog](https://github.com/shanto462/DotThrow/blob/main/CHANGELOG.md)
-- [DotThrow.AspNetCore](https://www.nuget.org/packages/DotThrow.AspNetCore) for minimal API and MVC validation
