@@ -27,6 +27,7 @@ Please include:
 
 - I will confirm that I received your report within 7 days.
 - I will keep you updated while I investigate and work on a fix.
+- I aim to release a fix for a confirmed vulnerability of medium or higher severity within 60 days, and much sooner for a critical one.
 - When a fix is released, I will publish a GitHub security advisory and credit you, unless you ask me not to.
 
 ## Verifying packages
