@@ -1,0 +1,98 @@
+name: Bug report
+description: A check or validator does not work as expected.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug.
+        Do not report security vulnerabilities here. Use [private vulnerability reporting](https://github.com/shanto462/DotThrow/security/advisories/new) instead.
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: A clear description of the bug.
+      placeholder: For example, "IfLongerThan(5) throws for a string with exactly 5 characters."
+    validations:
+      required: true
+  - type: textarea
+    id: sample
+    attributes:
+      label: Minimal code sample
+      description: The smallest code that shows the problem. It is formatted as C# automatically.
+      placeholder: |
+        using DotThrow;
+
+        var name = "Hello";
+        name.Throw().IfLongerThan(5);
+      render: csharp
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      placeholder: For example, "No exception, because the length is not longer than 5."
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What happened instead. Include the exception type, message and stack trace if there is one. It is formatted as code automatically.
+      placeholder: |
+        System.ArgumentException: 'name' must be at most 5 characters long. (Parameter 'name')
+           at Program.<Main>$(String[] args) in Program.cs:line 4
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: DotThrow version
+      description: The package version from your project file.
+      placeholder: 2.0.0
+    validations:
+      required: true
+  - type: dropdown
+    id: framework
+    attributes:
+      label: Target framework
+      description: The target framework of the project that uses DotThrow. Pick all that apply.
+      multiple: true
+      options:
+        - net10.0
+        - net9.0
+        - net8.0
+        - .NET Framework 4.6.2 to 4.8.1
+        - Other (please write it in the description)
+    validations:
+      required: true
+  - type: input
+    id: dotnet
+    attributes:
+      label: .NET SDK and runtime version
+      description: From `dotnet --info`.
+      placeholder: SDK 10.0.100, runtime 10.0.0
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Windows
+        - Linux
+        - macOS
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: publish
+    attributes:
+      label: Is the app trimmed or published with Native AOT?
+      options:
+        - 'No'
+        - Native AOT (PublishAot)
+        - Trimmed (PublishTrimmed)
+        - Not sure

@@ -1,0 +1,38 @@
+name: Dependency Review
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  dependency-review:
+    name: Dependency review
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: write # post the summary comment on the pull request
+    steps:
+      - name: Review dependency changes
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: moderate
+          comment-summary-in-pr: on-failure
+          # Permissive licenses only. A package with no license data is reported but does not fail.
+          allow-licenses: MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC, 0BSD, Unlicense
+          # Always allowed, whatever license GitHub detects (some ship a license file or URL
+          # instead of an SPDX expression):
+          # - benchmark-only comparison libraries (MIT or Apache-2.0), never part of the DotThrow package
+          # - .NET Framework reference assemblies from Microsoft (MIT), used only at build time
+          allow-dependencies-licenses: >-
+            pkg:nuget/FluentValidation,
+            pkg:nuget/Ardalis.GuardClauses,
+            pkg:nuget/CommunityToolkit.Diagnostics,
+            pkg:nuget/Throw,
+            pkg:nuget/Microsoft.NETFramework.ReferenceAssemblies

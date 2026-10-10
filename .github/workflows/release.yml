@@ -1,0 +1,304 @@
+name: Release
+
+# A pushed tag like v2.0.0 tests, packs, attests and publishes the package to
+# NuGet.org (trusted publishing, no long-lived API key) and creates a GitHub
+# Release. A manual run (workflow_dispatch), or a pull request that changes
+# this workflow or the build inputs, is a dry run: it tests and packs the
+# package but does not attest or publish anything.
+
+on:
+  push:
+    tags: ['v*.*.*']
+  pull_request:
+    paths:
+      - .github/workflows/release.yml
+      - Directory.Build.props
+      - Directory.Packages.props
+      - src/DotThrow/DotThrow.csproj
+      - global.json
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  prepare:
+    name: Prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      prerelease: ${{ steps.version.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+      - name: Read version and verify tag
+        id: version
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          version="$(dotnet msbuild src/DotThrow/DotThrow.csproj -getProperty:Version | tail -n 1 | tr -d '[:space:]')"
+          if ! printf '%s' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+            echo "::error file=src/DotThrow/DotThrow.csproj::Could not read a valid <Version> from src/DotThrow/DotThrow.csproj"
+            exit 1
+          fi
+          if [ "$EVENT_NAME" = "push" ] && [ "$REF_NAME" != "v$version" ]; then
+            echo "::error::Tag $REF_NAME does not match the project version v$version"
+            exit 1
+          fi
+          prerelease=false
+          case "$version" in
+            *-*) prerelease=true ;;
+          esac
+          echo "Version: $version (prerelease: $prerelease)"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "prerelease=$prerelease" >> "$GITHUB_OUTPUT"
+      - name: Extract release notes from CHANGELOG.md
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          if [ -f CHANGELOG.md ]; then
+            # Print the body of the "## [x.y.z]" section, stop at the next
+            # "## [" heading, and drop link reference lines like "[x.y.z]: url".
+            awk -v ver="$VERSION" '
+              /^## \[/ {
+                if (found) exit
+                if (index($0, "## [" ver "]") == 1) { found = 1; next }
+              }
+              found && /^\[[^ ]*\]: / { next }
+              found && !started && /^[ \t]*$/ { next }
+              found { started = 1; print }
+            ' CHANGELOG.md > release-notes.md
+          else
+            : > release-notes.md
+          fi
+          if ! grep -q '[^[:space:]]' release-notes.md; then
+            if [ "$EVENT_NAME" = "push" ]; then
+              echo "::error file=CHANGELOG.md::No '## [$VERSION]' section with content found in CHANGELOG.md"
+              exit 1
+            fi
+            echo "::warning file=CHANGELOG.md::No '## [$VERSION]' section found in CHANGELOG.md (dry run)"
+            echo "Dry run: no changelog section found for $VERSION." > release-notes.md
+          fi
+          {
+            echo "## Release notes for $VERSION"
+            echo
+            cat release-notes.md
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload release notes
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-notes
+          path: release-notes.md
+          if-no-files-found: error
+          retention-days: 7
+
+  build:
+    name: Test and pack
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    env:
+      VERSION: ${{ needs.prepare.outputs.version }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # No NuGet cache here: a release is always built from a clean restore.
+      - name: Install .NET (SDK from global.json, plus the .NET 8 and 9 runtimes)
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+          dotnet-version: |
+            8.0.x
+            9.0.x
+      - name: Restore
+        run: |
+          dotnet restore src/DotThrow/DotThrow.csproj
+          dotnet restore tests/DotThrow.Tests/DotThrow.Tests.csproj
+      - name: Run tests
+        run: dotnet test tests/DotThrow.Tests/DotThrow.Tests.csproj -c Release --no-restore
+      # EnablePackageValidation in the project makes pack fail on an invalid package.
+      - name: Pack
+        run: dotnet pack src/DotThrow/DotThrow.csproj -c Release --no-restore -o dist -p:ContinuousIntegrationBuild=true
+      - name: Check package files and target frameworks
+        run: |
+          for file in "dist/DotThrow.$VERSION.nupkg" "dist/DotThrow.$VERSION.snupkg"; do
+            if [ ! -f "$file" ]; then
+              echo "::error::Expected $file, found:"
+              ls -l dist
+              exit 1
+            fi
+          done
+          tfms="$(dotnet msbuild src/DotThrow/DotThrow.csproj -getProperty:TargetFrameworks | tail -n 1 | tr -d '[:space:]')"
+          # Read the listing once: "unzip | grep -q" can fail under pipefail when grep exits early.
+          listing="$(unzip -l "dist/DotThrow.$VERSION.nupkg")"
+          missing=0
+          for tfm in ${tfms//;/ }; do
+            if ! grep -q " lib/$tfm/DotThrow.dll$" <<< "$listing"; then
+              echo "::error::The package has no lib/$tfm/DotThrow.dll"
+              missing=1
+            fi
+          done
+          # The core package must stay dependency-free on every target framework (decision D21).
+          nuspec="$(unzip -p "dist/DotThrow.$VERSION.nupkg" DotThrow.nuspec)"
+          if grep -q '<dependency ' <<< "$nuspec"; then
+            echo "::error::The DotThrow package must not have dependencies. Found:"
+            grep '<dependency ' <<< "$nuspec"
+            missing=1
+          fi
+          exit "$missing"
+      - name: Generate SHA256SUMS
+        working-directory: dist
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          sha256sum "DotThrow.$VERSION.nupkg" "DotThrow.$VERSION.snupkg" > SHA256SUMS
+          {
+            echo '## SHA256SUMS'
+            echo
+            echo '```text'
+            cat SHA256SUMS
+            echo '```'
+            if [ "$EVENT_NAME" != "push" ]; then
+              echo
+              echo "Dry run: nothing is attested or published."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload release assets
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-assets
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
+
+  attest:
+    name: Attest
+    # Only v* tags may deploy to this environment (repository setting).
+    environment: release
+    if: github.event_name == 'push'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      id-token: write # mint the OIDC token for the Sigstore certificate
+      attestations: write # store the build provenance attestation
+    steps:
+      - name: Download release assets
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release-assets
+          path: dist
+      - name: Generate build provenance
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-checksums: dist/SHA256SUMS
+
+  publish-nuget:
+    name: Publish to NuGet
+    # Only v* tags may deploy to this environment (repository setting).
+    # The NuGet.org trusted publishing policy trusts release.yml in this environment.
+    environment: release
+    if: github.event_name == 'push'
+    needs: [prepare, attest]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      id-token: write # exchange the OIDC token for a short-lived NuGet API key
+    env:
+      VERSION: ${{ needs.prepare.outputs.version }}
+    steps:
+      - name: Download release assets
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release-assets
+          path: dist
+      - name: Verify checksums
+        working-directory: dist
+        run: sha256sum --check SHA256SUMS
+      - name: Install .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 10.0.x
+      - name: Log in to NuGet.org (trusted publishing)
+        id: login
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
+        with:
+          user: shalahuddinshanto
+      # Pushing the .nupkg also pushes the .snupkg next to it to the symbol server.
+      - name: Push package
+        env:
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
+        run: |
+          dotnet nuget push "dist/DotThrow.$VERSION.nupkg" \
+            --api-key "$NUGET_API_KEY" \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
+          {
+            echo '## NuGet.org'
+            echo
+            echo "Pushed [DotThrow $VERSION](https://www.nuget.org/packages/DotThrow/$VERSION) and its symbols."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  github-release:
+    name: Publish GitHub Release
+    # Only v* tags may deploy to this environment (repository setting).
+    environment: release
+    if: github.event_name == 'push'
+    needs: [prepare, publish-nuget]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write # create the GitHub Release and upload assets
+    steps:
+      - name: Download release assets
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release-assets
+          path: dist
+      - name: Download release notes
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release-notes
+          path: notes
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+          PRERELEASE: ${{ needs.prepare.outputs.prerelease }}
+        run: |
+          flags=()
+          if [ "$PRERELEASE" = "true" ]; then
+            flags+=(--prerelease)
+          fi
+          gh release create "$TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "$TAG" \
+            --notes-file notes/release-notes.md \
+            --verify-tag \
+            "${flags[@]}" \
+            dist/*
