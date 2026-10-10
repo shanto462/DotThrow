@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Xunit;
@@ -240,11 +241,23 @@ public sealed class CheckCase<T> : CheckCase
     }
 }
 
-/// <summary>Builds case table rows. The label is the source text of the check.</summary>
+/// <summary>
+/// Builds case table rows. The label is the source text of the check. On asset legs
+/// (DOTTHROW_LEGACY_ASSET) the library's internal CallerArgumentExpressionAttribute polyfill is
+/// visible to the tests and clashes with the real one, so the label is the source line instead.
+/// </summary>
 public static class Cases
 {
-    public static CheckCase Pass<T>(T value, Check<T> check, [CallerArgumentExpression(nameof(check))] string label = "") =>
-        new CheckCase<T>(value, check, label, shouldFail: false);
+    public static CheckCase Pass<T>(
+        T value,
+        Check<T> check,
+#if !DOTTHROW_LEGACY_ASSET
+        [CallerArgumentExpression(nameof(check))]
+#endif
+        string label = "",
+        [CallerFilePath] string file = "",
+        [CallerLineNumber] int line = 0) =>
+        new CheckCase<T>(value, check, Label(label, file, line), shouldFail: false);
 
     public static CheckCase Fail<T>(
         T value,
@@ -252,13 +265,28 @@ public static class Cases
         string code,
         Expect kind,
         string message,
-        [CallerArgumentExpression(nameof(check))] string label = "") =>
-        new CheckCase<T>(value, check, label, shouldFail: true, code, kind, message);
+#if !DOTTHROW_LEGACY_ASSET
+        [CallerArgumentExpression(nameof(check))]
+#endif
+        string label = "",
+        [CallerFilePath] string file = "",
+        [CallerLineNumber] int line = 0) =>
+        new CheckCase<T>(value, check, Label(label, file, line), shouldFail: true, code, kind, message);
 
     /// <summary>A null value that a content check rejects with the "Null" code.</summary>
-    public static CheckCase Null<T>(Check<T> check, [CallerArgumentExpression(nameof(check))] string label = "")
+    public static CheckCase Null<T>(
+        Check<T> check,
+#if !DOTTHROW_LEGACY_ASSET
+        [CallerArgumentExpression(nameof(check))]
+#endif
+        string label = "",
+        [CallerFilePath] string file = "",
+        [CallerLineNumber] int line = 0)
         where T : class =>
-        new CheckCase<T>(null!, check, label, shouldFail: true, ErrorCodes.Null, Expect.Null, $"'{CheckCase.Subject}' must not be null.");
+        new CheckCase<T>(null!, check, Label(label, file, line), shouldFail: true, ErrorCodes.Null, Expect.Null, $"'{CheckCase.Subject}' must not be null.");
+
+    private static string Label(string label, string file, int line) =>
+        label.Length > 0 ? label : $"{Path.GetFileName(file)} line {line.ToString(CultureInfo.InvariantCulture)}";
 
     public static TheoryData<CheckCase> Data(IEnumerable<CheckCase> cases)
     {

@@ -47,10 +47,10 @@ public sealed class CollectModeTests
     public void Every_error_code_used_by_a_check_appears_in_the_case_tables()
     {
         var tested = AllCases.Failures().Select(c => c.ExpectedCode).ToHashSet(StringComparer.Ordinal);
-#if NET8_0_OR_GREATER
+#if NET8_0_OR_GREATER && !DOTTHROW_LEGACY_ASSET
         var unused = new[] { ErrorCodes.Must, ErrorCodes.Invalid };
 #else
-        // IfNotParsable exists only on .NET 8 and later.
+        // IfNotParsable exists only in the .NET 8 and later builds of the library.
         var unused = new[] { ErrorCodes.Must, ErrorCodes.Invalid, ErrorCodes.NotParsable };
 #endif
         var codes = typeof(ErrorCodes)

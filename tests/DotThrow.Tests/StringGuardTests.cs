@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using DotThrow.Tests.Support;
 using Xunit;
 using static DotThrow.Tests.Support.Cases;
-#if NET8_0_OR_GREATER
+#if NET8_0_OR_GREATER && !DOTTHROW_LEGACY_ASSET
 using System.Globalization;
 #endif
 
@@ -59,7 +59,7 @@ public sealed class StringGuardTests
         yield return Fail("ABC-123", (g, m) => g.IfAllUpperCase(m), ErrorCodes.AllUpperCase, Expect.Argument, "'input' must not be all uppercase.");
         yield return Fail("abc-123", (g, m) => g.IfAllLowerCase(m), ErrorCodes.AllLowerCase, Expect.Argument, "'input' must not be all lowercase.");
 
-#if NET8_0_OR_GREATER
+#if NET8_0_OR_GREATER && !DOTTHROW_LEGACY_ASSET
         yield return Fail("12a", (g, m) => g.IfNotParsable<int>(message: m), ErrorCodes.NotParsable, Expect.Argument, "'input' must be a valid Int32.");
         yield return Fail("not-a-guid", (g, m) => g.IfNotParsable<Guid>(message: m), ErrorCodes.NotParsable, Expect.Argument, "'input' must be a valid Guid.");
         yield return Fail("1.5", (g, m) => g.IfNotParsable<decimal>(CultureInfo.GetCultureInfo("fr-FR"), m), ErrorCodes.NotParsable, Expect.Argument, "'input' must be a valid Decimal.");
@@ -144,7 +144,7 @@ public sealed class StringGuardTests
         yield return Pass("123", (g, m) => g.IfAllLowerCase(m));
         yield return Pass("日本", (g, m) => g.IfAllLowerCase(m));
 
-#if NET8_0_OR_GREATER
+#if NET8_0_OR_GREATER && !DOTTHROW_LEGACY_ASSET
         yield return Pass("-42", (g, m) => g.IfNotParsable<int>(message: m));
         yield return Pass("6f9619ff-8b86-d011-b42d-00cf4fc964ff", (g, m) => g.IfNotParsable<Guid>(message: m));
         yield return Pass("1.5", (g, m) => g.IfNotParsable<decimal>(message: m));
@@ -367,7 +367,7 @@ public sealed class StringGuardTests
         "abc".Throw().IfNotContains('b');
     }
 
-#if NET8_0_OR_GREATER
+#if NET8_0_OR_GREATER && !DOTTHROW_LEGACY_ASSET
     [Fact]
     public void IfNotParsable_uses_the_invariant_culture_by_default()
     {

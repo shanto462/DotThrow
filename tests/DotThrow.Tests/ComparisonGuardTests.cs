@@ -81,9 +81,13 @@ public sealed class ComparisonGuardTests
         yield return Null<Version>((g, m) => g.IfOutOfRange(new Version(1, 0), new Version(2, 0), m));
         yield return Null<Version>((g, m) => g.IfInRange(new Version(1, 0), new Version(2, 0), m));
 
-#if NET8_0_OR_GREATER
+#if NET8_0_OR_GREATER && !DOTTHROW_LEGACY_ASSET
+        // Only the .NET 8 and later builds of the library know that Half has NaN.
         yield return Fail(Half.NaN, (g, m) => g.IfGreaterThan((Half)1, m), ErrorCodes.GreaterThan, Expect.OutOfRange, "'input' must be less than or equal to 1.");
         yield return Fail(Half.NaN, (g, m) => g.IfNegative(m), ErrorCodes.Negative, Expect.OutOfRange, "'input' must not be negative.");
+#endif
+
+#if NET8_0_OR_GREATER
         yield return Fail((Half)(-1), (g, m) => g.IfNegative(m), ErrorCodes.Negative, Expect.OutOfRange, "'input' must not be negative.");
         yield return Fail(Int128.MaxValue, (g, m) => g.IfGreaterThan(Int128.MaxValue - 1, m), ErrorCodes.GreaterThan, Expect.OutOfRange, "'input' must be less than or equal to 170141183460469231731687303715884105726.");
 #endif

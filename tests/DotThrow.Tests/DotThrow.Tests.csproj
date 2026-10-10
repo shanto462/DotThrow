@@ -1,15 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
     <!-- .NET Framework runs only on Windows. Set DotThrowNetFx=true to compile it elsewhere. -->
-    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('Windows')) Or '$(DotThrowNetFx)' == 'true'">$(TargetFrameworks);net481</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('Windows')) Or '$(DotThrowNetFx)' == 'true'">$(TargetFrameworks);net472;net481</TargetFrameworks>
     <RootNamespace>DotThrow.Tests</RootNamespace>
     <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
     <!-- Run through VSTest (xunit.runner.visualstudio), so coverlet.collector works with dotnet test. -->
     <IsTestingPlatformApplication>false</IsTestingPlatformApplication>
+  </PropertyGroup>
+
+  <!--
+    Asset legs: run the tests against another build of the library, for example
+    dotnet test -p:DotThrowAssetTfm=netstandard2.0
+    Tests that need the library's .NET 8 API check DOTTHROW_LEGACY_ASSET.
+  -->
+  <PropertyGroup Condition="'$(DotThrowAssetTfm)' != ''">
+    <DefineConstants>$(DefineConstants);DOTTHROW_LEGACY_ASSET</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,8 +32,12 @@
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="all" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(DotThrowAssetTfm)' == ''">
     <ProjectReference Include="..\..\src\DotThrow\DotThrow.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(DotThrowAssetTfm)' != ''">
+    <ProjectReference Include="..\..\src\DotThrow\DotThrow.csproj" SetTargetFramework="TargetFramework=$(DotThrowAssetTfm)" />
   </ItemGroup>
 
 </Project>

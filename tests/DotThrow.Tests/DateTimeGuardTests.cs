@@ -26,7 +26,7 @@ public sealed class DateTimeGuardTests
         yield return Fail(DateTimeOffset.UtcNow.AddDays(-1), (g, m) => g.IfInPast(m), ErrorCodes.InPast, Expect.OutOfRange, "'input' must not be in the past.");
         yield return Fail(DateTimeOffset.UtcNow.AddDays(1), (g, m) => g.IfInFuture(m), ErrorCodes.InFuture, Expect.OutOfRange, "'input' must not be in the future.");
 
-#if NET8_0_OR_GREATER
+#if NET8_0_OR_GREATER && !DOTTHROW_LEGACY_ASSET
         var clock = new FakeTimeProvider(new DateTimeOffset(2026, 1, 1, 12, 0, 0, TimeSpan.Zero), FakeTimeProvider.PlusFive);
         var lateClock = new FakeTimeProvider(new DateTimeOffset(2026, 1, 1, 22, 0, 0, TimeSpan.Zero), FakeTimeProvider.PlusFive);
 
@@ -61,7 +61,7 @@ public sealed class DateTimeGuardTests
         yield return Pass(DateTimeOffset.UtcNow.AddDays(1), (g, m) => g.IfInPast(m));
         yield return Pass(DateTimeOffset.UtcNow.AddDays(-1), (g, m) => g.IfInFuture(m));
 
-#if NET8_0_OR_GREATER
+#if NET8_0_OR_GREATER && !DOTTHROW_LEGACY_ASSET
         var clock = new FakeTimeProvider(new DateTimeOffset(2026, 1, 1, 12, 0, 0, TimeSpan.Zero), FakeTimeProvider.PlusFive);
         var lateClock = new FakeTimeProvider(new DateTimeOffset(2026, 1, 1, 22, 0, 0, TimeSpan.Zero), FakeTimeProvider.PlusFive);
 
@@ -138,7 +138,7 @@ public sealed class DateTimeGuardTests
         Assert.Equal(offset > TimeSpan.Zero, localIsPast);
     }
 
-#if NET8_0_OR_GREATER
+#if NET8_0_OR_GREATER && !DOTTHROW_LEGACY_ASSET
     [Fact]
     public void TimeProvider_overloads_use_the_local_time_zone_of_the_provider()
     {
