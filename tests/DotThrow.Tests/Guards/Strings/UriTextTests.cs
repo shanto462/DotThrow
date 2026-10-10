@@ -39,6 +39,29 @@ public sealed class UriTextTests
         Check.Fails<ArgumentException, string>(text, g => g.IfNotUri(UriKind.RelativeOrAbsolute), ErrorCodes.NotUri);
     }
 
+    // Fuzzing fix: a surrogate that is not part of a pair is not a character (Uri replaced it
+    // with U+FFFD), and a format character outside the Basic Multilingual Plane, such as the
+    // invisible tag characters, is a format character too. Facts, not theory data: test case
+    // names with a lone surrogate are not valid UTF-16.
+    [Fact]
+    public void Lone_surrogates_and_supplementary_format_characters_fail()
+    {
+        foreach (var text in new[] { "http://a.com/\uD800", "http://a.com/\uDC00x", "http://a.com/?q=\uDBFF", "http://a.com/#\uDFFF", "http://a.com/\U000E0001", "http://a.com/a\U000E0041b", "http://a.com/a\U0001D173b" })
+        {
+            Check.Fails<ArgumentException, string>(text, g => g.IfNotUri(), ErrorCodes.NotUri);
+            Check.Fails<ArgumentException, string>(text, g => g.IfNotHttpUrl(), ErrorCodes.NotHttpUrl);
+            Check.Fails<ArgumentException, string>(text, g => g.IfNotUri(UriKind.RelativeOrAbsolute), ErrorCodes.NotUri);
+        }
+
+        foreach (var text in new[] { "\uD800", "a/\uDC00", "a\U000E0001" })
+        {
+            Check.Fails<ArgumentException, string>(text, g => g.IfNotUri(UriKind.Relative), ErrorCodes.NotUri);
+        }
+
+        Check.Passes("https://example.com/\U0001D400\U00020000", g => g.IfNotUri());
+        Check.Passes("a/\U0001F600", g => g.IfNotUri(UriKind.Relative));
+    }
+
     [Theory]
     [InlineData("http://a.com/a%20b")]
     [InlineData("https://example.com/path?q=1&r=2#top")]

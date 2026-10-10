@@ -296,7 +296,10 @@ internal static class Formats
     // The text of the URI as written: RFC 3986 unreserved and reserved characters, '%' only
     // as the start of a %XX escape, at most one '#'. Non-ASCII letters, digits, marks and
     // symbols are allowed as in IRIs (RFC 3987, as browsers show addresses); white space,
-    // control characters and format characters (such as bidi overrides) are not.
+    // control characters and format characters (such as bidi overrides) are not. A character
+    // outside the Basic Multilingual Plane is one surrogate pair, judged as one character (so
+    // the invisible tag characters U+E0000 to U+E007F are format characters too); a surrogate
+    // that is not part of a pair is not a character, and Uri would replace it with U+FFFD.
     private static bool HasOnlyUriCharacters(string value)
     {
         var fragments = 0;
@@ -326,7 +329,18 @@ internal static class Formats
                 return false;
             }
 
-            if (char.IsWhiteSpace(c) || char.IsControl(c) || CharUnicodeInfo.GetUnicodeCategory(c) == UnicodeCategory.Format)
+            if (char.IsHighSurrogate(c) && i + 1 < value.Length && char.IsLowSurrogate(value[i + 1]))
+            {
+                if (CharUnicodeInfo.GetUnicodeCategory(value, i) == UnicodeCategory.Format)
+                {
+                    return false;
+                }
+
+                i++;
+                continue;
+            }
+
+            if (char.IsSurrogate(c) || char.IsWhiteSpace(c) || char.IsControl(c) || CharUnicodeInfo.GetUnicodeCategory(c) == UnicodeCategory.Format)
             {
                 return false;
             }

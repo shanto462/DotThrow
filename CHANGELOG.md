@@ -6,6 +6,14 @@ and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- `IfNotUri` and `IfNotHttpUrl` passed text with a lone surrogate (half of a
+  surrogate pair), which `Uri` silently replaces with U+FFFD, and text with a
+  format character outside the Basic Multilingual Plane, such as the invisible
+  tag characters U+E0000 to U+E007F. Both now fail, like the other control and
+  format characters. Found by the new fuzz tests.
+
 ## [2.0.1] - 2026-10-10
 
 No code changes. The packages are the same as 2.0.0 apart from their README.
