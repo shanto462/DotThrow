@@ -25,8 +25,13 @@ public sealed class XmlLimitTests
     public void A_large_document_is_rejected_without_parsing_it()
     {
         var large = "<a>" + new string('x', 1_000_000) + "</a>";
+#if NET8_0_OR_GREATER
         var before = GC.GetAllocatedBytesForCurrentThread();
         Check.Fails<ArgumentException, string>(large, g => g.IfNotXml(1000), ErrorCodes.NotXml);
         Assert.True(GC.GetAllocatedBytesForCurrentThread() - before < 100_000);
+#else
+        // .NET Framework cannot count the bytes a thread allocates; check the result only.
+        Check.Fails<ArgumentException, string>(large, g => g.IfNotXml(1000), ErrorCodes.NotXml);
+#endif
     }
 }
