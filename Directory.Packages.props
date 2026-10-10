@@ -13,6 +13,9 @@
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.1" />
     <PackageVersion Include="coverlet.collector" Version="10.1.0" />
     <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" />
+    <!-- Property-based fuzz tests (tests/DotThrow.Tests/Fuzzing). They use the core API from plain
+         [Fact] tests, so the number of cases can come from an environment variable. -->
+    <PackageVersion Include="FsCheck" Version="3.4.0" />
 
     <!-- Benchmarks -->
     <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
