@@ -31,7 +31,7 @@ public sealed class PolymorphicValidator<T> : IValidator<T>, IChildValidator<T>
     /// </summary>
     /// <typeparam name="TDerived">The derived type.</typeparam>
     /// <param name="validator">The validator for that type.</param>
-    /// <param name="groups">The groups the validator runs with, instead of the groups of the run. Leave empty to keep them.</param>
+    /// <param name="groups">The groups the validator runs with, instead of the groups, property filter and custom selector of the run. Leave empty to keep them.</param>
     /// <returns>This validator.</returns>
     public PolymorphicValidator<T> Add<TDerived>(IValidator<TDerived> validator, params string[] groups)
         where TDerived : T
@@ -46,7 +46,7 @@ public sealed class PolymorphicValidator<T> : IValidator<T>, IChildValidator<T>
     /// </summary>
     /// <typeparam name="TDerived">The derived type.</typeparam>
     /// <param name="validatorFactory">Picks the validator for the object.</param>
-    /// <param name="groups">The groups the validator runs with, instead of the groups of the run.</param>
+    /// <param name="groups">The groups the validator runs with, instead of the groups, property filter and custom selector of the run.</param>
     /// <returns>This validator.</returns>
     public PolymorphicValidator<T> Add<TDerived>(Func<TDerived, IValidator<TDerived>?> validatorFactory, params string[] groups)
         where TDerived : T
@@ -65,7 +65,7 @@ public sealed class PolymorphicValidator<T> : IValidator<T>, IChildValidator<T>
     /// <typeparam name="TDerived">The derived type.</typeparam>
     /// <typeparam name="TRoot">The type of the object that has the property.</typeparam>
     /// <param name="validatorFactory">Picks the validator from the parent object and the value.</param>
-    /// <param name="groups">The groups the validator runs with, instead of the groups of the run.</param>
+    /// <param name="groups">The groups the validator runs with, instead of the groups, property filter and custom selector of the run.</param>
     /// <returns>This validator.</returns>
     /// <example><c>payments.Add&lt;CardPayment, Order&gt;((order, card) =&gt; order.IsTrusted ? relaxed : strict)</c></example>
     public PolymorphicValidator<T> Add<TDerived, TRoot>(Func<TRoot, TDerived, IValidator<TDerived>?> validatorFactory, params string[] groups)
@@ -83,7 +83,7 @@ public sealed class PolymorphicValidator<T> : IValidator<T>, IChildValidator<T>
     /// </summary>
     /// <param name="derivedType">The derived type.</param>
     /// <param name="validator">The validator. It must accept <paramref name="derivedType"/>.</param>
-    /// <param name="groups">The groups the validator runs with, instead of the groups of the run.</param>
+    /// <param name="groups">The groups the validator runs with, instead of the groups, property filter and custom selector of the run.</param>
     /// <returns>This validator.</returns>
     /// <exception cref="ArgumentException"><paramref name="derivedType"/> does not derive from <typeparamref name="T"/>, or the validator cannot validate it.</exception>
     public PolymorphicValidator<T> Add(Type derivedType, IValidator validator, params string[] groups)
@@ -136,6 +136,7 @@ public sealed class PolymorphicValidator<T> : IValidator<T>, IChildValidator<T>
 
     private static T Cast(object? instance) => instance switch
     {
+        null when default(T) is not null => throw new ArgumentNullException(nameof(instance)),
         null => default!,
         T typed => typed,
         _ => throw new ArgumentException(
@@ -170,13 +171,14 @@ public sealed class PolymorphicValidator<T> : IValidator<T>, IChildValidator<T>
             return options;
         }
 
+        // Registration groups replace the whole selection of the run (groups, properties and
+        // custom selector), like FluentValidation's rule sets on a child validator.
         var copy = new ValidationOptions
         {
             Groups = groups,
-            Properties = options?.Properties,
             ThrowOnFailures = options?.ThrowOnFailures ?? false,
             ClassCascade = options?.ClassCascade,
-            RuleSelector = options?.RuleSelector,
+            Depth = options?.Depth ?? 0,
         };
         if (options?.ItemsOrNull is { } items)
         {

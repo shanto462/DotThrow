@@ -353,7 +353,9 @@ public abstract class RuleOptionsBase<T, TValue, TOptions>
 
     /// <summary>
     /// Sets the groups the child or included validator runs with, instead of the groups of the
-    /// run (FluentValidation's <c>SetValidator(validator, ruleSets)</c>). Use it to run the
+    /// run (FluentValidation's <c>SetValidator(validator, ruleSets)</c>). Inside the child only
+    /// these groups select rules: a property filter or custom selector of the run still decides
+    /// whether this rule runs, but not which child rules run. Use it to run the
     /// default rules of a child that is added in a named group:
     /// <c>rule =&gt; rule.InGroup("shipping").WithChildGroups(ValidationGroups.Default)</c>.
     /// </summary>

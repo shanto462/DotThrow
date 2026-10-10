@@ -11,13 +11,20 @@ internal sealed class ContextSink : FailureSink
 
     public override bool OnCheckFailure(ValidationReport report, in RuleFrame frame, string name, string message, string errorCode, object? value)
     {
+        var context = frame.Context!;
+        var arguments = context.Run.Arguments is { Count: > 0 } appended
+            ? new System.Collections.Generic.Dictionary<string, object?>(appended, System.StringComparer.Ordinal)
+            : null;
         report.AddRuleFailure(ValidationFailure.Create(
-            PropertyPaths.Join(frame.Context!.PropertyPath, name),
-            message,
+            PropertyPaths.Join(context.PropertyPath, name),
+            RuleMessages.Format(message, arguments),
             errorCode,
             ValidatorDefaults.Severity,
             value,
-            null));
+            null,
+            name,
+            -1,
+            arguments));
         return true;
     }
 }

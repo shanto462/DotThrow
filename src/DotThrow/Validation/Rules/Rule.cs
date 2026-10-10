@@ -190,13 +190,16 @@ internal abstract class Rule<T> : FailureSink
             text = RuleMessages.Format(message, arguments);
         }
 
-        var code = ErrorCode ?? (ValidatorDefaults.ErrorCodeResolver is { } resolve ? resolve(errorCode) ?? errorCode : errorCode);
+        var code = CheckErrorCode(item) ?? ErrorCode ?? (ValidatorDefaults.ErrorCodeResolver is { } resolve ? resolve(errorCode) ?? errorCode : errorCode);
         var severity = SeverityProvider is not null ? SeverityProvider(context, value) : Severity ?? ValidatorDefaults.Severity;
         var state = StateProvider?.Invoke(context, value);
         report.AddRuleFailure(ValidationFailure.Create(path, text, code, severity, value, state, name, index, arguments));
     }
 
     public string NameFor(T instance) => DisplayNameProvider is null ? DisplayName : DisplayNameProvider(instance);
+
+    // An error code set on one check of the rule (dynamic rules pass the check as the frame item).
+    protected virtual string? CheckErrorCode(object? item) => null;
 
     protected abstract void Run(ValidationContext<T> context);
 
@@ -218,7 +221,7 @@ internal abstract class Rule<T> : FailureSink
         Expression is null
             ? exception
             : new InvalidOperationException(
-                $"A NullReferenceException occurred in the rule for '{Expression}'. If a part of the path can be null, add a When condition or use '?.' in the selector.",
+                $"A NullReferenceException occurred while running the rule for '{Expression}' (its selector, checks, filters, or a validator it calls; see the inner exception). If a part of the path can be null, add a When condition or use '?.' in the selector.",
                 exception);
 
     protected static TValue Select<TValue>(Func<T, TValue> selector, T instance) => selector(instance);
@@ -387,23 +390,22 @@ internal static class RuleList<T>
 // are "default", and Include rules without a group always run (their own rules are filtered).
 internal static class RuleSelection
 {
-    // With a property filter or a custom selector and no groups, FluentValidation does not apply
-    // the default group filter; the same here.
+    // Like FluentValidation's composite selector: when a custom selector, a property filter or
+    // groups are given, a rule runs when any of them selects it (checked in that order, so
+    // GroupsExecuted only records groups that decided). With none of them, or inside a child
+    // that runs with its own groups, the group filter alone decides.
     public static bool IsSelected<T>(Rule<T> rule, ValidationContext context)
     {
         var selector = context.Run.RuleSelector;
         var properties = context.Properties;
-        if ((context.GroupsRequested || (properties is null && selector is null)) && !InGroups(rule.Groups, rule.Kind, context))
+        if (context.GroupsOnly || (selector is null && properties is null))
         {
-            return false;
+            return InGroups(rule.Groups, rule.Kind, context);
         }
 
-        if (properties is not null && !PropertyFilter.Allows(rule, context))
-        {
-            return false;
-        }
-
-        return selector is null || selector.CanRun(rule.Descriptor, PropertyPaths.Join(context.PropertyPath, rule.Path), context);
+        return (selector is not null && selector.CanRun(rule.Descriptor, PropertyPaths.Join(context.PropertyPath, rule.Path), context))
+            || (properties is not null && PropertyFilter.Allows(rule, context))
+            || (context.GroupsRequested && InGroups(rule.Groups, rule.Kind, context));
     }
 
     private static bool InGroups(string[]? groups, RuleKind kind, ValidationContext context)

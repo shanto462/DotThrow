@@ -679,6 +679,10 @@ public partial class Validator<T> : IValidator<T>, IChildValidator<T>, IIncludeG
         return result;
     }
 
+    // Adds a rule built elsewhere in the library (dynamic rules), with the usual options,
+    // scopes and OnRuleAdded hook.
+    internal Validator<T> AddRule<TValue>(Rule<T> rule, Action<RuleOptions<T, TValue>>? configure) => Add(rule, configure);
+
     // DependentRules: runs the callback and returns the rules it added, instead of adding them.
     internal Rule<T>[] CaptureRules(Action<Validator<T>> rules)
     {
@@ -735,15 +739,19 @@ public partial class Validator<T> : IValidator<T>, IChildValidator<T>, IIncludeG
 
     private Validator<TChild> Inline<TChild>(Action<Validator<TChild>> childRules)
     {
-        var inline = new Validator<TChild>
-        {
-            IsInline = true,
-            _ruleCascade = _ruleCascade,
-            _classCascade = _classCascade,
-        };
+        var inline = CreateInline<TChild>();
         childRules(inline);
         return inline;
     }
+
+    // An inline validator for child rules, with this validator's cascade settings (also used by
+    // dynamic item rules).
+    internal Validator<TChild> CreateInline<TChild>() => new()
+    {
+        IsInline = true,
+        _ruleCascade = _ruleCascade,
+        _classCascade = _classCascade,
+    };
 
     private static string PathOf(string? selectorExpression) => RuleNames.Path(typeof(T), selectorExpression);
 
@@ -800,7 +808,13 @@ public partial class Validator<T> : IValidator<T>, IChildValidator<T>, IIncludeG
                 rule.AddCondition(scope.Condition, first: true);
             }
 
-            scopeGroups ??= scope.Groups;
+            // A captured (dependent) rule takes groups only from blocks inside the capture;
+            // outer groups reach it through its parent rule (InheritGroups).
+            if (capture is null)
+            {
+                scopeGroups ??= scope.Groups;
+            }
+
             capture ??= scope.Capture;
         }
 

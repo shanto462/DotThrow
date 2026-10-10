@@ -79,6 +79,9 @@ public class ValidationOptions
 
     internal IDictionary<string, object?>? ItemsOrNull => _items;
 
+    // How deep the run that created these options is (child runs of hand-written validators).
+    internal int Depth { get; set; }
+
     /// <summary>Adds groups to run (FluentValidation's <c>IncludeRuleSets</c>).</summary>
     /// <param name="groups">The group names.</param>
     /// <returns>These options.</returns>

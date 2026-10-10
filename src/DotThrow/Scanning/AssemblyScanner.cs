@@ -121,6 +121,12 @@ public sealed class AssemblyScanner : IEnumerable<AssemblyScanResult>
 
     private static Type[] TypesOf(Assembly assembly, bool includeInternalTypes)
     {
+        // Dynamic assemblies (for example from AppDomain.GetAssemblies()) cannot list exported types.
+        if (assembly.IsDynamic)
+        {
+            return Type.EmptyTypes;
+        }
+
         if (!includeInternalTypes)
         {
             return assembly.GetExportedTypes();

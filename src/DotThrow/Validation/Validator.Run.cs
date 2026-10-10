@@ -164,6 +164,8 @@ public partial class Validator<T>
 
     private static T Cast(object? instance) => instance switch
     {
+        // A value type cannot be null; only Nullable<T> validators accept null here.
+        null when default(T) is not null => throw new ArgumentNullException(nameof(instance)),
         null => default!,
         T typed => typed,
         _ => throw new ArgumentException(

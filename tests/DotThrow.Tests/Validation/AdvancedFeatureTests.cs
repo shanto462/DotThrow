@@ -97,7 +97,11 @@ public sealed class AdvancedFeatureTests
 
         Assert.Equal(["Address.City"], Names.Of(validator.Validate(person, options)));
         Assert.Equal(["Email"], Names.Of(validator.Validate(person, new ValidationOptions { RuleSelector = new PathSelector("E") })));
-        Assert.Empty(validator.Validate(person, new ValidationOptions { RuleSelector = new PathSelector("E"), Groups = ["other"] }).Failures);
+
+        // A custom selector and groups combine with OR, like FluentValidation's composite selector
+        // (UseCustomSelector plus IncludeRuleSets("other") still runs Email there).
+        Assert.Equal(["Email"], Names.Of(validator.Validate(person, new ValidationOptions { RuleSelector = new PathSelector("E"), Groups = ["other"] })));
+        Assert.Empty(validator.Validate(person, new ValidationOptions { RuleSelector = new PathSelector("X"), Groups = ["other"] }).Failures);
     }
 
     [Fact]
@@ -214,9 +218,16 @@ public sealed class AdvancedFeatureTests
         var order = new Order { Total = -1, Customer = new Customer { Address = new Address() } };
 
         Assert.Equal(["Customer.Address.City"], Names.Of(validator.Validate(order, o => o.IncludeProperties(x => x.Customer!.Address!.City))));
+        // FluentValidation 12 combines properties and rule sets with OR (CompositeValidatorSelector
+        // uses Any): IncludeRulesNotInRuleSet also selects the Customer rule, so the whole child
+        // runs. Checked against FluentValidation: Number, Customer.Name, Customer.Address.*, Total.
         var filtered = Names.Of(await validator.ValidateAsync(order, o => o.IncludeProperties(x => x.Number).IncludeProperties("Total").IncludeGroups("money").IncludeDefaultGroup(), Token));
-        Assert.Equal(["Number", "Total"], filtered);
-        Assert.Equal(5, validator.Validate(order, o => o.IncludeAllGroups().IncludeProperties(x => x.Customer).IncludeProperties(x => x.Total)).Failures.Count);
+        Assert.Equal(["Number", "Customer.Name", "Customer.Address.Street", "Customer.Address.City", "Customer.Address.PostalCode", "Total"], filtered);
+        var propertiesOnly = Names.Of(await validator.ValidateAsync(order, o => o.IncludeProperties(x => x.Number).IncludeProperties("Total"), Token));
+        Assert.Equal(["Number", "Total"], propertiesOnly);
+        // "*" selects every rule, and OR with the property filter keeps them all (6, as in FluentValidation).
+        Assert.Equal(6, validator.Validate(order, o => o.IncludeAllGroups().IncludeProperties(x => x.Customer).IncludeProperties(x => x.Total)).Failures.Count);
+        Assert.Equal(5, validator.Validate(order, o => o.IncludeProperties(x => x.Customer).IncludeProperties(x => x.Total)).Failures.Count);
         Assert.Throws<ValidationFailedException>(() => validator.Validate(order, o => o.ThrowOnFailure()));
         validator.TestValidate(order, o => o.IncludeProperties(x => x.Number)).ShouldHaveValidationErrorFor(x => x.Number).Only();
         IValidator<Order> contract = validator;

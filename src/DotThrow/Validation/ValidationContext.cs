@@ -48,16 +48,20 @@ public abstract class ValidationContext
         InsideInclude = scope.IsInclude || parent.InsideInclude;
         if (scope.Groups is { Length: > 0 } groups)
         {
+            // Like FluentValidation's rule sets on a child validator: the groups replace the
+            // whole selection inside the child (groups, property filter and custom selector).
             SelectedGroups = groups;
             GroupsRequested = true;
+            GroupsOnly = true;
         }
         else
         {
             SelectedGroups = parent.SelectedGroups;
             GroupsRequested = parent.GroupsRequested;
+            GroupsOnly = parent.GroupsOnly;
         }
 
-        Filters = GroupsRequested || _run.Properties is not null || _run.RuleSelector is not null;
+        Filters = GroupsRequested || (!GroupsOnly && (_run.Properties is not null || _run.RuleSelector is not null));
         CheckDepth();
     }
 
@@ -100,11 +104,15 @@ public abstract class ValidationContext
     // True when groups or properties were asked for, so every rule must be checked against them.
     internal bool Filters { get; private set; }
 
+    // True inside a child that runs with its own groups (WithChildGroups, PolymorphicValidator
+    // registration groups): only those groups select rules there.
+    internal bool GroupsOnly { get; private set; }
+
     internal string[]? Properties => _run.Properties;
 
     internal CascadeMode? ClassCascadeOverride => _run.ClassCascadeOverride;
 
-    internal int Depth { get; }
+    internal int Depth { get; private set; }
 
     internal bool IsInclude { get; }
 
@@ -263,6 +271,17 @@ public abstract class ValidationContext
         run.CancellationToken = cancellationToken;
     }
 
+    // A run started by a parent run (a hand-written or polymorphic child validator) continues
+    // the parent's depth, so cycles through such validators stop too.
+    private protected void StartDepth(int depth)
+    {
+        Depth = depth;
+        if (depth > 0)
+        {
+            CheckDepth();
+        }
+    }
+
     // Ends a run on the root context: sets ValidationReport.GroupsExecuted and detaches the report.
     private protected void EndRun()
     {
@@ -283,9 +302,16 @@ public abstract class ValidationContext
             report.GroupsExecuted = executed is null ? Array.Empty<string>() : [.. executed];
         }
 
+        // Items created by the rules go back to the caller's options, as documented.
+        if (run.Options is { ItemsOrNull: null } options && run.Items is { } items)
+        {
+            options.ShareItems(items);
+        }
+
         report.Run = null;
         run.Clear();
         _conditionResults?.Clear();
+        Depth = 0;
     }
 
     private static string[]? Normalize(IReadOnlyList<string>? names)
@@ -307,11 +333,33 @@ public abstract class ValidationContext
         return result.Count == 0 ? null : [.. result];
     }
 
+    // Builds the path without recursion (deep object graphs must not overflow the stack):
+    // walks up to the nearest context with a known path, then joins the segments downwards
+    // and keeps each result.
     private string BuildPath()
     {
-        var parentPath = Parent?.PropertyPath ?? string.Empty;
-        var path = PropertyPaths.Join(parentPath, _segment);
-        return _index >= 0 ? PropertyPaths.AppendIndex(path, _index, _indexText) : path;
+        var chain = new List<ValidationContext>();
+        var current = this;
+        while (current._path is null)
+        {
+            chain.Add(current);
+            current = current.Parent!;
+        }
+
+        var path = current._path;
+        for (var i = chain.Count - 1; i >= 0; i--)
+        {
+            var context = chain[i];
+            path = PropertyPaths.Join(path, context._segment);
+            if (context._index >= 0)
+            {
+                path = PropertyPaths.AppendIndex(path, context._index, context._indexText);
+            }
+
+            context._path = path;
+        }
+
+        return path;
     }
 
     // The stack check costs a runtime call, so it runs every fourth level; the runtime keeps
@@ -336,8 +384,9 @@ public abstract class ValidationContext
         }
         catch (InsufficientExecutionStackException exception)
         {
+            // Little stack is left, so the message names only the last segment.
             throw new InvalidOperationException(
-                $"Validation ran out of stack space at '{PropertyPath}'. The object graph may be too deep or have a cycle.",
+                $"Validation ran out of stack space at '{_segment}' ({Depth} validators deep). The object graph may be too deep or have a cycle.",
                 exception);
         }
     }
@@ -389,6 +438,8 @@ public sealed class ValidationContext<T> : ValidationContext
             options?.RuleSelector,
             isAsync,
             cancellationToken);
+        context.Run.Options = options;
+        context.StartDepth(options?.Depth ?? 0);
         return context;
     }
 

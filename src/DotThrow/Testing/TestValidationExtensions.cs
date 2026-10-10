@@ -22,6 +22,7 @@ public static class TestValidationExtensions
     /// <param name="options">The options, or <see langword="null"/> for a default run.</param>
     /// <returns>The result with assertions.</returns>
     /// <exception cref="AsyncRuleInvokedSynchronouslyException">The validator has async rules; use <see cref="TestValidateAsync{T}(IValidator{T}, T, ValidationOptions?, CancellationToken)"/>.</exception>
+    [OverloadResolutionPriority(1)]
     public static TestValidationResult<T> TestValidate<T>(this IValidator<T> validator, T value, ValidationOptions? options = null)
     {
         Argument.NotNull(validator);
@@ -65,6 +66,15 @@ public static class TestValidationExtensions
     public static Task<TestValidationResult<T>> TestValidateAsync<T>(this IValidator<T> validator, T value, Action<ValidationOptions<T>> configure, CancellationToken cancellationToken = default) =>
         TestValidateAsync(validator, value, ValidationOptions<T>.Create(configure), cancellationToken);
 
+    /// <summary>Validates <paramref name="value"/> for a test, including async rules, with a cancellation token.</summary>
+    /// <typeparam name="T">The validated type.</typeparam>
+    /// <param name="validator">The validator under test.</param>
+    /// <param name="value">The value to validate.</param>
+    /// <param name="cancellationToken">A token to cancel the run.</param>
+    /// <returns>The result with assertions.</returns>
+    public static Task<TestValidationResult<T>> TestValidateAsync<T>(this IValidator<T> validator, T value, CancellationToken cancellationToken) =>
+        TestValidateAsync(validator, value, (ValidationOptions?)null, cancellationToken);
+
     /// <summary>Validates <paramref name="value"/> for a test, including async rules.</summary>
     /// <typeparam name="T">The validated type.</typeparam>
     /// <param name="validator">The validator under test.</param>
@@ -72,6 +82,7 @@ public static class TestValidationExtensions
     /// <param name="options">The options, or <see langword="null"/> for a default run.</param>
     /// <param name="cancellationToken">A token to cancel the run.</param>
     /// <returns>The result with assertions.</returns>
+    [OverloadResolutionPriority(1)]
     public static async Task<TestValidationResult<T>> TestValidateAsync<T>(this IValidator<T> validator, T value, ValidationOptions? options = null, CancellationToken cancellationToken = default)
     {
         Argument.NotNull(validator);

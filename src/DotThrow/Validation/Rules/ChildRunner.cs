@@ -115,7 +115,10 @@ internal static class ChildRunner
         {
             Groups = scope.Groups ?? (parent.GroupsRequested ? parent.SelectedGroups : null),
             ClassCascade = parent.ClassCascadeOverride,
-            RuleSelector = parent.Run.RuleSelector,
+
+            // Child groups replace the custom selector too (see ValidationContext.GroupsOnly).
+            RuleSelector = scope.Groups is null && !parent.GroupsOnly ? parent.Run.RuleSelector : null,
+            Depth = parent.Depth + 1,
         };
 
         options.ShareItems(parent.Items);

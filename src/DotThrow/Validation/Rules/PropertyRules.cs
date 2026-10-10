@@ -191,6 +191,9 @@ internal sealed class MustRule<T, TValue> : Rule<T>
         _predicate = predicate;
         _message = message;
         _objectLevel = objectLevel;
+
+        // The message works like WithMessage: placeholders such as {PropertyName} are filled.
+        Message = message;
     }
 
     public override bool IsObjectLevel => _objectLevel;
@@ -230,6 +233,9 @@ internal sealed class MustAsyncRule<T, TValue> : Rule<T>
         _predicate = predicate;
         _message = message;
         _objectLevel = objectLevel;
+
+        // The message works like WithMessage: placeholders such as {PropertyName} are filled.
+        Message = message;
     }
 
     public override bool IsAsync => true;
