@@ -22,10 +22,12 @@ public class GuardBenchmarks
     private const string IntRange = "Int in 0..150";
     private const string StringCheck = "String not blank, max 50";
     private const string ListCheck = "List not null or empty, max 10";
+    private const string SetCheck = "HashSet<int> not null or empty, max 10";
 
     private int[] _ages = [];
     private string[] _names = [];
     private List<string>[] _tagLists = [];
+    private HashSet<int>[] _idSets = [];
 
     [GlobalSetup]
     public void Setup()
@@ -33,6 +35,7 @@ public class GuardBenchmarks
         _ages = TestData.Ages();
         _names = TestData.Names();
         _tagLists = TestData.TagLists();
+        _idSets = TestData.IdSets();
     }
 
     // ---- int in 0..150 -----------------------------------------------------------------
@@ -315,6 +318,106 @@ public class GuardBenchmarks
         foreach (var tags in _tagLists)
         {
             items += tags.ThrowIfNull().IfEmpty().IfCountGreaterThan(10).Value.Count;
+        }
+
+        return items;
+    }
+
+    // ---- HashSet<int> not null or empty, max 10 -----------------------------------------
+
+    [Benchmark(Baseline = true, OperationsPerInvoke = TestData.Count, Description = "Hand-written if")]
+    [BenchmarkCategory(SetCheck)]
+    public int SetHandWritten()
+    {
+        var items = 0;
+        foreach (var ids in _idSets)
+        {
+            if (ids is null)
+            {
+                throw new ArgumentNullException(nameof(ids));
+            }
+
+            if (ids.Count == 0 || ids.Count > 10)
+            {
+                throw new ArgumentException("Ids must have between 1 and 10 items.", nameof(ids));
+            }
+
+            items += ids.Count;
+        }
+
+        return items;
+    }
+
+    [Benchmark(OperationsPerInvoke = TestData.Count, Description = ".NET built-in")]
+    [BenchmarkCategory(SetCheck)]
+    public int SetBuiltIn()
+    {
+        var items = 0;
+        foreach (var ids in _idSets)
+        {
+            ArgumentNullException.ThrowIfNull(ids);
+            ArgumentOutOfRangeException.ThrowIfZero(ids.Count);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(ids.Count, 10);
+            items += ids.Count;
+        }
+
+        return items;
+    }
+
+    [Benchmark(OperationsPerInvoke = TestData.Count, Description = "DotThrow")]
+    [BenchmarkCategory(SetCheck)]
+    public int SetDotThrow()
+    {
+        var items = 0;
+        foreach (var ids in _idSets)
+        {
+            HashSet<int> checkedIds = ids.Throw().IfNullOrEmpty().IfCountGreaterThan(10);
+            items += checkedIds.Count;
+        }
+
+        return items;
+    }
+
+    [Benchmark(OperationsPerInvoke = TestData.Count, Description = "Ardalis.GuardClauses")]
+    [BenchmarkCategory(SetCheck)]
+    public int SetArdalis()
+    {
+        var items = 0;
+        foreach (var ids in _idSets)
+        {
+            ArdalisGuard.Against.NullOrEmpty(ids);
+            items += ArdalisGuard.Against.OutOfRange(ids.Count, nameof(ids), 1, 10);
+        }
+
+        return items;
+    }
+
+    [Benchmark(OperationsPerInvoke = TestData.Count, Description = "CommunityToolkit.Diagnostics")]
+    [BenchmarkCategory(SetCheck)]
+    public int SetToolkit()
+    {
+        var items = 0;
+        foreach (var ids in _idSets)
+        {
+            // HashSet<T> matches both the ICollection<T> and IReadOnlyCollection<T> overloads,
+            // so the call needs a cast to compile.
+            ToolkitGuard.IsNotNull(ids);
+            ToolkitGuard.IsNotEmpty((ICollection<int>)ids);
+            ToolkitGuard.HasSizeLessThanOrEqualTo((ICollection<int>)ids, 10);
+            items += ids.Count;
+        }
+
+        return items;
+    }
+
+    [Benchmark(OperationsPerInvoke = TestData.Count, Description = "Throw (amantinband)")]
+    [BenchmarkCategory(SetCheck)]
+    public int SetThrowLibrary()
+    {
+        var items = 0;
+        foreach (var ids in _idSets)
+        {
+            items += ids.ThrowIfNull().IfEmpty().IfCountGreaterThan(10).Value.Count;
         }
 
         return items;

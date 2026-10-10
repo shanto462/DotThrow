@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using DotThrow.Benchmarks;
@@ -12,14 +13,20 @@ using DotThrow.Benchmarks;
 //   dotnet run -c Release --project benchmarks/DotThrow.Benchmarks -- --check
 if (args is ["--check"])
 {
-    foreach (var type in new[] { typeof(GuardBenchmarks), typeof(ValidationBenchmarks) })
+    foreach (var type in new[] { typeof(GuardBenchmarks), typeof(ValidationBenchmarks), typeof(CheckBenchmarks) })
     {
         var instance = Activator.CreateInstance(type)!;
         type.GetMethod("Setup")!.Invoke(instance, null);
         foreach (var method in type.GetMethods().Where(m => m.GetCustomAttribute<BenchmarkAttribute>() is not null))
         {
             var category = method.GetCustomAttribute<BenchmarkCategoryAttribute>()!.Categories[0];
-            Console.WriteLine($"{category,-32} {method.Name,-28} {method.Invoke(instance, null)}");
+            var result = method.Invoke(instance, null);
+            if (result is Task<int> task)
+            {
+                result = await task.ConfigureAwait(false);
+            }
+
+            Console.WriteLine($"{category,-40} {method.Name,-32} {result}");
         }
     }
 

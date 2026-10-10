@@ -7,6 +7,11 @@
     <!-- BenchmarkDotNet refuses to measure Debug builds. -->
     <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
     <ServerGarbageCollection>false</ServerGarbageCollection>
+    <!--
+      The repository pins Roslyn 4.8 for the analyzers. BenchmarkDotNet needs a newer Roslyn
+      at run time, so this project does not pin transitive packages.
+    -->
+    <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 
 namespace DotThrow.Samples;
 
@@ -24,26 +23,25 @@ public static class CustomChecks
             return guard.FailNull(message);
         }
 
-        // 3. Check the value. Build the message only when the check fails.
+        // 3. Check the value. Build the message only when the check fails. Reading the
+        //    template from MessageTemplates lets an app reword or translate it.
         if (!IsSku(guard.Value))
         {
-            return guard.Fail("NotSku", message ?? $"'{guard.Name}' must look like SKU-1234.");
+            var template = message ?? MessageTemplates.Get("NotSku") ?? "'{PropertyName}' must look like SKU-1234.";
+            return guard.Fail("NotSku", MessageTemplates.Format(template, guard.Name));
         }
 
         return guard;
     }
 
-    /// <summary>Fails when the number has more decimal places than <paramref name="places"/>.</summary>
-    public static Guard<decimal> IfMoreDecimalPlacesThan(this Guard<decimal> guard, int places, string? message = null)
+    /// <summary>Fails when the time is outside business hours (09:00 to 17:00).</summary>
+    public static Guard<DateTime> IfOutsideBusinessHours(this Guard<DateTime> guard, string? message = null)
     {
-        // A bad argument to the check itself is a bug in the caller, so it always throws.
-        ArgumentOutOfRangeException.ThrowIfNegative(places);
-
-        if (guard.IsActive && decimal.Round(guard.Value, places) != guard.Value)
+        if (guard.IsActive && (guard.Value.Hour < 9 || guard.Value.Hour >= 17))
         {
             // FailOutOfRange throws ArgumentOutOfRangeException, which carries the actual value.
-            var text = message ?? $"'{guard.Name}' must have at most {places.ToString(CultureInfo.InvariantCulture)} decimal places.";
-            return guard.FailOutOfRange("MoreDecimalPlaces", text);
+            var template = message ?? "'{PropertyName}' must be between 09:00 and 17:00.";
+            return guard.FailOutOfRange("OutsideBusinessHours", MessageTemplates.Format(template, guard.Name));
         }
 
         return guard;

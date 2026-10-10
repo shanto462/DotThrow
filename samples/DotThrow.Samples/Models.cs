@@ -23,7 +23,7 @@ public sealed class Customer
     public int Age { get; }
 }
 
-public sealed record SignUpRequest(string Name, string Email, string? MiddleName = null);
+public sealed record SignUpRequest(string Name, string Email, string? MiddleName = null, int? Age = null);
 
 public sealed record Address(string Street, string City, string PostalCode);
 
@@ -35,11 +35,18 @@ public sealed record Order(string Number, string Email, Address? ShippingAddress
 
     public bool IsGift { get; init; }
 
-    // Not string? for now: Validator.For on a string? property gives nullable warnings
-    // until For erases nullable annotations (decisions.md D9). Then make it string? again.
-    public string GiftMessage { get; init; } = "";
+    public string? GiftMessage { get; init; }
 
     public decimal Total => Lines.Sum(line => line.Quantity * line.Price);
+}
+
+[Flags]
+public enum FilePermissions
+{
+    None = 0,
+    Read = 1,
+    Write = 2,
+    Execute = 4,
 }
 
 /// <summary>An exception from your own domain, thrown instead of ArgumentException.</summary>

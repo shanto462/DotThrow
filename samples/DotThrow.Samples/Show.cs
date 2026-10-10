@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using DotThrow.Testing;
 
 namespace DotThrow.Samples;
 
@@ -25,7 +26,7 @@ internal static class Show
         {
             code();
         }
-        catch (Exception exception) when (exception is ArgumentException or DomainException or InvalidOperationException)
+        catch (Exception exception) when (exception is ArgumentException or DomainException or InvalidOperationException or ValidationTestException)
         {
             Exception(exception);
             return;
@@ -62,7 +63,8 @@ internal static class Show
         foreach (var failure in report.Failures)
         {
             var name = failure.Name.Length == 0 ? "(whole object)" : failure.Name;
-            Line($"  {name}: {failure.Message} [{failure.ErrorCode}]");
+            var severity = failure.Severity == Severity.Error ? string.Empty : $" ({failure.Severity})";
+            Line($"  {name}: {failure.Message} [{failure.ErrorCode}]{severity}");
         }
     }
 
@@ -112,7 +114,7 @@ internal static class Show
 
             default:
                 Line(exception.GetType().Name);
-                Line($"  Message:     {exception.Message}");
+                Line($"  Message:     {exception.Message.ReplaceLineEndings(" ")}");
                 break;
         }
     }

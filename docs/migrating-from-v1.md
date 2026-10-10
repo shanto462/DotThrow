@@ -61,7 +61,7 @@ name.Throw()
 | `ThrowIfNot(predicate)` | `IfNot(predicate)` | Now also takes a `message`. |
 | `ThrowIfNotValidJson()` | `IfNotJson()` | See [JSON](#json-and-xml). |
 | `ThrowIfNotValidXml()` | `IfNotXml()` | See [JSON and XML](#json-and-xml). |
-| `ThrowIfNotValidInteger()` | `IfNotParsable<int>()` | .NET 8 and later. It uses the invariant culture unless you pass a provider; v1 used the current culture. On netstandard2.0 use `IfNot(s => int.TryParse(s, out _))`. |
+| `ThrowIfNotValidInteger()` | `IfNotParsable<int>()` | .NET 8 and later. It uses the invariant culture unless you pass a provider; v1 used the current culture. On older frameworks use `IfNot(s => int.TryParse(s, out _))`, or `IfNotDigits()` when only the digits 0 to 9 are allowed. |
 
 ## Number checks
 
@@ -82,7 +82,7 @@ v1 had these for `int` only. In v2 they work on every number type, and they thro
 
 | 1.x | 2.x | Notes |
 | --- | --- | --- |
-| `ThrowIfEmpty()` | `IfNullOrEmpty()` | A null collection now fails with `ArgumentNullException`. |
+| `ThrowIfEmpty()` | `IfNullOrEmpty()` | A null collection now fails with `ArgumentNullException`. `IfEmpty()` works too, on any type. |
 | `ThrowIf(predicate, message)` | `If(predicate, message)` | |
 | `ThrowIfCountIsGreaterThan(count)` | `IfCountGreaterThan(count)` | |
 | `ThrowIfCountIsLessThan(count)` | `IfCountLessThan(count)` | |
@@ -93,7 +93,7 @@ otherwise stops as soon as the answer is known.
 
 ## Date checks
 
-They throw `ArgumentOutOfRangeException` now.
+The date checks throw `ArgumentOutOfRangeException` now (`If` throws `ArgumentException`).
 
 | 1.x | 2.x | Notes |
 | --- | --- | --- |
@@ -133,7 +133,7 @@ var name = "Ada Lovelace";
 
 // true means "the value is valid"
 var nameRules = new Validator<string>()
-    .Must(s => s.Length <= 50, "The name is too long.", group: "names");
+    .Must(s => s.Length <= 50, "The name is too long.", rule => rule.InGroup("names"));
 
 nameRules.ValidateAndThrow(name, "names");               // throws one exception with every failure
 ValidationReport report = nameRules.Validate(name, "names");
@@ -151,13 +151,13 @@ default messages without extra work. See [validation.md](validation.md).
 | `Validator<T>.AddRule(predicate, message, ...)` | `new Validator<T>().Must(predicate, message)` | **The predicate is inverted.** Rewrite `x => broken` as `x => !broken` (or the opposite comparison). |
 | `exceptionType` (`typeof(SomeException)`) | none | `ValidateAndThrow` throws `ValidationFailedException`. Catch it and wrap it if you need another type. In guard clauses, `Throw(factory)` creates any exception. |
 | `passMessage` | none | Reports list only failures. |
-| `group` | `group` | Rules without a group are in `ValidationGroups.Default`. `ValidationGroups.All` runs every rule. v1 treated `""` as "no group"; in v2 pass no group at all, because `Validate(value, "")` runs only rules in a group named `""`. |
+| `group` | `rule => rule.InGroup("name")`, or a `Group("name", v => ...)` block | Rules without a group are in `ValidationGroups.Default`. `ValidationGroups.All` runs every rule. v1 treated `""` as "no group"; in v2 pass no group at all. |
 | `Validator<T>.Verify(value, group)` | `validator.ValidateAndThrow(value, group)` | v1 threw on the first broken rule; v2 runs every rule and throws once with all failures. |
 | `Validator<T>.VerifyNotThrow(value, group)` | `validator.Validate(value, group)` | Returns a `ValidationReport`. |
 | `ValidatorReport<T>.IsPassed` | `report.IsValid` | Per report, not per rule. |
 | `ValidatorReport<T>.Rule.ExceptionMessage` | `failure.Message` | Each `ValidationFailure` also has `Name` and `ErrorCode`. |
 | `ValidatorReport<T>.Group` | none | |
-| `ValidatorReport<T>.ToString()` | `failure.ToString()` | `"Name: Message"`, or only the message when the failure has no name (a `Must` rule without `name:`). |
+| `ValidatorReport<T>.ToString()` | `failure.ToString()` | `"Name: Message"`, or only the message when the failure has no name (a `Must` rule without `WithName`). |
 
 ## Removed helpers
 
@@ -168,7 +168,7 @@ v1 also had public helper classes. They are gone in v2:
 | `JsonHelpers.IsValidJson(text)` | `text.Throw().IfNotJson()`, or `report.Check(text).IfNotJson()` to get a result instead of an exception |
 | `XmlHelpers.IsValidXml(text)` | `text.Throw().IfNotXml()`, or `report.Check(text).IfNotXml()` |
 | `IEunemerableExtensions.Any()`, `Count()` | `System.Linq` `Any()` and `Count()` (after `Cast<object>()` for a non-generic `IEnumerable`) |
-| `ObjectExtensions.CastTo<T>()`, `CastToReflected(type)` | A normal cast. v2 uses no reflection. |
+| `ObjectExtensions.CastTo<T>()`, `CastToReflected(type)` | A normal cast. v2 does not need these helpers. |
 
 ## Behavior changes
 
@@ -203,7 +203,8 @@ null through, call `AllowNull()` first. See [guards.md](guards.md#null-values).
 
 ### Target frameworks
 
-v1 targeted .NET 6 only. v2 targets netstandard2.0, .NET 8 and .NET 10, so it also runs
-on .NET Framework 4.6.1 and later through netstandard2.0. A few checks need .NET 8 or
-later: `IfNotParsable<T>()`, the `TimeProvider` overloads, and the `DateOnly` and
-`TimeOnly` checks.
+v1 targeted .NET 6 only. v2 targets netstandard2.0, netstandard2.1, net462, net8.0, net9.0
+and net10.0, so it runs on .NET Framework 4.6.2 and later, every .NET Core and .NET
+version, Mono and Unity. Some checks need .NET 8 or later, such as `IfNotParsable<T>()`,
+the `TimeProvider` overloads, the `DateOnly` and `TimeOnly` checks, and the generic math
+overloads. [guards.md](guards.md#checks-by-family) marks them.

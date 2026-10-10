@@ -1,10 +1,20 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Net;
 using DotThrow;
 using DotThrow.Samples;
+using DotThrow.Testing;
 
 // DotThrow samples. Each section runs and prints what happens.
 //   dotnet run --project samples/DotThrow.Samples
 // The app also runs as a Native AOT binary:
 //   dotnet publish samples/DotThrow.Samples -c Release -r osx-arm64
+
+// Same output on every machine: messages and printed values use the invariant culture.
+CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
 
 // ----------------------------------------------------------------------------------------
 Show.Title("1. Guard clauses in a constructor");
@@ -35,8 +45,9 @@ Show.Line($"pageNumber unwrapped to int: {page}");
 // ----------------------------------------------------------------------------------------
 Show.Title("3. Custom messages and custom exceptions");
 
-var pageSize = 0;
-Show.Error(() => pageSize.Throw().IfNegativeOrZero("Ask for at least one item per page."));
+// A custom message can use the same placeholders as the default one.
+var pageSize = 500;
+Show.Error(() => pageSize.Throw().IfGreaterThan(100, "Ask for at most {ComparisonValue} items per page."));
 
 // The factory gets the failure (name, message, error code) and returns your exception.
 var balance = -25m;
@@ -56,17 +67,21 @@ Show.Error(() => middleName.Throw().AllowNull().IfLongerThan(20));
 string? nickname = null;
 Show.Error(() => nickname.Throw().IfLongerThan(20));
 
+// An optional number: AllowNull() skips null, IfNull() unwraps int? to int for the range check.
+int? age = 200;
+Show.Error(() => age.Throw().AllowNull().IfNull().IfOutOfRange(0, 150));
+
 // ----------------------------------------------------------------------------------------
 Show.Title("5. Collect mode: every failure, no exceptions");
 
-var form = new SignUpRequest(Name: "", Email: "ada.example.com", MiddleName: "Augusta Ada Byron King");
-var age = 12;
+var form = new SignUpRequest(Name: "", Email: "ada.example.com", MiddleName: "Augusta Ada Byron King", Age: 12);
 
+// Check(form, f => f.Name) names the failure "Name", as a validator does.
 var report = new ValidationReport();
-report.Check(form.Name).IfNullOrWhiteSpace();
-report.Check(form.Email).IfNullOrWhiteSpace().IfNotEmailAddress();
-report.Check(form.MiddleName).AllowNull().IfLongerThan(20);
-report.Check(age).IfLessThan(13, "You must be 13 or older to sign up.");
+report.Check(form, f => f.Name).IfNullOrWhiteSpace();
+report.Check(form, f => f.Email).IfNullOrWhiteSpace().IfNotEmailAddress();
+report.Check(form, f => f.MiddleName).AllowNull().IfLongerThan(20);
+report.Check(form, f => f.Age).AllowNull().IfNull().IfLessThan(13, "You must be 13 or older to sign up.");
 
 // Each chain reports at most one failure: the first check that failed.
 Show.Report(report);
@@ -99,22 +114,42 @@ var badOrder = new Order(
     Number: "1002",
     Email: "ada.example.com",
     ShippingAddress: new Address("12 Analytical Way", "", "ABC"),
-    Lines: [new OrderLine("SKU-ENGINE", 1, 950m), new OrderLine("ENGINE", 200, 100m)])
+    Lines: [new OrderLine("SKU-ENGINE", 1, 950m), new OrderLine("ENGINE", 200, 100.005m)])
 {
     Tags = ["gift", " ", "difference-engine"],
     IsGift = true,
-    GiftMessage = "",
+    GiftMessage = null,
 };
 Show.Line("A bad order:");
 Show.Report(orderValidator.Validate(badOrder));
 
 // ----------------------------------------------------------------------------------------
-Show.Title("7. Groups: run a different set of rules for each situation");
+Show.Title("7. Rule options: messages, names, severity, conditions");
+
+var reviewRules = new Validator<Order>()
+    .For(x => x.Email, email => email.IfNotEmailAddress(), rule => rule
+        .WithName("E-mail address")
+        .WithMessage("Please check {PropertyName}."))
+    .ForEach(x => x.Tags, tag => tag.IfLongerThan(10), rule => rule
+        .WithSeverity(Severity.Warning)
+        .WithErrorCode("LongTag"))
+    .When(x => x.IsGift, gift => gift
+        .For(x => x.GiftMessage, message => message.IfNullOrWhiteSpace()));
+
+Show.Report(reviewRules.Validate(badOrder));
+
+// Validate only some properties, for example the field a user just edited.
+Show.Line("Only the Email property:");
+Show.Report(reviewRules.Validate(badOrder, options => options.IncludeProperties(x => x.Email)));
+
+// ----------------------------------------------------------------------------------------
+Show.Title("8. Groups: run a different set of rules for each situation");
 
 var draftRules = new Validator<Order>()
     .For(x => x.Number, number => number.IfNullOrWhiteSpace())
-    .For(x => x.ShippingAddress, address => address.IfNull(), group: "checkout")
-    .For(x => x.Lines, lines => lines.IfNullOrEmpty(), group: "checkout");
+    .Group("checkout", checkout => checkout
+        .For(x => x.ShippingAddress, address => address.IfNull())
+        .For(x => x.Lines, lines => lines.IfNullOrEmpty()));
 
 var draft = new Order(Number: "", Email: "ada@example.com", ShippingAddress: null, Lines: []);
 
@@ -127,17 +162,17 @@ CountFailures("Validate(draft, ValidationGroups.Default, \"checkout\")", Validat
 CountFailures("Validate(draft, ValidationGroups.All)", ValidationGroups.All);
 
 // ----------------------------------------------------------------------------------------
-Show.Title("8. Async rules");
+Show.Title("9. Async rules");
 
 var users = new FakeUserStore("ada@example.com");
 var signUpRules = new Validator<SignUpRequest>()
     .For(x => x.Name, name => name.IfNullOrWhiteSpace())
-    .For(x => x.Email, email => email.IfNullOrWhiteSpace().IfNotEmailAddress())
-    .MustAsync(
-        async (x, cancellationToken) => !await users.EmailExistsAsync(x.Email, cancellationToken),
-        "The email address is already registered.",
-        name: "Email",
-        errorCode: "EmailTaken");
+    .For(x => x.Email, email => email.IfNullOrWhiteSpace().IfNotEmailAddress(), rule => rule
+        .DependentRules(lookup => lookup.MustAsync(
+            x => x.Email,
+            async (email, cancellationToken) => !await users.EmailExistsAsync(email, cancellationToken),
+            "The email address is already registered.",
+            taken => taken.WithErrorCode("EmailTaken"))));
 
 Show.Line("A new user:");
 Show.Report(await signUpRules.ValidateAsync(new SignUpRequest("Charles Babbage", "charles@example.com")));
@@ -152,20 +187,78 @@ Show.Line("Validate (not async) on a validator with async rules:");
 Show.Error(() => signUpRules.Validate(new SignUpRequest("Charles Babbage", "charles@example.com")));
 
 // ----------------------------------------------------------------------------------------
-Show.Title("9. Your own checks");
+Show.Title("10. Your own checks");
 
-// IfNotSku and IfMoreDecimalPlacesThan are written in CustomChecks.cs.
+// IfNotSku and IfOutsideBusinessHours are written in CustomChecks.cs.
 var sku = "sku-12";
 Show.Error(() => sku.Throw().IfNotSku());
 
-var price = 9.999m;
-Show.Error(() => price.Throw().IfMoreDecimalPlacesThan(2));
+var pickupTime = new DateTime(2026, 10, 12, 18, 30, 0, DateTimeKind.Local);
+Show.Error(() => pickupTime.Throw().IfOutsideBusinessHours());
 
 // The same checks work in collect mode, and in a validator (see OrderLineValidator).
 var lineReport = new ValidationReport();
 lineReport.Check(sku).IfNullOrWhiteSpace().IfNotSku();
-lineReport.Check(price).IfNegative().IfMoreDecimalPlacesThan(2);
+lineReport.Check(pickupTime).IfOutsideBusinessHours();
 Show.Report(lineReport);
+
+// ----------------------------------------------------------------------------------------
+Show.Title("11. More built-in checks");
+
+var slug = "Hello World";
+var boxSize = 7;
+var price = 19.999m;
+var website = new Uri("http://contoso.example");
+var server = IPAddress.Parse("10.0.0.5");
+var settings = new Dictionary<string, string> { ["theme"] = "dark" };
+var tagIds = new HashSet<int> { 1, 2, 3 };
+var deliveryDate = new DateOnly(2026, 10, 10);
+var permissions = FilePermissions.Read;
+var cardNumber = "4111 1111 1111 1112";
+using var upload = new MemoryStream();
+
+var more = new ValidationReport();
+more.Check(slug).IfNotSlug();
+more.Check(boxSize).IfNotMultipleOf(5);
+more.Check(price).IfPrecisionScaleExceeded(5, 2);
+more.Check(website).IfNotHttps();
+more.Check(server).IfPrivate();
+more.Check(settings).IfNotContainsKey("language");
+more.Check(tagIds).IfCountGreaterThan(2);
+more.Check(deliveryDate).IfWeekend();
+more.Check(permissions).IfNotHasFlag(FilePermissions.Write);
+more.Check(cardNumber).IfNotCreditCardNumber();
+more.Check(upload).IfEmpty();
+Show.Report(more);
+
+// ----------------------------------------------------------------------------------------
+Show.Title("12. Message templates and languages");
+
+var title = "A very long title for a short field";
+MessageTemplates.Set(ErrorCodes.LongerThan, "{PropertyName} is too long: {TotalLength} of {MaxLength} characters.");
+MessageTemplates.Set(ErrorCodes.LongerThan, "'{PropertyName}' darf höchstens {MaxLength} Zeichen haben.", new CultureInfo("de"));
+
+Show.Line("Reworded for every culture:");
+Show.Error(() => title.Throw().IfLongerThan(20));
+
+MessageTemplates.Culture = new CultureInfo("de-AT");
+Show.Line("German, found through the culture chain de-AT -> de:");
+Show.Error(() => title.Throw().IfLongerThan(20));
+
+// Back to the built-in English messages and the current UI culture.
+MessageTemplates.Reset();
+
+// ----------------------------------------------------------------------------------------
+Show.Title("13. Testing helpers (DotThrow.Testing)");
+
+// In a test project these lines are your assertions: they throw when the expectation fails.
+var result = orderValidator.TestValidate(badOrder);
+result.ShouldHaveValidationErrorFor(x => x.Number).WithErrorCode(ErrorCodes.NotStartsWith);
+result.ShouldHaveValidationErrorFor("ShippingAddress.City");
+result.ShouldNotHaveValidationErrorFor("ShippingAddress.Street");
+Show.Line("Number, ShippingAddress.City and ShippingAddress.Street behave as expected.");
+
+Show.Error(() => orderValidator.TestValidate(goodOrder).ShouldHaveValidationErrorFor(x => x.Email));
 
 // ----------------------------------------------------------------------------------------
 Show.Title("Done");

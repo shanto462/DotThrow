@@ -12,9 +12,6 @@
     -->
     <PublishAot>true</PublishAot>
     <TrimmerSingleWarn>false</TrimmerSingleWarn>
-
-    <!-- Same output on every machine, whatever the local culture is. -->
-    <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
 
   <ItemGroup>

@@ -4,6 +4,10 @@ A check is an extension method on `Guard<T>`. When you write one, it works every
 built-in checks work: in guard clauses with `Throw()`, in collect mode with
 `ValidationReport`, and in `Validator<T>` rules.
 
+Before you write one, look at the [list of built-in checks](guards.md#checks-by-family):
+there are more than 110, including formats such as `IfNotSlug`, `IfNotHex` and
+`IfNotIPAddress`.
+
 The examples assume `using DotThrow;`.
 
 ## A first check
@@ -27,10 +31,12 @@ public static class SkuChecks
             return guard.FailNull(message);
         }
 
-        // 3. Check the value. Build the message only when the check fails.
+        // 3. Check the value. Build the message only when the check fails, from a template
+        //    that an app can reword or translate.
         if (!IsSku(guard.Value))
         {
-            return guard.Fail("NotSku", message ?? $"'{guard.Name}' must look like SKU-1234.");
+            var template = message ?? MessageTemplates.Get("NotSku") ?? "'{PropertyName}' must look like SKU-1234.";
+            return guard.Fail("NotSku", MessageTemplates.Format(template, guard.Name));
         }
 
         return guard;
@@ -73,8 +79,9 @@ sku.Throw().IfNullOrWhiteSpace().IfNotSku();
 ## The rules
 
 1. **Return the guard unchanged when `guard.IsActive` is `false`.** That happens after a
-   failed check in collect mode (so each value reports one failure) and after
-   `AllowNull()` found a null value.
+   failed check in collect mode (so each value reports one failure; with the rule cascade
+   `Continue` of a validator the guard stays active) and after `AllowNull()` found a null
+   value.
 2. **Fail a null value with `guard.FailNull(message)`**, unless null is a normal value for
    your check. This keeps the [null rule](guards.md#null-values) of the built-in checks.
 3. **Report a failure with `Fail` or `FailOutOfRange`**, and return what they return.
@@ -85,31 +92,34 @@ sku.Throw().IfNullOrWhiteSpace().IfNotSku();
      later checks.
    - With `Throw(factory)` both throw the exception from the factory.
 4. **Build the message only when the check fails.** Then a check that passes never
-   formats a string. Start the message with `'{guard.Name}'`, like the built-in messages. Do not put
-   the value of a string in the message: it may be a password.
-5. **Pick a stable error code**: the check name without `If`, such as `"NotSku"`.
-6. **Validate the arguments of your check by throwing.** A bad argument is a bug in the
+   formats a string. `Fail` uses the message as it is, so fill in placeholders with
+   `MessageTemplates.Format(template, guard.Name, values)`. Read the template with
+   `MessageTemplates.Get(code)` first, so an app can reword or translate it (see
+   [localization.md](localization.md#templates-in-your-own-checks)).
+5. **Never put the checked value in a default message**: it may be a password. Start the
+   message with `'{PropertyName}'`, like the built-in messages.
+6. **Pick a stable error code**: the check name without `If`, such as `"NotSku"`.
+7. **Validate the arguments of your check by throwing.** A bad argument is a bug in the
    calling code, so it should throw even in collect mode.
 
 ## A check that throws ArgumentOutOfRangeException
 
 ```csharp
-public static class MoneyChecks
+public static class OpeningHoursChecks
 {
-    public static Guard<decimal> IfMoreDecimalPlacesThan(this Guard<decimal> guard, int places, string? message = null)
+    public static Guard<DateTime> IfOutsideHours(this Guard<DateTime> guard, int openHour, int closeHour, string? message = null)
     {
-        // Rule 6: a bad argument always throws. (On .NET 8 and later you can write
-        // ArgumentOutOfRangeException.ThrowIfNegative(places) instead.)
-        if (places < 0)
+        // Rule 7: a bad argument always throws.
+        if (openHour < 0 || closeHour > 24 || openHour >= closeHour)
         {
-            throw new ArgumentOutOfRangeException(nameof(places), places, "The value must not be negative.");
+            throw new ArgumentOutOfRangeException(nameof(closeHour), closeHour, "The hours must be in 0 to 24, and open before close.");
         }
 
-        if (guard.IsActive && decimal.Round(guard.Value, places) != guard.Value)
+        if (guard.IsActive && (guard.Value.Hour < openHour || guard.Value.Hour >= closeHour))
         {
-            return guard.FailOutOfRange(
-                "MoreDecimalPlaces",
-                message ?? $"'{guard.Name}' must have at most {places} decimal places.");
+            var template = message ?? MessageTemplates.Get("OutsideHours") ?? "'{PropertyName}' must be between {Open}:00 and {Close}:00.";
+            var values = new Dictionary<string, object?> { ["Open"] = openHour, ["Close"] = closeHour };
+            return guard.FailOutOfRange("OutsideHours", MessageTemplates.Format(template, guard.Name, values));
         }
 
         return guard;
@@ -118,16 +128,17 @@ public static class MoneyChecks
 ```
 
 ```csharp
-var price = 9.999m;
-price.Throw().IfNegative().IfMoreDecimalPlacesThan(2);
+var pickupTime = new DateTime(2026, 10, 12, 18, 30, 0);
+pickupTime.Throw().IfOutsideHours(9, 17);
 ```
 
 ```text
-System.ArgumentOutOfRangeException: 'price' must have at most 2 decimal places. (Parameter 'price')
-Actual value was 9.999.
+System.ArgumentOutOfRangeException: 'pickupTime' must be between 9:00 and 17:00. (Parameter 'pickupTime')
+Actual value was 10/12/2026 18:30:00.
 ```
 
-A `decimal` cannot be null, so this check has no null step.
+A `DateTime` cannot be null, so this check has no null step. The format of the actual
+value on the second line comes from .NET and follows the current culture.
 
 ## A check built from other checks
 
@@ -140,7 +151,7 @@ public static class PasswordChecks
     public static Guard<string> IfWeakPassword(this Guard<string> guard) =>
         guard
             .IfNullOrEmpty()
-            .IfShorterThan(12, "Use at least 12 characters.")
+            .IfShorterThan(12, "Use at least {MinLength} characters.")
             .IfAllLowerCase("Mix uppercase and lowercase letters.")
             .IfAllUpperCase("Mix uppercase and lowercase letters.");
 }
@@ -159,7 +170,7 @@ public sealed class OrderLineValidator : Validator<OrderLine>
     {
         For(x => x.Sku, sku => sku.IfNullOrWhiteSpace().IfNotSku());
         For(x => x.Quantity, quantity => quantity.IfOutOfRange(1, 100));
-        For(x => x.Price, price => price.IfNegative().IfMoreDecimalPlacesThan(2));
+        For(x => x.Price, price => price.IfNegative().IfPrecisionScaleExceeded(9, 2));
     }
 }
 ```
@@ -170,14 +181,14 @@ public sealed class OrderLineValidator : Validator<OrderLine>
 | --- | --- |
 | `guard.Value` | The checked value. |
 | `guard.Name` | The name for messages: a parameter name, a property path, or an expression. |
-| `guard.IsActive` | `false` after a failure in collect mode or after `AllowNull()` saw null. Return the guard unchanged then. |
+| `guard.IsActive` | `false` after a failure in collect mode (unless the rule cascade is `Continue`) or after `AllowNull()` saw null. Return the guard unchanged then. |
 | `guard.HasFailed` | `true` after a failure in collect mode. |
 | `guard.Fail(code, message)` | Reports a failure. Default exception: `ArgumentException`. |
 | `guard.FailOutOfRange(code, message)` | Reports a failure. Default exception: `ArgumentOutOfRangeException` with the value. |
-| `guard.FailNull(message?)` | Reports a null value with the code `Null`. Default exception: `ArgumentNullException`. |
+| `guard.FailNull(message?)` | Reports a null value with the code `Null`. Default exception: `ArgumentNullException`. A custom message can use `{PropertyName}`. |
 
 `Guard<T>` is a `ref struct`, so a check cannot store it or capture it in a lambda. Keep
 the work inside the method, as in the examples.
 
-The [samples project](../samples/DotThrow.Samples/CustomChecks.cs) has both checks from
-this page and runs them in all three modes.
+The [samples project](../samples/DotThrow.Samples/CustomChecks.cs) has two custom checks
+and runs them in all three modes.

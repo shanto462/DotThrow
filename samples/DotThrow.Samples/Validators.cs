@@ -15,10 +15,10 @@ public sealed class OrderLineValidator : Validator<OrderLine>
 {
     public OrderLineValidator()
     {
-        // IfNotSku and IfMoreDecimalPlacesThan are custom checks (CustomChecks.cs).
+        // IfNotSku is a custom check (CustomChecks.cs).
         For(x => x.Sku, sku => sku.IfNullOrWhiteSpace().IfNotSku());
         For(x => x.Quantity, quantity => quantity.IfOutOfRange(1, 100));
-        For(x => x.Price, price => price.IfNegative().IfMoreDecimalPlacesThan(2));
+        For(x => x.Price, price => price.IfNegative().IfPrecisionScaleExceeded(9, 2));
     }
 }
 
@@ -33,6 +33,6 @@ public static class OrderRules
         .For(x => x.Lines, lines => lines.IfNullOrEmpty().IfCountGreaterThan(20))
         .ForEach(x => x.Lines, new OrderLineValidator())
         .ForEach(x => x.Tags, tag => tag.IfNullOrWhiteSpace().IfLongerThan(10))
-        .For(x => x.GiftMessage, message => message.IfNullOrWhiteSpace(), when: x => x.IsGift)
-        .Must(x => x.Total <= 10_000m, "The order total must not be more than 10000.", name: "Total");
+        .For(x => x.GiftMessage, message => message.IfNullOrWhiteSpace(), rule => rule.When(x => x.IsGift))
+        .Must(x => x.Total, total => total <= 10_000m, "The order total must not be more than 10000.");
 }
