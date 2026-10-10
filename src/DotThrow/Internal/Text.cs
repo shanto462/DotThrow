@@ -371,7 +371,20 @@ internal static class Text
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP
         return Guid.TryParse(value.AsSpan(), out _);
 #else
-        return Guid.TryParse(value, out _);
+        // .NET Framework's Guid.TryParse throws instead of returning false for some text in the
+        // hexadecimal format, such as "{0xa,0xa,0xa,{0xz,": it reads the last eight numbers with
+        // Convert.ToInt32(text, 16), which throws FormatException, OverflowException or
+        // ArgumentException. Such text is not a GUID.
+        try
+        {
+            return Guid.TryParse(value, out _);
+        }
+#pragma warning disable CA1031 // Do not catch general exception types: only the parse errors above.
+        catch (Exception exception) when (exception is FormatException or OverflowException or ArgumentException)
+#pragma warning restore CA1031
+        {
+            return false;
+        }
 #endif
     }
 

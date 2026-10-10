@@ -19,6 +19,10 @@ and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   constructor, `Update` and `CheckArguments.Parse<Uri>`. It is now a normal
   definition error (`FormatException` from `CheckArguments.Parse`). Found by
   the new fuzz tests.
+- On .NET Framework, `IfNotGuid` threw `FormatException` for some text in the
+  hexadecimal GUID format, for example `{0xa,0xa,0xa,{0xz,`, because .NET
+  Framework's `Guid.TryParse` throws for it. The check now fails as documented.
+  Found by the fuzz tests.
 
 ## [2.0.1] - 2026-10-10
 

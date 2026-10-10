@@ -113,7 +113,7 @@ public sealed class TextCheckFuzzTests
 
     [Fact]
     public void NotGuid_agrees_with_Guid_TryParse() =>
-        Fuzz.Run(GuidText, text => Assert.Equal(!Guid.TryParse(text, out _), Contract.Fails(text, g => g.IfNotGuid(), ErrorCodes.NotGuid)));
+        Fuzz.Run(GuidText, text => Assert.Equal(!IsGuid(text), Contract.Fails(text, g => g.IfNotGuid(), ErrorCodes.NotGuid)));
 
 #if NET
     // The documentation promises Convert.FromBase64String's reading (white space ignored), and an
@@ -259,6 +259,19 @@ public sealed class TextCheckFuzzTests
 
         var sum = Enumerable.Reverse(digits).Select((c, i) => i % 2 == 0 ? c - '0' : ((c - '0') * 2) - ((c - '0') >= 5 ? 9 : 0)).Sum();
         return sum % 10 == 0;
+    }
+
+    // Guid.TryParse, where a throw (.NET Framework, some hexadecimal text) means "not a GUID".
+    private static bool IsGuid(string? text)
+    {
+        try
+        {
+            return Guid.TryParse(text, out _);
+        }
+        catch (Exception exception) when (exception is FormatException or OverflowException or ArgumentException)
+        {
+            return false;
+        }
     }
 
     // Letters and digits (char.IsLetterOrDigit), with a surrogate pair read as one character.
