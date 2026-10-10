@@ -463,4 +463,65 @@ public sealed class ValidatorUsageTests
                 }
             }
             """ + Validators);
+
+    // A cycle used to recurse until the compiler crashed (stack overflow). The finder now
+    // follows values with one visited set; a stack check turns any new recursion bug into an
+    // analyzer exception (AD0001), which fails this test instead of the test host.
+    [Fact]
+    public Task DT0004_survives_cycles() =>
+        Verify.AnalyzerAsync<ValidatorUsageAnalyzer>(
+            """
+            using System.Threading.Tasks;
+            using DotThrow;
+
+            public sealed class A : Validator<string>
+            {
+                public A() => Include(new B());
+            }
+
+            public sealed class B : Validator<string>
+            {
+                public B() => Include(new A());
+            }
+
+            class Uses
+            {
+                static Validator<string> P => Q;
+
+                static Validator<string> Q => P;
+
+                static Validator<string> Self() => Self();
+
+                void M()
+                {
+                    var a = new Validator<string>();
+                    var b = new Validator<string>();
+                    var t = a;
+                    a = b;
+                    b = t;
+                    _ = a.Validate("x");
+
+                    a = b;
+                    b = a;
+                    _ = b.Validate("x");
+
+                    _ = P.Validate("x");
+                    _ = Self().Validate("x");
+                    _ = new A().Validate("x");
+
+                    var c = new Validator<string>();
+                    var d = new Validator<string>();
+                    c.Include(d);
+                    d.Include(c);
+                    _ = c.Validate("x");
+
+                    // A cycle that reaches an async rule is still found.
+                    var e = new Validator<string>();
+                    var f = e;
+                    e = f;
+                    f.MustAsync((value, token) => Task.FromResult(true));
+                    _ = e.{|DT0004:Validate|}("x");
+                }
+            }
+            """);
 }

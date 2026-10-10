@@ -62,8 +62,8 @@ internal static class Descriptors
         "Regular expression pattern is not valid",
         "The pattern is not a valid regular expression, so this check always throws: {0}",
         Usage,
-        DiagnosticSeverity.Error,
-        "IfMatches and IfNotMatches build a Regex from the pattern on every call. A pattern that does not parse throws an ArgumentException every time the check runs.");
+        DiagnosticSeverity.Warning,
+        "IfMatches and IfNotMatches build a Regex from the pattern on every call. A pattern that does not parse throws an ArgumentException every time the check runs. The pattern is checked with the regular expression engine of the process that runs the compiler, which can differ from the app's runtime, so this is a warning.");
 
     public static readonly DiagnosticDescriptor UseGeneratedRegex = Create(
         DiagnosticIds.UseGeneratedRegex,

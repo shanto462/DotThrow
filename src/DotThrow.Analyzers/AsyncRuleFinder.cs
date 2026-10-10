@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Operations;
@@ -78,13 +79,16 @@ internal sealed class AsyncRuleFinder
 {
     private const int MaxDepth = 6;
 
+    // The most expressions one Collect follows (locals, fields, properties, methods).
+    private const int MaxExpressions = 256;
+
     private readonly DotThrowSymbols _symbols;
     private readonly Compilation _compilation;
     private readonly ConcurrentDictionary<INamedTypeSymbol, ImmutableArray<RuleEntry>> _typeRules = new(SymbolEqualityComparer.Default);
 
-    // The rules of a local, found by walking its method once (a test method can call Validate
-    // on the same local many times).
-    private readonly ConcurrentDictionary<ILocalSymbol, ImmutableArray<RuleEntry>> _localRules = new(SymbolEqualityComparer.Default);
+    // Where a local's validator comes from, found by walking its method once (a test method
+    // can call Validate on the same local many times). The walk itself never recurses.
+    private readonly ConcurrentDictionary<ILocalSymbol, LocalSources> _localSources = new(SymbolEqualityComparer.Default);
 
     public AsyncRuleFinder(DotThrowSymbols symbols, Compilation compilation)
     {
@@ -141,6 +145,9 @@ internal sealed class AsyncRuleFinder
 
     private string? Find(IOperation validator, GroupSet run, int depth, HashSet<ISymbol> visited)
     {
+        // Child validators nest at most MaxDepth deep. The stack check turns any future
+        // recursion bug into an analyzer exception (AD0001) instead of a crashed compiler.
+        RuntimeHelpers.EnsureSufficientExecutionStack();
         if (depth > MaxDepth)
         {
             return null;
@@ -169,92 +176,78 @@ internal sealed class AsyncRuleFinder
         return null;
     }
 
-    // Collects the rules of the validator that an expression produces.
-    private void Collect(IOperation expression, List<RuleEntry> rules, HashSet<ISymbol> visited)
+    // Collects the rules of the validator that an expression produces. Iterative, with one
+    // visited set for the whole search, so aliases (a = b; b = a;) and cycles between fields,
+    // properties and methods end.
+    private void Collect(IOperation start, List<RuleEntry> rules, HashSet<ISymbol> visited)
     {
-        expression = WithoutConversions(expression);
-
-        // A builder chain: new Validator<T>().For(...).MustAsync(...)
-        while (expression is IInvocationOperation call && IsBuilder(call))
+        RuntimeHelpers.EnsureSufficientExecutionStack();
+        var pending = new Stack<IOperation>();
+        pending.Push(start);
+        for (var budget = MaxExpressions; pending.Count > 0 && budget > 0; budget--)
         {
-            AddRuleCall(call, Scope.Root, rules);
-            if (call.Instance is null)
+            var expression = WithoutConversions(pending.Pop());
+
+            // A builder chain: new Validator<T>().For(...).MustAsync(...)
+            var chainEnded = false;
+            while (expression is IInvocationOperation call && IsBuilder(call))
             {
-                return;
+                AddRuleCall(call, Scope.Root, rules);
+                if (call.Instance is null)
+                {
+                    chainEnded = true;
+                    break;
+                }
+
+                expression = WithoutConversions(call.Instance);
             }
 
-            expression = WithoutConversions(call.Instance);
-        }
-
-        // Rules from the constructors of a validator class declared in this compilation.
-        if (expression.Type is INamedTypeSymbol type)
-        {
-            rules.AddRange(TypeRules(type));
-        }
-
-        switch (expression)
-        {
-            case ILocalReferenceOperation local when !visited.Contains(local.Local):
-                rules.AddRange(_localRules.GetOrAdd(local.Local, _ =>
-                {
-                    var localRules = new List<RuleEntry>();
-                    CollectLocal(local, localRules, new HashSet<ISymbol>(SymbolEqualityComparer.Default) { local.Local });
-                    return localRules.ToImmutableArray();
-                }));
-                break;
-            case IFieldReferenceOperation field when visited.Add(field.Field):
-                foreach (var value in InitializerValues(field.Field))
-                {
-                    Collect(value, rules, visited);
-                }
-
-                break;
-            case IPropertyReferenceOperation property when visited.Add(property.Property):
-                foreach (var value in InitializerValues(property.Property))
-                {
-                    Collect(value, rules, visited);
-                }
-
-                break;
-            case IInvocationOperation method when visited.Add(method.TargetMethod):
-                foreach (var value in ReturnedValues(method.TargetMethod))
-                {
-                    Collect(value, rules, visited);
-                }
-
-                break;
-        }
-    }
-
-    // A local: its initializer, later assignments, and rules added through it.
-    private void CollectLocal(ILocalReferenceOperation reference, List<RuleEntry> rules, HashSet<ISymbol> visited)
-    {
-        var local = reference.Local;
-        IOperation root = reference;
-        while (root.Parent is { } parent)
-        {
-            root = parent;
-        }
-
-        foreach (var operation in root.Descendants())
-        {
-            switch (operation)
+            if (chainEnded)
             {
-                case IVariableDeclaratorOperation declarator when SymbolEqualityComparer.Default.Equals(declarator.Symbol, local):
-                    if (declarator.GetVariableInitializer() is { } initializer)
+                continue;
+            }
+
+            // Rules from the constructors of a validator class declared in this compilation.
+            if (expression.Type is INamedTypeSymbol type)
+            {
+                rules.AddRange(TypeRules(type));
+            }
+
+            switch (expression)
+            {
+                case ILocalReferenceOperation local when visited.Add(local.Local):
+                    var sources = _localSources.GetOrAdd(local.Local, _ => LocalSources.Find(local, this));
+                    foreach (var call in sources.Calls)
                     {
-                        Collect(initializer.Value, rules, visited);
+                        AddRuleCall(call, Scope.Root, rules);
+                    }
+
+                    foreach (var value in sources.Values)
+                    {
+                        pending.Push(value);
                     }
 
                     break;
-                case ISimpleAssignmentOperation { Target: ILocalReferenceOperation target } assignment
-                    when SymbolEqualityComparer.Default.Equals(target.Local, local):
-                    Collect(assignment.Value, rules, visited);
+                case IFieldReferenceOperation field when visited.Add(field.Field):
+                    foreach (var value in InitializerValues(field.Field))
+                    {
+                        pending.Push(value);
+                    }
+
                     break;
-                case IInvocationOperation call when IsBuilder(call)
-                    && ChainRoot(call) is ILocalReferenceOperation chainRoot
-                    && SymbolEqualityComparer.Default.Equals(chainRoot.Local, local):
-                    AddRuleCall(call, Scope.Root, rules);
+                case IPropertyReferenceOperation property when visited.Add(property.Property):
+                    foreach (var value in InitializerValues(property.Property))
+                    {
+                        pending.Push(value);
+                    }
+
+                    break;
+                case IInvocationOperation method when visited.Add(method.TargetMethod):
+                    foreach (var value in ReturnedValues(method.TargetMethod))
+                    {
+                        pending.Push(value);
+                    }
+
                     break;
             }
         }
@@ -421,6 +414,8 @@ internal sealed class AsyncRuleFinder
     // Adds what one builder call contributes: a rule, nested rules, or a child validator.
     private void AddRuleCall(IInvocationOperation call, Scope scope, List<RuleEntry> rules)
     {
+        // Recursion here follows nested lambdas in the source, so it is as deep as the code.
+        RuntimeHelpers.EnsureSufficientExecutionStack();
         var name = call.TargetMethod.Name;
         switch (name)
         {
@@ -628,6 +623,57 @@ internal sealed class AsyncRuleFinder
         }
 
         return names;
+    }
+
+    // The values a local gets (initializer, assignments) and the builder calls made through it.
+    private sealed class LocalSources
+    {
+        private LocalSources(ImmutableArray<IOperation> values, ImmutableArray<IInvocationOperation> calls)
+        {
+            Values = values;
+            Calls = calls;
+        }
+
+        public ImmutableArray<IOperation> Values { get; }
+
+        public ImmutableArray<IInvocationOperation> Calls { get; }
+
+        public static LocalSources Find(ILocalReferenceOperation reference, AsyncRuleFinder finder)
+        {
+            var local = reference.Local;
+            IOperation root = reference;
+            while (root.Parent is { } parent)
+            {
+                root = parent;
+            }
+
+            var values = ImmutableArray.CreateBuilder<IOperation>();
+            var calls = ImmutableArray.CreateBuilder<IInvocationOperation>();
+            foreach (var operation in root.Descendants())
+            {
+                switch (operation)
+                {
+                    case IVariableDeclaratorOperation declarator when SymbolEqualityComparer.Default.Equals(declarator.Symbol, local):
+                        if (declarator.GetVariableInitializer() is { } initializer)
+                        {
+                            values.Add(initializer.Value);
+                        }
+
+                        break;
+                    case ISimpleAssignmentOperation { Target: ILocalReferenceOperation target } assignment
+                        when SymbolEqualityComparer.Default.Equals(target.Local, local):
+                        values.Add(assignment.Value);
+                        break;
+                    case IInvocationOperation call when finder.IsBuilder(call)
+                        && finder.ChainRoot(call) is ILocalReferenceOperation chainRoot
+                        && SymbolEqualityComparer.Default.Equals(chainRoot.Local, local):
+                        calls.Add(call);
+                        break;
+                }
+            }
+
+            return new LocalSources(values.ToImmutable(), calls.ToImmutable());
+        }
     }
 
     private readonly struct Scope

@@ -482,4 +482,140 @@ public sealed class ManualGuardTests
                 static void Generic<T>(T value) { }
             }
             """);
+
+    [Fact]
+    public Task DT0002_fix_adds_the_using_after_global_usings() =>
+        Verify.CodeFixAsync<ManualGuardAnalyzer, ManualGuardCodeFix>(
+            """
+            global using System;
+            global using System.Collections.Generic;
+
+            class C
+            {
+                void M(object value)
+                {
+                    {|DT0002:if (value is null)|} throw new ArgumentNullException(nameof(value));
+                }
+            }
+            """,
+            """
+            global using System;
+            global using System.Collections.Generic;
+            using DotThrow;
+
+            class C
+            {
+                void M(object value)
+                {
+                    value.Throw().IfNull();
+                }
+            }
+            """);
+
+    [Fact]
+    public Task DT0002_fix_keeps_the_using_out_of_preprocessor_regions() =>
+        Verify.CodeFixAsync<ManualGuardAnalyzer, ManualGuardCodeFix>(
+            """
+            using System;
+            #if DEBUG
+            using System.Diagnostics;
+            #endif
+
+            class C
+            {
+                void M(object value)
+                {
+                    {|DT0002:if (value is null)|} throw new ArgumentNullException(nameof(value));
+                }
+            }
+            """,
+            """
+            using System;
+            using DotThrow;
+            #if DEBUG
+            using System.Diagnostics;
+            #endif
+
+            class C
+            {
+                void M(object value)
+                {
+                    value.Throw().IfNull();
+                }
+            }
+            """);
+
+    [Fact]
+    public Task DT0002_fix_adds_the_using_before_a_directive_and_a_file_scoped_namespace() =>
+        Verify.CodeFixAsync<ManualGuardAnalyzer, ManualGuardCodeFix>(
+            """
+            // File header.
+            #nullable enable
+            namespace App;
+
+            class C
+            {
+                void M(object value)
+                {
+                    {|DT0002:if (value is null)|} throw new System.ArgumentNullException(nameof(value));
+                }
+            }
+            """,
+            """
+            // File header.
+            using DotThrow;
+
+            #nullable enable
+            namespace App;
+
+            class C
+            {
+                void M(object value)
+                {
+                    value.Throw().IfNull();
+                }
+            }
+            """);
+
+    [Fact]
+    public Task DT0002_fix_in_top_level_statements_without_usings() =>
+        Verify.CodeFixAsync(() => new DotThrowCodeFixTest<ManualGuardAnalyzer, ManualGuardCodeFix>
+        {
+            TestState =
+            {
+                OutputKind = Microsoft.CodeAnalysis.OutputKind.ConsoleApplication,
+                Sources =
+                {
+                    """
+                    // Program.
+
+                    Check(args);
+
+                    static void Check(object value)
+                    {
+                        {|DT0002:if (value is null)|} throw new System.ArgumentNullException(nameof(value));
+                    }
+                    """,
+                },
+            },
+            FixedState =
+            {
+                OutputKind = Microsoft.CodeAnalysis.OutputKind.ConsoleApplication,
+                Sources =
+                {
+                    """
+                    // Program.
+
+                    using DotThrow;
+
+                    Check(args);
+
+                    static void Check(object value)
+                    {
+                        value.Throw().IfNull();
+                    }
+                    """,
+                },
+            },
+        });
 }

@@ -37,17 +37,37 @@ internal static class SyntaxHelpers
             return root.WithUsings(Insert(root.Usings, directive, name));
         }
 
-        // No usings yet: the file header (comments) stays first, then the directive and a blank line.
+        // No usings yet: the file header (comments) stays first, then the directive and a blank
+        // line. Preprocessor directives (#if, #nullable) stay with the code after it.
         var first = root.GetFirstToken(includeZeroWidth: true);
-        var header = first.LeadingTrivia;
-        var updated = root.ReplaceToken(first, first.WithLeadingTrivia());
+        var (header, rest) = SplitHeader(first.LeadingTrivia);
+        var updated = root.ReplaceToken(first, first.WithLeadingTrivia(rest));
         return updated.WithUsings(SyntaxFactory.SingletonList(
             directive.WithLeadingTrivia(header).WithTrailingTrivia(endOfLine, endOfLine)));
     }
 
+    // Where the new directive goes:
+    // - after every global using (a plain using before a global one is error CS8915);
+    // - not after a using that starts a preprocessor region (#if), so it is never conditional;
+    // - otherwise in sorted order, System first.
     private static SyntaxList<UsingDirectiveSyntax> Insert(SyntaxList<UsingDirectiveSyntax> usings, UsingDirectiveSyntax directive, string name)
     {
-        var index = usings.Count;
+        var lowest = 0;
+        var highest = usings.Count;
+        for (var i = 0; i < usings.Count; i++)
+        {
+            if (!usings[i].GlobalKeyword.IsKind(SyntaxKind.None))
+            {
+                lowest = i + 1;
+            }
+
+            if (highest == usings.Count && usings[i].GetLeadingTrivia().Any(trivia => trivia.IsDirective))
+            {
+                highest = i;
+            }
+        }
+
+        var index = -1;
         for (var i = 0; i < usings.Count; i++)
         {
             if (IsPlainUsing(usings[i]) && Compare(name, usings[i].Name!.ToString()) < 0)
@@ -57,27 +77,27 @@ internal static class SyntaxHelpers
             }
         }
 
-        if (index == usings.Count)
+        if (index < 0)
         {
             // After the last plain using, keeping aliases and static usings after it where they are.
-            var lastPlain = -1;
             for (var i = 0; i < usings.Count; i++)
             {
                 if (IsPlainUsing(usings[i]))
                 {
-                    lastPlain = i;
+                    index = i + 1;
                 }
             }
-
-            index = lastPlain + 1;
         }
 
+        index = Math.Max(lowest, Math.Min(Math.Max(index, 0), highest));
         if (index == 0)
         {
-            // The first directive may carry the file header: keep the header on top.
+            // The first directive may carry the file header: keep the header on top, and keep
+            // preprocessor directives with the directive they belong to.
             var first = usings[0];
-            directive = directive.WithLeadingTrivia(first.GetLeadingTrivia());
-            usings = usings.Replace(first, first.WithLeadingTrivia(Indentation(first)));
+            var (header, rest) = SplitHeader(first.GetLeadingTrivia());
+            directive = directive.WithLeadingTrivia(header);
+            usings = usings.Replace(first, first.WithLeadingTrivia(rest.Count > 0 ? rest : Indentation(first)));
         }
         else
         {
@@ -85,6 +105,21 @@ internal static class SyntaxHelpers
         }
 
         return usings.Insert(index, directive);
+    }
+
+    // Splits leading trivia at the first preprocessor directive: comments before it are the file
+    // header, the directive and everything after it stay where they are.
+    private static (SyntaxTriviaList Header, SyntaxTriviaList Remainder) SplitHeader(SyntaxTriviaList leading)
+    {
+        for (var i = 0; i < leading.Count; i++)
+        {
+            if (leading[i].IsDirective)
+            {
+                return (SyntaxFactory.TriviaList(leading.Take(i)), SyntaxFactory.TriviaList(leading.Skip(i)));
+            }
+        }
+
+        return (leading, SyntaxFactory.TriviaList());
     }
 
     // The whitespace before a directive on its own line.
