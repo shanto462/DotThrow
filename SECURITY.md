@@ -36,7 +36,13 @@ All packages are built and published only by the release workflow in this reposi
 Every [GitHub Release](https://github.com/shanto462/DotThrow/releases) includes the `.nupkg` and `.snupkg` of every package (`DotThrow` and its companion packages such as `DotThrow.DependencyInjection`), a `SHA256SUMS` file, and a signed build provenance attestation. To check a package you downloaded from the GitHub Release, use the GitHub CLI. It works the same for every package:
 
 ```sh
-gh attestation verify DotThrow.2.0.0.nupkg --repo shanto462/DotThrow
+gh attestation verify DotThrow.2.0.1.nupkg --repo shanto462/DotThrow
+```
+
+The attestation is also attached to the release as `DotThrow.<version>.intoto.jsonl` (a Sigstore bundle with the SLSA provenance of every file). With it, the check works without looking up the attestation online:
+
+```sh
+gh attestation verify DotThrow.2.0.1.nupkg --repo shanto462/DotThrow --bundle DotThrow.2.0.1.intoto.jsonl
 ```
 
 To check the files against `SHA256SUMS`, put them in the same folder and run:
@@ -49,5 +55,5 @@ shasum -a 256 --check SHA256SUMS    # macOS
 NuGet.org adds its own repository signature to every package it serves, so a package downloaded from NuGet.org has a different hash than the file on the GitHub Release. To check a package from NuGet.org, verify its signatures instead:
 
 ```sh
-dotnet nuget verify --all DotThrow.2.0.0.nupkg
+dotnet nuget verify --all DotThrow.2.0.1.nupkg
 ```
