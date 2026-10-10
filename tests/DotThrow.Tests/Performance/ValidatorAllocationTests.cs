@@ -24,9 +24,7 @@ public sealed class ValidatorAllocationTests
     {
         Allocations.SkipUnlessOptimized();
         var person = Person.Valid();
-        var allocated = Allocations.Measure(() => Assert.True(PersonValidator.Validate(person).IsValid), iterations: 1, allowedPerCall: 40 + 200);
-
-        Assert.True(allocated <= 40 + 200, $"Allocated {allocated} bytes.");
+        Allocations.AssertAtMost(() => Assert.True(PersonValidator.Validate(person).IsValid), iterations: 1, allowedPerCall: 40 + 200);
     }
 
     [Fact]
@@ -39,9 +37,7 @@ public sealed class ValidatorAllocationTests
             .ForEach(x => x.Tags, t => t.IfNullOrEmpty())
             .Must(x => x.Age < 200);
         var person = Person.Valid();
-        var allocated = Allocations.Measure(() => validator.Validate(person), iterations: 1, allowedPerCall: 40);
-
-        Assert.True(allocated <= 40, $"Allocated {allocated} bytes.");
+        Allocations.AssertAtMost(() => validator.Validate(person), iterations: 1, allowedPerCall: 40);
     }
 
     [Fact]
@@ -50,9 +46,7 @@ public sealed class ValidatorAllocationTests
         Allocations.SkipUnlessOptimized();
         var validator = new Validator<Person>().For(x => x.Name, n => n.IfNullOrWhiteSpace());
         var person = Person.Valid();
-        var allocated = Allocations.Measure(() => Assert.True(validator.ValidateAsync(person, Token).IsCompletedSuccessfully), iterations: 1, allowedPerCall: 40 + 80);
-
-        Assert.True(allocated <= 40 + 80, $"Allocated {allocated} bytes.");
+        Allocations.AssertAtMost(() => Assert.True(validator.ValidateAsync(person, Token).IsCompletedSuccessfully), iterations: 1, allowedPerCall: 40 + 80);
     }
 }
 #endif

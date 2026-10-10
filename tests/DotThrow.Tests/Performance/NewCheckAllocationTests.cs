@@ -50,6 +50,24 @@ public sealed class NewCheckAllocationTests
         ["version and ordinal comparison"] = static () => "1.2.3.4".Throw().IfNotVersion().IfGreaterThan("9").Value.Length,
         ["enum names"] = static () => "Monday".Throw().IfNotEnumName<DayOfWeek>().IfNotEnumName<DayOfWeek>(ignoreCase: true).Value.Length,
         ["file name and string equality"] = static () => "report.pdf".Throw().IfNotFileName().IfEqualTo("x").IfNotEqualTo("report.pdf").Value.Length,
+
+        // Every check of the combined rows above, measured alone.
+        ["IfNotSlug alone"] = static () => "hello-world-2".Throw().IfNotSlug().Value.Length,
+        ["IfNotTrimmed alone"] = static () => "hello-world-2".Throw().IfNotTrimmed().Value.Length,
+        ["IfContainsWhiteSpace alone"] = static () => "hello-world-2".Throw().IfContainsWhiteSpace().Value.Length,
+        ["IfContainsControlCharacters alone"] = static () => "hello-world-2".Throw().IfContainsControlCharacters().Value.Length,
+        ["IfNotAscii alone"] = static () => "hello-world-2".Throw().IfNotAscii().Value.Length,
+        ["IfNotDigits alone"] = static () => "0123456789".Throw().IfNotDigits().Value.Length,
+        ["IfNotHex alone"] = static () => "0123456789".Throw().IfNotHex().Value.Length,
+        ["IfNotLettersOrDigits alone"] = static () => "0123456789".Throw().IfNotLettersOrDigits(message: null).Value.Length,
+        ["IfEmpty (generic) alone"] = static () => "0123456789".Throw().IfEmpty().Value.Length,
+        ["IfNotVersion alone"] = static () => "1.2.3.4".Throw().IfNotVersion().Value.Length,
+        ["IfGreaterThan (ordinal string) alone"] = static () => "1.2.3.4".Throw().IfGreaterThan("9").Value.Length,
+        ["IfNotEnumName alone"] = static () => "Monday".Throw().IfNotEnumName<DayOfWeek>().Value.Length,
+        ["IfNotEnumName ignoring case alone"] = static () => "Monday".Throw().IfNotEnumName<DayOfWeek>(ignoreCase: true).Value.Length,
+        ["IfNotFileName alone"] = static () => "report.pdf".Throw().IfNotFileName().Value.Length,
+        ["IfEqualTo (string) alone"] = static () => "report.pdf".Throw().IfEqualTo("x").Value.Length,
+        ["IfNotEqualTo (string) alone"] = static () => "report.pdf".Throw().IfNotEqualTo("report.pdf").Value.Length,
     };
 
     public static TheoryData<string> StringChainNames => new(StringChains.Keys);
@@ -97,6 +115,19 @@ public sealed class NewCheckAllocationTests
         });
     }
 
+    [Fact]
+    public void Allocation_diagnostic_names_what_was_allocated()
+    {
+        // Proves that the diagnostic of a failed allocation test works on this runtime.
+        var text = Allocations.Explain(static () => Sink = new byte[64]);
+
+        Assert.SkipWhen(text.StartsWith("No GCAllocationTick", StringComparison.Ordinal), text);
+        Assert.Contains("Byte[]", text, StringComparison.Ordinal);
+        Assert.Contains("this thread", text, StringComparison.Ordinal);
+    }
+
+    private static object? Sink { get; set; }
+
     private static void AssertNoAllocations(Func<int> chain)
     {
         Allocations.SkipUnlessOptimized();
@@ -104,10 +135,9 @@ public sealed class NewCheckAllocationTests
         // Warms up first (static caches such as SearchValues, enum data and templates, and the
         // tiered JIT); a one-time allocation does not count, a per-call allocation does.
         var sum = 0;
-        var allocated = Allocations.Measure(() => sum += chain(), Iterations);
+        Allocations.AssertAtMost(() => sum += chain(), Iterations);
 
         Assert.True(sum != 0);
-        Assert.Equal(0, allocated);
     }
 }
 #endif

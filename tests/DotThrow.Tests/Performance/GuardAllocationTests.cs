@@ -119,9 +119,8 @@ public sealed class GuardAllocationTests
         Allocations.SkipUnlessOptimized();
 
         var sink = 0;
-        var allocated = Allocations.Measure(() => sink += chain(), Iterations);
+        Allocations.AssertAtMost(() => sink += chain(), Iterations);
 
-        Assert.True(allocated == 0, $"The happy path allocated {allocated} bytes over {Iterations} runs.");
         Assert.NotEqual(int.MinValue, sink);
     }
 }
