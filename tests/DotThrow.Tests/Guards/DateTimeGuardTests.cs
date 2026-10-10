@@ -14,10 +14,10 @@ public sealed class DateTimeGuardTests
 
     public static IEnumerable<CheckCase> FailureCases()
     {
-        yield return Fail(NewYearUtc.AddTicks(-1), (g, m) => g.IfBefore(NewYearUtc, m), ErrorCodes.Before, Expect.OutOfRange, "'input' must not be before 2026-01-01T00:00:00.0000000Z.");
-        yield return Fail(NewYearUnspecified.AddDays(1), (g, m) => g.IfAfter(NewYearUnspecified, m), ErrorCodes.After, Expect.OutOfRange, "'input' must not be after 2026-01-01T00:00:00.0000000.");
-        yield return Fail(NewYearOffset.AddSeconds(-1), (g, m) => g.IfBefore(NewYearOffset, m), ErrorCodes.Before, Expect.OutOfRange, "'input' must not be before 2026-01-01T00:00:00.0000000+00:00.");
-        yield return Fail(NewYearOffset.AddSeconds(1), (g, m) => g.IfAfter(NewYearOffset, m), ErrorCodes.After, Expect.OutOfRange, "'input' must not be after 2026-01-01T00:00:00.0000000+00:00.");
+        yield return Fail(NewYearUtc.AddTicks(-1), (g, m) => g.IfBefore(NewYearUtc, m), ErrorCodes.Before, Expect.OutOfRange, "'input' must not be before 2026-01-01 00:00:00Z.");
+        yield return Fail(NewYearUnspecified.AddDays(1), (g, m) => g.IfAfter(NewYearUnspecified, m), ErrorCodes.After, Expect.OutOfRange, "'input' must not be after 2026-01-01.");
+        yield return Fail(NewYearOffset.AddSeconds(-1), (g, m) => g.IfBefore(NewYearOffset, m), ErrorCodes.Before, Expect.OutOfRange, "'input' must not be before 2026-01-01 00:00:00 +00:00.");
+        yield return Fail(NewYearOffset.AddSeconds(1), (g, m) => g.IfAfter(NewYearOffset, m), ErrorCodes.After, Expect.OutOfRange, "'input' must not be after 2026-01-01 00:00:00 +00:00.");
         yield return Fail(DateTime.UtcNow.AddDays(-1), (g, m) => g.IfInPast(m), ErrorCodes.InPast, Expect.OutOfRange, "'input' must not be in the past.");
         yield return Fail(DateTime.Now.AddDays(-1), (g, m) => g.IfInPast(m), ErrorCodes.InPast, Expect.OutOfRange, "'input' must not be in the past.");
         yield return Fail(DateTime.MinValue, (g, m) => g.IfInPast(m), ErrorCodes.InPast, Expect.OutOfRange, "'input' must not be in the past.");
@@ -42,8 +42,8 @@ public sealed class DateTimeGuardTests
         yield return Fail(DateOnly.FromDateTime(DateTime.Now.AddDays(2)), (g, m) => g.IfInFuture(m), ErrorCodes.InFuture, Expect.OutOfRange, "'input' must not be in the future.");
         yield return Fail(new DateOnly(2025, 12, 31), (g, m) => g.IfBefore(new DateOnly(2026, 1, 1), m), ErrorCodes.Before, Expect.OutOfRange, "'input' must not be before 2026-01-01.");
         yield return Fail(new DateOnly(2026, 1, 2), (g, m) => g.IfAfter(new DateOnly(2026, 1, 1), m), ErrorCodes.After, Expect.OutOfRange, "'input' must not be after 2026-01-01.");
-        yield return Fail(new TimeOnly(8, 59), (g, m) => g.IfBefore(new TimeOnly(9, 0), m), ErrorCodes.Before, Expect.OutOfRange, "'input' must not be before 09:00:00.0000000.");
-        yield return Fail(new TimeOnly(17, 0, 1), (g, m) => g.IfAfter(new TimeOnly(17, 0), m), ErrorCodes.After, Expect.OutOfRange, "'input' must not be after 17:00:00.0000000.");
+        yield return Fail(new TimeOnly(8, 59), (g, m) => g.IfBefore(new TimeOnly(9, 0), m), ErrorCodes.Before, Expect.OutOfRange, "'input' must not be before 09:00:00.");
+        yield return Fail(new TimeOnly(17, 0, 1), (g, m) => g.IfAfter(new TimeOnly(17, 0), m), ErrorCodes.After, Expect.OutOfRange, "'input' must not be after 17:00:00.");
         yield return Fail(new DateOnly(2025, 12, 31), (g, m) => g.IfLessThan(new DateOnly(2026, 1, 1), m), ErrorCodes.LessThan, Expect.OutOfRange, "'input' must be greater than or equal to 2026-01-01.");
 #endif
     }

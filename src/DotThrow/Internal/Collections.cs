@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+#if NET8_0_OR_GREATER
+using System.Runtime.CompilerServices;
+#endif
 #if NET5_0_OR_GREATER
 using System.Runtime.InteropServices;
 #endif
@@ -131,22 +134,72 @@ internal static class Collections
     }
 
 #if NET8_0_OR_GREATER
+    // The values of IfOneOf(1, 2, 3) are usually a few constants. Up to four values are
+    // compared without a loop, so after inlining the JIT turns the check into plain
+    // comparisons with constants (like a pattern match). Longer lists of common primitive
+    // types use the vectorized MemoryExtensions.Contains; anything else a simple loop.
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Contains<T>(scoped ReadOnlySpan<T> values, T item, IEqualityComparer<T>? comparer)
     {
-        if (comparer is null)
+        if (comparer is not null)
         {
-            // EqualityComparer<T>.Default is devirtualized for value types.
-            foreach (var candidate in values)
-            {
-                if (EqualityComparer<T>.Default.Equals(candidate, item))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return ContainsWithComparer(values, item, comparer);
         }
 
+        switch (values.Length)
+        {
+            case 0:
+                return false;
+            case 1:
+                return EqualityComparer<T>.Default.Equals(values[0], item);
+            case 2:
+                return EqualityComparer<T>.Default.Equals(values[0], item) || EqualityComparer<T>.Default.Equals(values[1], item);
+            case 3:
+                return EqualityComparer<T>.Default.Equals(values[0], item) || EqualityComparer<T>.Default.Equals(values[1], item)
+                    || EqualityComparer<T>.Default.Equals(values[2], item);
+            case 4:
+                return EqualityComparer<T>.Default.Equals(values[0], item) || EqualityComparer<T>.Default.Equals(values[1], item)
+                    || EqualityComparer<T>.Default.Equals(values[2], item) || EqualityComparer<T>.Default.Equals(values[3], item);
+            default:
+                return ContainsMany(values, item);
+        }
+    }
+
+    private static bool ContainsMany<T>(scoped ReadOnlySpan<T> values, T item)
+    {
+        if (typeof(T) == typeof(int) || typeof(T) == typeof(uint))
+        {
+            return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<T, int>(ref MemoryMarshal.GetReference(values)), values.Length).Contains(Unsafe.As<T, int>(ref item));
+        }
+
+        if (typeof(T) == typeof(long) || typeof(T) == typeof(ulong))
+        {
+            return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<T, long>(ref MemoryMarshal.GetReference(values)), values.Length).Contains(Unsafe.As<T, long>(ref item));
+        }
+
+        if (typeof(T) == typeof(char) || typeof(T) == typeof(short) || typeof(T) == typeof(ushort))
+        {
+            return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<T, short>(ref MemoryMarshal.GetReference(values)), values.Length).Contains(Unsafe.As<T, short>(ref item));
+        }
+
+        if (typeof(T) == typeof(byte) || typeof(T) == typeof(sbyte))
+        {
+            return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<T, byte>(ref MemoryMarshal.GetReference(values)), values.Length).Contains(Unsafe.As<T, byte>(ref item));
+        }
+
+        foreach (var candidate in values)
+        {
+            if (EqualityComparer<T>.Default.Equals(candidate, item))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool ContainsWithComparer<T>(scoped ReadOnlySpan<T> values, T item, IEqualityComparer<T> comparer)
+    {
         foreach (var candidate in values)
         {
             if (comparer.Equals(candidate, item))

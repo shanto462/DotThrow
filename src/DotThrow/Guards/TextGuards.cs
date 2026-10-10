@@ -132,7 +132,7 @@ public static partial class GuardExtensions
     public static Guard<string> IfContainsAny(this Guard<string> guard, scoped ReadOnlySpan<char> characters, string? message)
     {
         var text = guard.Value;
-        if (guard.IsActive && (text is null || text.AsSpan().ContainsAny(characters)))
+        if (guard.IsActive && (text is null || Text.ContainsAny(text.AsSpan(), characters)))
         {
             return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.ContainsAny, message, Placeholder.Characters, characters.ToString());
         }
@@ -180,7 +180,7 @@ public static partial class GuardExtensions
     public static Guard<string> IfContainsAnyExcept(this Guard<string> guard, scoped ReadOnlySpan<char> characters, string? message)
     {
         var text = guard.Value;
-        if (guard.IsActive && (text is null || text.AsSpan().ContainsAnyExcept(characters)))
+        if (guard.IsActive && (text is null || Text.ContainsAnyExcept(text.AsSpan(), characters)))
         {
             return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.ContainsAnyExcept, message, Placeholder.Characters, characters.ToString());
         }

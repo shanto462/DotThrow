@@ -62,6 +62,47 @@ public static partial class GuardExtensions
         return guard.Map(guard.Value.GetValueOrDefault());
     }
 
+    /// <summary>
+    /// Makes the rest of the chain optional: when the nullable value has no value, every later
+    /// check is skipped; otherwise the chain continues with the unwrapped value. This is the
+    /// "if present, check it" form of <see cref="IfNull{T}(Guard{T?}, string?)"/>.
+    /// </summary>
+    /// <typeparam name="T">The underlying value type.</typeparam>
+    /// <param name="guard">The guard.</param>
+    /// <returns>A guard for the unwrapped value, stopped when there is no value.</returns>
+    /// <remarks>
+    /// It never fails. Use <see cref="IfNull{T}(Guard{T?}, string?)"/> when the value is
+    /// required. The name starts with <c>When</c> because it is a condition, not a check
+    /// (checks start with <c>If</c> and fail).
+    /// <para>
+    /// The returned guard holds the unwrapped value, so do not assign the chain to a nullable
+    /// variable: when there is no value it converts to <c>default(T)</c> (for example <c>0</c>),
+    /// not to <see langword="null"/>. Check, then keep using the original value.
+    /// </para>
+    /// </remarks>
+    /// <example><c>request.Age.Throw().WhenPresent().IfOutOfRange(0, 150);</c></example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Guard<T> WhenPresent<T>(this Guard<T?> guard)
+        where T : struct
+    {
+        var value = guard.Value;
+        return value.HasValue ? guard.Map(value.GetValueOrDefault()) : guard.AllowNull().Map(default(T));
+    }
+
+    /// <summary>
+    /// Makes the rest of the chain optional: when the value is <see langword="null"/>, every
+    /// later check is skipped. The same as <see cref="Guard{T}.AllowNull"/>, so the same word
+    /// works for nullable value types and reference types.
+    /// </summary>
+    /// <typeparam name="T">The reference type of the value.</typeparam>
+    /// <param name="guard">The guard.</param>
+    /// <returns>The guard, stopped when the value is <see langword="null"/>.</returns>
+    /// <example><c>middleName.Throw().WhenPresent().IfLongerThan(50);</c></example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Guard<T> WhenPresent<T>(this Guard<T> guard)
+        where T : class =>
+        guard.AllowNull();
+
     /// <summary>Fails when the value is not <see langword="null"/>.</summary>
     /// <typeparam name="T">The type of the value.</typeparam>
     /// <param name="guard">The guard.</param>
@@ -209,6 +250,7 @@ public static partial class GuardExtensions
     /// <param name="guard">The guard.</param>
     /// <param name="values">The rejected values.</param>
     /// <returns>The guard.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<T> IfOneOf<T>(this Guard<T> guard, params ReadOnlySpan<T> values) =>
         guard.IfOneOf(values, comparer: null, message: null);
 
@@ -223,6 +265,7 @@ public static partial class GuardExtensions
     /// <param name="comparer">The comparer, or <see langword="null"/> for <see cref="EqualityComparer{T}.Default"/>.</param>
     /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
     /// <returns>The guard.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<T> IfOneOf<T>(this Guard<T> guard, scoped ReadOnlySpan<T> values, IEqualityComparer<T>? comparer = null, string? message = null)
     {
         if (guard.IsActive && Collections.Contains(values, guard.Value, comparer))
@@ -242,6 +285,7 @@ public static partial class GuardExtensions
     /// <param name="guard">The guard.</param>
     /// <param name="values">The allowed values.</param>
     /// <returns>The guard.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<T> IfNotOneOf<T>(this Guard<T> guard, params ReadOnlySpan<T> values) =>
         guard.IfNotOneOf(values, comparer: null, message: null);
 
@@ -256,6 +300,7 @@ public static partial class GuardExtensions
     /// <param name="comparer">The comparer, or <see langword="null"/> for <see cref="EqualityComparer{T}.Default"/>.</param>
     /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
     /// <returns>The guard.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<T> IfNotOneOf<T>(this Guard<T> guard, scoped ReadOnlySpan<T> values, IEqualityComparer<T>? comparer = null, string? message = null)
     {
         if (guard.IsActive && !Collections.Contains(values, guard.Value, comparer))

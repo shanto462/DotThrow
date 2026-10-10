@@ -94,12 +94,27 @@ internal static class Text
 #endif
     }
 
-    public static bool ContainsAny(string value, char[] characters) => value.IndexOfAny(characters) >= 0;
+    // Ad-hoc character sets (IfContainsAny and IfContainsAnyExcept with a list or an array).
+    // Up to five characters use the vectorized single-pass span searches of the BCL. A longer
+    // set is checked with a 128-bit ASCII bitmap on the stack, plus a span search for non-ASCII
+    // characters, so the check never depends on the CPU-specific paths that the BCL takes for
+    // long value sets (probabilistic maps and ASCII searchers). For a large set that is used
+    // often, the SearchValues overloads are the fast path.
+    private const int ShortSet = 5;
+
+    public static bool ContainsAny(string value, char[] characters)
+    {
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP
+        return ContainsAny(value.AsSpan(), characters);
+#else
+        return value.IndexOfAny(characters) >= 0;
+#endif
+    }
 
     public static bool ContainsAnyExcept(string value, char[] characters)
     {
-#if NET8_0_OR_GREATER
-        return value.AsSpan().ContainsAnyExcept(characters);
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP
+        return ContainsAnyExcept(value.AsSpan(), characters);
 #else
         foreach (var c in value)
         {
@@ -112,6 +127,91 @@ internal static class Text
         return false;
 #endif
     }
+
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP
+    public static bool ContainsAny(ReadOnlySpan<char> value, ReadOnlySpan<char> characters)
+    {
+        if (characters.Length <= ShortSet)
+        {
+            return value.IndexOfAny(characters) >= 0;
+        }
+
+        var map = new AsciiSet(characters);
+        foreach (var c in value)
+        {
+            if (c < 128 ? map.Contains(c) : map.HasNonAscii && characters.IndexOf(c) >= 0)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static bool ContainsAnyExcept(ReadOnlySpan<char> value, ReadOnlySpan<char> characters)
+    {
+        if (characters.Length <= ShortSet)
+        {
+#if NET8_0_OR_GREATER
+            return value.IndexOfAnyExcept(characters) >= 0;
+#else
+            foreach (var c in value)
+            {
+                if (characters.IndexOf(c) < 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+#endif
+        }
+
+        var map = new AsciiSet(characters);
+        foreach (var c in value)
+        {
+            if (c < 128 ? !map.Contains(c) : !map.HasNonAscii || characters.IndexOf(c) < 0)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // The ASCII characters of a set as two 64-bit masks.
+    private readonly struct AsciiSet
+    {
+        private readonly ulong _low;
+        private readonly ulong _high;
+
+        public AsciiSet(ReadOnlySpan<char> characters)
+        {
+            _low = 0;
+            _high = 0;
+            HasNonAscii = false;
+            foreach (var c in characters)
+            {
+                if (c < 64)
+                {
+                    _low |= 1UL << c;
+                }
+                else if (c < 128)
+                {
+                    _high |= 1UL << (c - 64);
+                }
+                else
+                {
+                    HasNonAscii = true;
+                }
+            }
+        }
+
+        public bool HasNonAscii { get; }
+
+        public bool Contains(char c) => c < 64 ? (_low & (1UL << c)) != 0 : (_high & (1UL << (c - 64))) != 0;
+    }
+#endif
 
     public static bool IsAscii(string value)
     {

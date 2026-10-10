@@ -110,8 +110,8 @@ public sealed class EnglishTextTests
     {
         var limit = new DateTime(2026, 1, 2, 3, 4, 5, DateTimeKind.Utc);
         Assert.Equal("'input' must be a defined DayOfWeek value.", Check.MessageOf((DayOfWeek)42, g => g.IfNotDefined()));
-        Assert.Equal("'input' must not be before 2026-01-02T03:04:05.0000000Z.", Check.MessageOf(limit.AddDays(-1), g => g.IfBefore(limit)));
-        Assert.Equal("'input' must not be after 2026-01-02T03:04:05.0000000Z.", Check.MessageOf(limit.AddDays(1), g => g.IfAfter(limit)));
+        Assert.Equal("'input' must not be before 2026-01-02 03:04:05Z.", Check.MessageOf(limit.AddDays(-1), g => g.IfBefore(limit)));
+        Assert.Equal("'input' must not be after 2026-01-02 03:04:05Z.", Check.MessageOf(limit.AddDays(1), g => g.IfAfter(limit)));
         Assert.Equal("'input' must not be in the past.", Check.MessageOf(DateTime.UtcNow.AddDays(-1), g => g.IfInPast()));
         Assert.Equal("'input' must not be in the future.", Check.MessageOf(DateTime.UtcNow.AddDays(1), g => g.IfInFuture()));
 #if NET8_0_OR_GREATER && !DOTTHROW_LEGACY_ASSET

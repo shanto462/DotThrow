@@ -344,9 +344,10 @@ public static partial class GuardExtensions
     }
 
     /// <summary>
-    /// Fails when the string is not a plausible email address: one <c>@</c> with text on both
-    /// sides, no white space, and no dot at the start or end of either side. This is a format
-    /// check only. Send a confirmation email to prove that an address exists.
+    /// Fails when the string is not a plausible email address: exactly one <c>@</c> with text
+    /// on both sides; no white-space or control characters anywhere; and on each side of the
+    /// <c>@</c>, no dot at the start or end and no two dots in a row. This is a format check
+    /// only. Send a confirmation email to prove that an address exists.
     /// </summary>
     /// <param name="guard">The guard.</param>
     /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>

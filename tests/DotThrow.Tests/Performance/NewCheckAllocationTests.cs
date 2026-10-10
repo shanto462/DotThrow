@@ -36,22 +36,27 @@ public sealed class NewCheckAllocationTests
         return a + (int)b + (int)c + (int)d + (int)e;
     });
 
-    [Fact]
-    public void String_checks_do_not_allocate() => AssertNoAllocations(static () =>
+    // One row per chain, so an allocation seen only on some machine names the exact check.
+    private static readonly Dictionary<string, Func<int>> StringChains = new()
     {
-        string a = "hello-world-2".Throw().IfNotSlug().IfNotTrimmed().IfContainsWhiteSpace().IfContainsControlCharacters()
-            .IfNotAscii().AllowNull().IfContainsAnyExcept("abcdefghijklmnopqrstuvwxyz-0123456789");
-        string b = "0123456789".Throw().IfNotDigits().IfNotHex().IfNotLettersOrDigits(message: null).IfEmpty();
-        string card = "4111 1111 1111 1111".Throw().IfNotCreditCardNumber();
-        string c = "SGVsbG8gV29ybGQ=".Throw().IfNotBase64();
-        string d = "3fa85f64-5717-4562-b3fc-2c963f66afa6".Throw().IfNotGuid();
-        string e = "192.168.0.1".Throw().IfNotIPAddress();
-        string f = "2001:db8::1".Throw().IfNotIPAddress();
-        string g = "1.2.3.4".Throw().IfNotVersion().IfGreaterThan("9");
-        string h = "Monday".Throw().IfNotEnumName<DayOfWeek>().IfNotEnumName<DayOfWeek>(ignoreCase: true);
-        string i = "report.pdf".Throw().IfNotFileName().IfEqualTo("x").IfNotEqualTo("report.pdf");
-        return a.Length + b.Length + card.Length + c.Length + d.Length + e.Length + f.Length + g.Length + h.Length + i.Length;
-    });
+        ["slug, trimmed, white space, control, ASCII"] = static () => "hello-world-2".Throw().IfNotSlug().IfNotTrimmed().IfContainsWhiteSpace().IfContainsControlCharacters().IfNotAscii().AllowNull().Value.Length,
+        ["IfContainsAnyExcept with 37 characters"] = static () => "hello-world-2".Throw().IfContainsAnyExcept("abcdefghijklmnopqrstuvwxyz-0123456789").Value.Length,
+        ["digits, hex, letters or digits, IfEmpty"] = static () => "0123456789".Throw().IfNotDigits().IfNotHex().IfNotLettersOrDigits(message: null).IfEmpty().Value.Length,
+        ["credit card number"] = static () => "4111 1111 1111 1111".Throw().IfNotCreditCardNumber().Value.Length,
+        ["Base64"] = static () => "SGVsbG8gV29ybGQ=".Throw().IfNotBase64().Value.Length,
+        ["GUID"] = static () => "3fa85f64-5717-4562-b3fc-2c963f66afa6".Throw().IfNotGuid().Value.Length,
+        ["IPv4 address"] = static () => "192.168.0.1".Throw().IfNotIPAddress().Value.Length,
+        ["IPv6 address"] = static () => "2001:db8::1".Throw().IfNotIPAddress().Value.Length,
+        ["version and ordinal comparison"] = static () => "1.2.3.4".Throw().IfNotVersion().IfGreaterThan("9").Value.Length,
+        ["enum names"] = static () => "Monday".Throw().IfNotEnumName<DayOfWeek>().IfNotEnumName<DayOfWeek>(ignoreCase: true).Value.Length,
+        ["file name and string equality"] = static () => "report.pdf".Throw().IfNotFileName().IfEqualTo("x").IfNotEqualTo("report.pdf").Value.Length,
+    };
+
+    public static TheoryData<string> StringChainNames => new(StringChains.Keys);
+
+    [Theory]
+    [MemberData(nameof(StringChainNames))]
+    public void String_checks_do_not_allocate(string chain) => AssertNoAllocations(StringChains[chain]);
 
     [Fact]
     public void Collection_checks_do_not_allocate() => AssertNoAllocations(static () =>
@@ -80,15 +85,10 @@ public sealed class NewCheckAllocationTests
     [Fact]
     public void Params_span_overloads_do_not_allocate()
     {
-        // Found with real runtimes (eng/test-matrix.sh): on the .NET 8 runtime these two calls
-        // allocate 64 bytes per call in steady state with the default settings. The optimized
-        // code is allocation-free (no allocation with DOTNET_TieredCompilation=0), and the
-        // allocation goes away with DOTNET_TieredPGO=0, so .NET 8's dynamic PGO causes it.
-        // .NET 9 and .NET 10 do not allocate.
-        Assert.SkipWhen(
-            Environment.Version.Major == 8,
-            "Known .NET 8 issue: IfOneOf(params ReadOnlySpan<T>) and IfContainsAny(params ReadOnlySpan<char>) allocate 64 B per call under dynamic PGO.");
-
+        // Real runtimes (eng/test-matrix.sh) once showed 64 B per call here on .NET 8: the
+        // caller's not yet optimized code (Tier0, or the instrumented tier of dynamic PGO)
+        // allocates a RuntimeFieldInfoStub for the compiler's RuntimeHelpers.CreateSpan of the
+        // constant params values. Allocations.Measure now waits for optimized code.
         AssertNoAllocations(static () =>
         {
             int a = 64.Throw().IfOneOf(1, 2, 3).IfNotOneOf(64, 128);

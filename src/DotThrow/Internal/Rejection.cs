@@ -13,6 +13,13 @@ namespace DotThrow.Internal;
 //   not inlined, so each failure branch is only a call and a throw.
 // - Collect mode: Collect is not inlined. It renders the message and records the failure.
 //
+// The mode test starts with `guard.Sink is null`. In a Throw() chain the sink is a constant
+// null, and the JIT folds a null test early (before it looks for repeated expressions), so
+// the collect path is gone by then. With only the type test (`is ValidationReport`), the
+// JIT removes the collect path later, after it has already decided that a value such as
+// HashSet.Count may change across checks and must be read again (measured: a two-check
+// HashSet chain read Count three times instead of once).
+//
 // The throw path gets the parts of the guard (name, value, sink), not the guard itself: a
 // guard is too big for registers, so passing it would put a copy on the caller's stack and
 // make the JIT zero it in every call of the caller. The guard is never passed as `this` to
@@ -27,7 +34,7 @@ internal static class Rejection
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<T> WithMessage<T>(Guard<T> guard, FailureKind kind, string code, string message)
     {
-        if (!guard.Collects)
+        if (guard.Sink is null || !guard.Collects)
         {
             throw ExceptionWithMessage(guard.Name, guard.Value, guard.Sink, kind, code, message);
         }
@@ -38,9 +45,9 @@ internal static class Rejection
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<T> Fail<T>(Guard<T> guard, FailureKind kind, string code, string? message, string? key = null)
     {
-        if (!guard.Collects)
+        if (guard.Sink is null || !guard.Collects)
         {
-            throw CreateException(guard.Name, guard.Value, guard.Sink, kind, code, message, key, false, default(NoArgs));
+            throw CreateException(guard.Name, guard.Value, guard.Sink, kind, code, message, key, false);
         }
 
         return Collect(guard, kind, code, message, key, false, default(NoArgs));
@@ -49,7 +56,7 @@ internal static class Rejection
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<T> Fail<T, TA>(Guard<T> guard, FailureKind kind, string code, string? message, Placeholder idA, TA a, string? key = null)
     {
-        if (!guard.Collects)
+        if (guard.Sink is null || !guard.Collects)
         {
             throw CreateException(guard.Name, guard.Value, guard.Sink, kind, code, message, key, false, new MessageArgs<TA>(idA, a));
         }
@@ -58,23 +65,11 @@ internal static class Rejection
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Guard<T> Fail<T, TA, TB>(
-        Guard<T> guard, FailureKind kind, string code, string? message, Placeholder idA, TA a, Placeholder idB, TB b, string? key = null)
-    {
-        if (!guard.Collects)
-        {
-            throw CreateException(guard.Name, guard.Value, guard.Sink, kind, code, message, key, false, new MessageArgs<TA, TB>(idA, a, idB, b));
-        }
-
-        return Collect(guard, kind, code, message, key, false, new MessageArgs<TA, TB>(idA, a, idB, b));
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<T> Content<T>(Guard<T> guard, FailureKind kind, string code, string? message, string? key = null)
     {
-        if (!guard.Collects)
+        if (guard.Sink is null || !guard.Collects)
         {
-            throw CreateException(guard.Name, guard.Value, guard.Sink, kind, code, message, key, true, default(NoArgs));
+            throw CreateException(guard.Name, guard.Value, guard.Sink, kind, code, message, key, true);
         }
 
         return Collect(guard, kind, code, message, key, true, default(NoArgs));
@@ -83,7 +78,7 @@ internal static class Rejection
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<T> Content<T, TA>(Guard<T> guard, FailureKind kind, string code, string? message, Placeholder idA, TA a, string? key = null)
     {
-        if (!guard.Collects)
+        if (guard.Sink is null || !guard.Collects)
         {
             throw CreateException(guard.Name, guard.Value, guard.Sink, kind, code, message, key, true, new MessageArgs<TA>(idA, a));
         }
@@ -95,7 +90,7 @@ internal static class Rejection
     public static Guard<T> Content<T, TA, TB>(
         Guard<T> guard, FailureKind kind, string code, string? message, Placeholder idA, TA a, Placeholder idB, TB b, string? key = null)
     {
-        if (!guard.Collects)
+        if (guard.Sink is null || !guard.Collects)
         {
             throw CreateException(guard.Name, guard.Value, guard.Sink, kind, code, message, key, true, new MessageArgs<TA, TB>(idA, a, idB, b));
         }
@@ -107,7 +102,7 @@ internal static class Rejection
     public static Guard<T> Content<T, TA, TB, TC>(
         Guard<T> guard, FailureKind kind, string code, string? message, Placeholder idA, TA a, Placeholder idB, TB b, Placeholder idC, TC c, string? key = null)
     {
-        if (!guard.Collects)
+        if (guard.Sink is null || !guard.Collects)
         {
             throw CreateException(guard.Name, guard.Value, guard.Sink, kind, code, message, key, true, new MessageArgs<TA, TB, TC>(idA, a, idB, b, idC, c));
         }
@@ -131,7 +126,7 @@ internal static class Rejection
         TD d,
         string? key = null)
     {
-        if (!guard.Collects)
+        if (guard.Sink is null || !guard.Collects)
         {
             throw CreateException(guard.Name, guard.Value, guard.Sink, kind, code, message, key, true, new MessageArgs<TA, TB, TC, TD>(idA, a, idB, b, idC, c, idD, d));
         }
@@ -148,6 +143,13 @@ internal static class Rejection
     [StackTraceHidden]
     private static Guard<T> CollectWithMessage<T>(Guard<T> guard, FailureKind kind, string code, string message) =>
         guard.Collect(kind, code, message);
+
+    // No arguments: a separate overload, so the inlined failure branch does not build and pass
+    // an empty struct (which takes a stack slot in the caller).
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    [StackTraceHidden]
+    private static System.Exception CreateException<T>(string name, T value, object? sink, FailureKind kind, string code, string? message, string? key, bool content) =>
+        CreateException(name, value, sink, kind, code, message, key, content, default(NoArgs));
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     [StackTraceHidden]
