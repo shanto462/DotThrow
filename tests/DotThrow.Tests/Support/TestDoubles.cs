@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace DotThrow.Tests.Support;
 
@@ -87,3 +89,72 @@ public sealed class FakeTimeProvider(DateTimeOffset utcNow, TimeZoneInfo? localT
     public override DateTimeOffset GetUtcNow() => utcNow;
 }
 #endif
+
+/// <summary>A stream with chosen capabilities and length. It holds no data.</summary>
+public sealed class CapabilityStream(bool canRead = true, bool canWrite = true, bool canSeek = true, long length = 0) : System.IO.Stream
+{
+    public override bool CanRead { get; } = canRead;
+
+    public override bool CanWrite { get; } = canWrite;
+
+    public override bool CanSeek { get; } = canSeek;
+
+    public override long Length => CanSeek ? length : throw new NotSupportedException();
+
+    public override long Position { get; set; }
+
+    public override void Flush()
+    {
+    }
+
+    public override int Read(byte[] buffer, int offset, int count) => 0;
+
+    public override long Seek(long offset, System.IO.SeekOrigin origin) => 0;
+
+    public override void SetLength(long value) => throw new NotSupportedException();
+
+    public override void Write(byte[] buffer, int offset, int count)
+    {
+    }
+
+    public override string ToString() => $"stream(read={CanRead}, write={CanWrite}, seek={CanSeek})";
+}
+
+/// <summary>Cancels a token source the best way the runtime offers.</summary>
+public static class CancellationExtensions
+{
+    public static Task CancelNowAsync(this CancellationTokenSource source)
+    {
+#if NET8_0_OR_GREATER
+        return source.CancelAsync();
+#else
+        source.Cancel();
+        return Task.CompletedTask;
+#endif
+    }
+}
+
+/// <summary>String helpers with the same meaning on .NET Framework and .NET.</summary>
+public static class TextHelpers
+{
+    public static bool HasChar(this string text, char value)
+    {
+#if NETCOREAPP2_1_OR_GREATER
+        return text.Contains(value);
+#else
+        return text.IndexOf(value) >= 0;
+#endif
+    }
+}
+
+/// <summary>Lazy sequences: they are not collections, so checks must enumerate them.</summary>
+public static class Sequences
+{
+    public static IEnumerable<T> Of<T>(params T[] items)
+    {
+        foreach (var item in items)
+        {
+            yield return item;
+        }
+    }
+}

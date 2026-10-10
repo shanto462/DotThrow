@@ -28,6 +28,11 @@
     <PackageReference Include="coverlet.collector" />
   </ItemGroup>
 
+  <!-- Parity tests compare with FluentValidation 12, which targets .NET 8 and later only. -->
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+    <PackageReference Include="FluentValidation" />
+  </ItemGroup>
+
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="all" />
   </ItemGroup>
