@@ -31,9 +31,9 @@ Please include:
 
 ## Verifying packages
 
-Packages are built and published only by the release workflow in this repository. It pushes to NuGet.org with trusted publishing, so there is no long-lived NuGet API key that could leak.
+All packages are built and published only by the release workflow in this repository. It pushes to NuGet.org with trusted publishing, so there is no long-lived NuGet API key that could leak.
 
-Every [GitHub Release](https://github.com/shanto462/DotThrow/releases) includes the `.nupkg`, the `.snupkg`, a `SHA256SUMS` file, and a signed build provenance attestation. To check a package you downloaded from the GitHub Release, use the GitHub CLI:
+Every [GitHub Release](https://github.com/shanto462/DotThrow/releases) includes the `.nupkg` and `.snupkg` of every package (`DotThrow` and its companion packages such as `DotThrow.DependencyInjection`), a `SHA256SUMS` file, and a signed build provenance attestation. To check a package you downloaded from the GitHub Release, use the GitHub CLI. It works the same for every package:
 
 ```sh
 gh attestation verify DotThrow.2.0.0.nupkg --repo shanto462/DotThrow

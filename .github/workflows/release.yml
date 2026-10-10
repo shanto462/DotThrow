@@ -1,10 +1,11 @@
 name: Release
 
-# A pushed tag like v2.0.0 tests, packs, attests and publishes the package to
-# NuGet.org (trusted publishing, no long-lived API key) and creates a GitHub
-# Release. A manual run (workflow_dispatch), or a pull request that changes
-# this workflow or the build inputs, is a dry run: it tests and packs the
-# package but does not attest or publish anything.
+# A pushed tag like v2.0.0 tests, packs, attests and publishes every package
+# (DotThrow and its companion packages, one shared version) to NuGet.org with
+# trusted publishing (no long-lived API key), and creates a GitHub Release. A
+# manual run (workflow_dispatch), or a pull request that changes this workflow
+# or the build inputs, is a dry run: it tests and packs but does not attest or
+# publish anything.
 
 on:
   push:
@@ -14,7 +15,8 @@ on:
       - .github/workflows/release.yml
       - Directory.Build.props
       - Directory.Packages.props
-      - src/DotThrow/DotThrow.csproj
+      - src/*/*.csproj
+      - eng/pack.sh
       - global.json
   workflow_dispatch:
 
@@ -59,7 +61,7 @@ jobs:
         run: |
           version="$(dotnet msbuild src/DotThrow/DotThrow.csproj -getProperty:Version | tail -n 1 | tr -d '[:space:]')"
           if ! printf '%s' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
-            echo "::error file=src/DotThrow/DotThrow.csproj::Could not read a valid <Version> from src/DotThrow/DotThrow.csproj"
+            echo "::error file=Directory.Build.props::Could not read a valid version (VersionPrefix and VersionSuffix in Directory.Build.props)"
             exit 1
           fi
           if [ "$EVENT_NAME" = "push" ] && [ "$REF_NAME" != "v$version" ]; then
@@ -121,8 +123,6 @@ jobs:
     timeout-minutes: 30
     permissions:
       contents: read
-    env:
-      VERSION: ${{ needs.prepare.outputs.version }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -135,48 +135,29 @@ jobs:
           dotnet-version: |
             8.0.x
             9.0.x
-      - name: Restore
+      - name: Run tests (Release)
         run: |
-          dotnet restore src/DotThrow/DotThrow.csproj
-          dotnet restore tests/DotThrow.Tests/DotThrow.Tests.csproj
-      - name: Run tests
-        run: dotnet test tests/DotThrow.Tests/DotThrow.Tests.csproj -c Release --no-restore
-      # EnablePackageValidation in the project makes pack fail on an invalid package.
-      - name: Pack
-        run: dotnet pack src/DotThrow/DotThrow.csproj -c Release --no-restore -o dist -p:ContinuousIntegrationBuild=true
-      - name: Check package files and target frameworks
-        run: |
-          for file in "dist/DotThrow.$VERSION.nupkg" "dist/DotThrow.$VERSION.snupkg"; do
-            if [ ! -f "$file" ]; then
-              echo "::error::Expected $file, found:"
-              ls -l dist
-              exit 1
-            fi
+          failed=0
+          for project in tests/*/*.csproj; do
+            echo "::group::$project"
+            dotnet test "$project" -c Release || failed=1
+            echo "::endgroup::"
           done
-          tfms="$(dotnet msbuild src/DotThrow/DotThrow.csproj -getProperty:TargetFrameworks | tail -n 1 | tr -d '[:space:]')"
-          # Read the listing once: "unzip | grep -q" can fail under pipefail when grep exits early.
-          listing="$(unzip -l "dist/DotThrow.$VERSION.nupkg")"
-          missing=0
-          for tfm in ${tfms//;/ }; do
-            if ! grep -q " lib/$tfm/DotThrow.dll$" <<< "$listing"; then
-              echo "::error::The package has no lib/$tfm/DotThrow.dll"
-              missing=1
-            fi
-          done
-          # The core package must stay dependency-free on every target framework (decision D21).
-          nuspec="$(unzip -p "dist/DotThrow.$VERSION.nupkg" DotThrow.nuspec)"
-          if grep -q '<dependency ' <<< "$nuspec"; then
-            echo "::error::The DotThrow package must not have dependencies. Found:"
-            grep '<dependency ' <<< "$nuspec"
-            missing=1
-          fi
-          exit "$missing"
+          exit "$failed"
+      # Packs every packable project under src/ (DotThrow, DotThrow.DependencyInjection,
+      # DotThrow.AspNetCore, ...) with package validation, and checks that each package has
+      # this version, its target framework folders and symbols, and that the core package
+      # has no dependencies. See eng/pack.sh.
+      - name: Pack and check packages
+        env:
+          EXPECTED_VERSION: ${{ needs.prepare.outputs.version }}
+        run: bash eng/pack.sh dist -p:ContinuousIntegrationBuild=true
       - name: Generate SHA256SUMS
         working-directory: dist
         env:
           EVENT_NAME: ${{ github.event_name }}
         run: |
-          sha256sum "DotThrow.$VERSION.nupkg" "DotThrow.$VERSION.snupkg" > SHA256SUMS
+          sha256sum -- *.nupkg *.snupkg > SHA256SUMS
           {
             echo '## SHA256SUMS'
             echo
@@ -249,19 +230,33 @@ jobs:
         uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
         with:
           user: shalahuddinshanto
-      # Pushing the .nupkg also pushes the .snupkg next to it to the symbol server.
-      - name: Push package
+      # Pushing a .nupkg also pushes the .snupkg next to it to the symbol server.
+      # The core package goes first, because the other packages depend on it.
+      # --skip-duplicate makes a rerun of this job safe.
+      - name: Push packages
         env:
           NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
         run: |
-          dotnet nuget push "dist/DotThrow.$VERSION.nupkg" \
-            --api-key "$NUGET_API_KEY" \
-            --source https://api.nuget.org/v3/index.json \
-            --skip-duplicate
+          core="dist/DotThrow.$VERSION.nupkg"
+          packages=("$core")
+          for package in dist/*.nupkg; do
+            if [ "$package" != "$core" ]; then
+              packages+=("$package")
+            fi
+          done
+          for package in "${packages[@]}"; do
+            dotnet nuget push "$package" \
+              --api-key "$NUGET_API_KEY" \
+              --source https://api.nuget.org/v3/index.json \
+              --skip-duplicate
+          done
           {
             echo '## NuGet.org'
             echo
-            echo "Pushed [DotThrow $VERSION](https://www.nuget.org/packages/DotThrow/$VERSION) and its symbols."
+            for package in "${packages[@]}"; do
+              id="$(basename "$package" ".$VERSION.nupkg")"
+              echo "- Pushed [$id $VERSION](https://www.nuget.org/packages/$id/$VERSION) and its symbols."
+            done
           } >> "$GITHUB_STEP_SUMMARY"
 
   github-release:

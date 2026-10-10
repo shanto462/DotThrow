@@ -50,9 +50,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Each OS leg runs net8.0, net9.0 and net10.0. Windows also runs net472 and net481.
-        # The two asset legs run the net8.0 tests against the netstandard2.0 and
-        # netstandard2.1 builds of the library.
+        # Every leg runs in Release, because the zero-allocation tests skip in Debug.
+        # The OS legs run every test project under tests/ on net8.0, net9.0 and net10.0
+        # (Windows also on net472 and net481). Together the legs cover all six builds of
+        # the library: net8.0, net9.0 and net10.0 directly, net462 through the .NET Framework
+        # tests on Windows, and netstandard2.0 and netstandard2.1 through the asset legs,
+        # which run the net8.0 core tests against those builds.
         include:
           - label: ubuntu-latest
             os: ubuntu-latest
@@ -85,30 +88,26 @@ jobs:
           cache-dependency-path: |
             Directory.Packages.props
             **/*.csproj
-      - name: Restore
+      - name: Run tests (Release)
         run: |
           args=()
           if [ -n "$ASSET" ]; then
-            args+=("-p:DotThrowAssetTfm=$ASSET")
-          fi
-          dotnet restore tests/DotThrow.Tests/DotThrow.Tests.csproj "${args[@]}"
-      - name: Build
-        run: |
-          args=()
-          if [ -n "$ASSET" ]; then
+            # Only the core tests can swap in another build of the library.
+            projects=(tests/DotThrow.Tests/DotThrow.Tests.csproj)
             args+=(-f net8.0 "-p:DotThrowAssetTfm=$ASSET")
-          fi
-          dotnet build tests/DotThrow.Tests/DotThrow.Tests.csproj -c Release --no-restore "${args[@]}"
-      - name: Run tests
-        run: |
-          args=()
-          if [ -n "$ASSET" ]; then
-            args+=(-f net8.0 "-p:DotThrowAssetTfm=$ASSET")
+          else
+            projects=(tests/*/*.csproj)
           fi
           if [ "$COVERAGE" = "true" ]; then
             args+=(--collect "XPlat Code Coverage" --results-directory coverage)
           fi
-          dotnet test tests/DotThrow.Tests/DotThrow.Tests.csproj -c Release --no-build "${args[@]}"
+          failed=0
+          for project in "${projects[@]}"; do
+            echo "::group::$project"
+            dotnet test "$project" -c Release "${args[@]}" || failed=1
+            echo "::endgroup::"
+          done
+          exit "$failed"
       - name: Upload coverage files
         if: matrix.coverage
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -132,47 +131,15 @@ jobs:
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
           global-json-file: global.json
-      # EnablePackageValidation in the project makes pack fail on an invalid package.
-      - name: Pack with package validation
-        run: dotnet pack src/DotThrow/DotThrow.csproj -c Release -o dist
-      - name: Check that the package has every target framework
-        run: |
-          tfms="$(dotnet msbuild src/DotThrow/DotThrow.csproj -getProperty:TargetFrameworks | tail -n 1 | tr -d '[:space:]')"
-          nupkg="$(ls dist/DotThrow.[0-9]*.nupkg)"
-          # Read the listing once: "unzip | grep -q" can fail under pipefail when grep exits early.
-          listing="$(unzip -l "$nupkg")"
-          missing=0
-          for tfm in ${tfms//;/ }; do
-            if ! grep -q " lib/$tfm/DotThrow.dll$" <<< "$listing"; then
-              echo "::error::$nupkg has no lib/$tfm/DotThrow.dll"
-              missing=1
-            fi
-          done
-          {
-            echo '## NuGet package'
-            echo
-            echo "Target frameworks: \`$tfms\`"
-            echo
-            echo '```text'
-            ls -l dist
-            grep ' lib/' <<< "$listing" || true
-            echo '```'
-          } >> "$GITHUB_STEP_SUMMARY"
-          exit "$missing"
-      # The core package must stay dependency-free on every target framework (decision D21).
-      - name: Check that the core package has no dependencies
-        run: |
-          nuspec="$(unzip -p "$(ls dist/DotThrow.[0-9]*.nupkg)" DotThrow.nuspec)"
-          if grep -q '<dependency ' <<< "$nuspec"; then
-            echo "::error::The DotThrow package must not have dependencies. Found:"
-            grep '<dependency ' <<< "$nuspec"
-            exit 1
-          fi
-          echo "DotThrow.nuspec has no dependencies."
+      # Packs every packable project under src/ (package validation runs on pack) and
+      # checks target framework folders, lockstep versions, symbols, and that the core
+      # package has no dependencies. See the comment at the top of eng/pack.sh.
+      - name: Pack and check packages
+        run: bash eng/pack.sh dist
       - name: Upload package
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: nuget-package
+          name: nuget-packages
           path: |
             dist/*.nupkg
             dist/*.snupkg
@@ -252,13 +219,13 @@ jobs:
         with:
           name: coverage-raw
           path: coverage
-      - name: Merge coverage (net8.0 and net10.0)
+      - name: Merge coverage of every test project and framework
         uses: danielpalme/ReportGenerator-GitHub-Action@d3ebf1f760f7d8ab92cc44d9bcfee7ad73722a31 # 5.5.11
         with:
           reports: coverage/**/coverage.cobertura.xml
           targetdir: coverage-report
           reporttypes: HtmlInline;Cobertura;MarkdownSummaryGithub
-          assemblyfilters: +DotThrow
+          assemblyfilters: +DotThrow*;-*.Tests
           title: DotThrow coverage
       - name: Write coverage summary
         run: cat coverage-report/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"
