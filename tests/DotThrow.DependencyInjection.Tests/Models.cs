@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -121,4 +122,24 @@ public sealed class SmtpOptionsValidator : Validator<SmtpOptions>
         For(x => x.Credentials!.UserName, user => user.IfNullOrEmpty(), rule => rule.When(x => x.Credentials is not null));
         Must(x => x.Host != "localhost" || x.Port != 25, "Port 25 on localhost is not allowed.");
     }
+}
+
+public sealed class Contact
+{
+    public string? Name { get; set; }
+
+    public string? Email { get; set; }
+
+    public int Age { get; set; }
+
+    public string? Country { get; set; }
+
+    public List<string>? Tags { get; set; }
+
+    public Address? Address { get; set; }
+}
+
+public sealed class Address
+{
+    public string? City { get; set; }
 }

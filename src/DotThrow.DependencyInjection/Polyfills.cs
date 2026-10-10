@@ -1,4 +1,4 @@
-// Trimming attributes that .NET 5 and later ship and netstandard2.0 / .NET Framework do not.
+// Trimming and AOT attributes that newer frameworks ship and netstandard2.0 / .NET Framework do not.
 // The compiler and the trimming tools find them by name, so internal copies are enough.
 #pragma warning disable IDE0161
 
@@ -40,6 +40,27 @@ namespace System.Diagnostics.CodeAnalysis
         None = 0,
         PublicParameterlessConstructor = 0x0001,
         PublicConstructors = 0x0002 | PublicParameterlessConstructor,
+        PublicProperties = 0x0200,
+    }
+}
+
+#endif
+
+#if !NET7_0_OR_GREATER
+
+namespace System.Diagnostics.CodeAnalysis
+{
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Class, Inherited = false)]
+    internal sealed class RequiresDynamicCodeAttribute : Attribute
+    {
+        public RequiresDynamicCodeAttribute(string message)
+        {
+            Message = message;
+        }
+
+        public string Message { get; }
+
+        public string? Url { get; set; }
     }
 }
 

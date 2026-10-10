@@ -6,9 +6,12 @@ validators:
 - Register validators by assembly scanning, with the same methods as FluentValidation.
 - Register one validator at a time without reflection (trimming and Native AOT safe).
 - Validate options classes with a DotThrow validator, with `ValidateOnStart` and named options.
+- Register dynamic validators whose rules live in `appsettings.json` (or any `IConfiguration`) and
+  reload when the configuration changes.
 
 Targets netstandard2.0, .NET Framework 4.6.2, .NET 8, .NET 9 and .NET 10. It depends on
-`DotThrow`, `Microsoft.Extensions.DependencyInjection.Abstractions` and `Microsoft.Extensions.Options`.
+`DotThrow`, `Microsoft.Extensions.Configuration.Abstractions`,
+`Microsoft.Extensions.DependencyInjection.Abstractions` and `Microsoft.Extensions.Options`.
 
 ## Install
 
@@ -94,6 +97,55 @@ services.AddOptions<SmtpOptions>("backup")
 - The registered validator may have any lifetime: it is resolved in its own scope.
 - Options validation is synchronous, so the validator must not have async rules
   (`MustAsync`, `CustomAsync`); such a validator throws `AsyncRuleInvokedSynchronouslyException`.
+
+## Dynamic rules from configuration
+
+Rules can live in configuration instead of code, in the shape of `RuleSetDefinition`
+(see the [dynamic rules guide](https://github.com/shanto462/DotThrow/blob/main/docs/dynamic-rules.md)):
+
+```json
+{
+  "Validation": {
+    "SignUp": {
+      "rules": [
+        { "property": "Email", "checks": [ "WhiteSpace", "NotEmailAddress" ] },
+        { "property": "Age", "severity": "Warning", "checks": [ { "check": "OutOfRange", "min": 18, "max": 130 } ] }
+      ]
+    }
+  }
+}
+```
+
+```csharp
+// Reflection finds the properties.
+builder.Services.AddDynamicValidator<SignUp>(builder.Configuration.GetSection("Validation:SignUp"));
+
+// Trimming and Native AOT: name the properties the rules may check.
+builder.Services.AddDynamicValidator(
+    "Validation:SignUp",
+    new PropertyMap<SignUp>().Add(x => x.Email).Add(x => x.Age),
+    o =>
+    {
+        o.Checks = new CheckRegistry().Add<string>("NotReserved", (email, _) => email.IfOneOf("admin@example.com"));
+        o.CodeRules = v => v.For(x => x.Password, p => p.IfNullOrEmpty().IfShorterThan(12));
+        o.OnReloadError = (error, services) =>
+            services.GetRequiredService<ILogger<SignUp>>().LogError(error, "The SignUp rules were not reloaded.");
+    });
+```
+
+- The validator is a singleton `IValidator<T>` and `DynamicValidator<T>`. One per type: a second
+  call for the same type replaces the first.
+- When the configuration changes (for example `reloadOnChange: true` on a JSON file), the rules are
+  read again and swapped in one step. Rules with errors are not used: the old rules stay, and
+  `OnReloadError` gets every error (without it, they go to `Trace.TraceError`).
+- A definition with errors fails when the validator is first resolved, and also when the host starts
+  (`ValidateOnStart`, on by default), with every error and its place, for example
+  `Rules[0].Checks[1].Chek (Validation:SignUp:rules:0:checks:1:chek): unknown key (did you mean 'check'?).`
+- `AddDynamicValidator<T>(RuleSetDefinition)` registers rules from code, a database or
+  `RuleSetDefinition.FromJson`; change them with `DynamicValidator<T>.Update`.
+- The section is read without the configuration binder (`RuleSetConfiguration.Read`), so the
+  `PropertyMap` overloads are safe for trimming and Native AOT. Configuration stores a JSON `null`
+  as an empty string, so empty values read as not set.
 
 ## Moving from FluentValidation
 

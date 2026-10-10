@@ -12,8 +12,8 @@
     <IsPackable>true</IsPackable>
     <PackageId>DotThrow.DependencyInjection</PackageId>
     <Title>DotThrow.DependencyInjection</Title>
-    <Description>Microsoft.Extensions.DependencyInjection support for DotThrow validators: register validators by assembly scanning or one by one (AOT safe), and validate options classes with a DotThrow validator, including ValidateOnStart and named options.</Description>
-    <PackageTags>validation;validator;dependency-injection;options;ioptions;fluentvalidation;guard;dotthrow</PackageTags>
+    <Description>Microsoft.Extensions.DependencyInjection support for DotThrow validators: register validators by assembly scanning or one by one (AOT safe), validate options classes with a DotThrow validator (ValidateOnStart, named options), and register dynamic validators whose rules come from IConfiguration and reload when it changes.</Description>
+    <PackageTags>validation;validator;dependency-injection;options;ioptions;configuration;dynamic-rules;fluentvalidation;guard;dotthrow</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReleaseNotes>https://github.com/shanto462/DotThrow/blob/main/CHANGELOG.md</PackageReleaseNotes>
@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Options" />
   </ItemGroup>
