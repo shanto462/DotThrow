@@ -6,6 +6,17 @@ and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-10-10
+
+No code changes. The packages are the same as 2.0.0 apart from their README.
+
+### Changed
+
+- The README of each package on NuGet.org links all three packages:
+  `DotThrow`, `DotThrow.DependencyInjection` and `DotThrow.AspNetCore`.
+- The packages are also published to GitHub Packages, so they are listed on the
+  repository page. Install them from NuGet.org as before.
+
 ## [2.0.0] - 2026-10-10
 
 Complete rewrite with a new API. Code written for 1.x needs changes, see
@@ -199,7 +210,8 @@ First release (.NET 6).
 - Grouped rules, so `Verify` and `VerifyNotThrow` can run only the rules of one
   group.
 
-[Unreleased]: https://github.com/shanto462/DotThrow/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/shanto462/DotThrow/compare/v2.0.1...HEAD
+[2.0.1]: https://github.com/shanto462/DotThrow/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/shanto462/DotThrow/compare/v1.0.2...v2.0.0
 [2.0.0-rc.1]: https://github.com/shanto462/DotThrow/compare/v1.0.2...v2.0.0-rc.1
 [1.0.2]: https://github.com/shanto462/DotThrow/compare/v1.0.1...v1.0.2

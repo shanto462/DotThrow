@@ -56,15 +56,17 @@ DotThrow is MIT licensed, has no dependencies, runs on every .NET from .NET Fram
 
 ## Install
 
+All packages are on [NuGet.org](https://www.nuget.org/packages?q=owner%3Ashalahuddinshanto+DotThrow) and share one version.
+
 ```shell
 dotnet add package DotThrow
 ```
 
-| Package | What it has | Targets |
-| --- | --- | --- |
-| `DotThrow` | Guard clauses, collect mode, `Validator<T>`, dynamic rules (`DotThrow.Dynamic`), message templates with translations for 58 cultures (54 languages), test helpers (`DotThrow.Testing`), an assembly scanner (`DotThrow.Scanning`), and Roslyn analyzers with code fixes. No dependencies. | netstandard2.0, netstandard2.1, net462, net8.0, net9.0, net10.0 |
-| [`DotThrow.DependencyInjection`](src/DotThrow.DependencyInjection/README.md) | `AddValidatorsFromAssemblyContaining<T>()`, `AddValidator<TModel, TValidator>()` (trimming safe), options validation with `ValidateOnStart`, and dynamic validators from configuration with reload. | netstandard2.0, net462, net8.0, net9.0, net10.0 |
-| [`DotThrow.AspNetCore`](src/DotThrow.AspNetCore/README.md) | `.WithValidation<T>()` for minimal API endpoints and route groups, an MVC filter and `[ValidateWithDotThrow]`, and validation problem helpers. | net8.0, net9.0, net10.0 |
+| Package | NuGet | What it has | Targets |
+| --- | --- | --- | --- |
+| [DotThrow](https://www.nuget.org/packages/DotThrow) | [![DotThrow on NuGet](https://img.shields.io/nuget/v/DotThrow.svg)](https://www.nuget.org/packages/DotThrow) | Guard clauses, collect mode, `Validator<T>`, dynamic rules (`DotThrow.Dynamic`), message templates with translations for 58 cultures (54 languages), test helpers (`DotThrow.Testing`), an assembly scanner (`DotThrow.Scanning`), and Roslyn analyzers with code fixes. No dependencies. | netstandard2.0, netstandard2.1, net462, net8.0, net9.0, net10.0 |
+| [DotThrow.DependencyInjection](https://www.nuget.org/packages/DotThrow.DependencyInjection) | [![DotThrow.DependencyInjection on NuGet](https://img.shields.io/nuget/v/DotThrow.DependencyInjection.svg)](https://www.nuget.org/packages/DotThrow.DependencyInjection) | `AddValidatorsFromAssemblyContaining<T>()`, `AddValidator<TModel, TValidator>()` (trimming safe), options validation with `ValidateOnStart`, and dynamic validators from configuration with reload. See its [README](src/DotThrow.DependencyInjection/README.md). | netstandard2.0, net462, net8.0, net9.0, net10.0 |
+| [DotThrow.AspNetCore](https://www.nuget.org/packages/DotThrow.AspNetCore) | [![DotThrow.AspNetCore on NuGet](https://img.shields.io/nuget/v/DotThrow.AspNetCore.svg)](https://www.nuget.org/packages/DotThrow.AspNetCore) | `.WithValidation<T>()` for minimal API endpoints and route groups, an MVC filter and `[ValidateWithDotThrow]`, and validation problem helpers. See its [README](src/DotThrow.AspNetCore/README.md). | net8.0, net9.0, net10.0 |
 
 ```shell
 dotnet add package DotThrow.DependencyInjection
@@ -396,7 +398,7 @@ Facts checked on 2026-10-10 against the latest stable NuGet packages.
 | Declares Native AOT compatibility | Yes | No | No | Trimming only | No | Part of .NET |
 | Dependencies | None | None | OneOf | None on net8.0; System.Memory or Unsafe on netstandard | None | None |
 | Targets | netstandard2.0, netstandard2.1, net462, net8.0, net9.0, net10.0 | netstandard2.0, netstandard2.1, net8.0 | net6.0 | netstandard2.0, netstandard2.1, net8.0 | net8.0 | .NET 6 and later |
-| Latest release | 2.0.0 (this repository) | 5.0.0, Sep 2024 | 1.4.0, Sep 2023 | 8.4.2, Mar 2026 | 12.1.1, Dec 2025 | Ships with .NET |
+| Latest release | 2.0.1 (this repository) | 5.0.0, Sep 2024 | 1.4.0, Sep 2023 | 8.4.2, Mar 2026 | 12.1.1, Dec 2025 | Ships with .NET |
 
 The .NET built-in helpers (`ArgumentNullException.ThrowIfNull` and friends, .NET 6 to 8)
 cover the basics only: no collection checks, no custom messages, and no collect mode.
