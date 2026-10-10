@@ -22,6 +22,15 @@ updates:
       # The 8.0 line reaches every supported .NET. Only patch and minor updates.
       - dependency-name: 'Microsoft.Extensions.*'
         update-types: ['version-update:semver-major']
+      # Dependencies of the published DotThrow.DependencyInjection package. Their versions
+      # are the minimum that every app using the package must have, so they stay at the
+      # oldest version that works and are raised by hand only, for example for a security
+      # fix. A vulnerable version still shows up: Dependabot alerts, and NuGet audit
+      # warnings, which fail the build (TreatWarningsAsErrors).
+      - dependency-name: 'Microsoft.Extensions.Configuration.Abstractions'
+      - dependency-name: 'Microsoft.Extensions.DependencyInjection.Abstractions'
+      - dependency-name: 'Microsoft.Extensions.Logging.Abstractions'
+      - dependency-name: 'Microsoft.Extensions.Options'
       # Microsoft.AspNetCore.Mvc.Testing is pinned per target framework (8, 9 and 10).
       - dependency-name: 'Microsoft.AspNetCore.*'
         update-types: ['version-update:semver-major']
