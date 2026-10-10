@@ -81,13 +81,22 @@ internal static class Formats
 
     public static bool IsUri(string value, UriKind kind, [NotNullWhen(true)] out Uri? uri)
     {
+        // Rules that hold on every operating system: no empty text, no backslash (RFC 3986
+        // does not allow it, and Uri reads it differently on Windows and Unix), and no
+        // Windows drive path such as C:\temp or C:/temp.
+        if (string.IsNullOrWhiteSpace(value) || Text.ContainsChar(value, '\\') || IsDrivePath(value))
+        {
+            uri = null;
+            return false;
+        }
+
         if (!Uri.TryCreate(value, kind, out uri))
         {
             return false;
         }
 
-        // Uri treats "/etc/hosts" (Unix) and "C:\temp" (Windows) as absolute file URIs.
-        // A file path is not what callers mean by a URI, so require an explicit scheme.
+        // Uri treats "/etc/hosts" (Unix) as an absolute file URI. A file path is not what
+        // callers mean by a URI, so require an explicit scheme.
         if (uri.IsAbsoluteUri && uri.IsFile && !value.StartsWith("file:", StringComparison.OrdinalIgnoreCase))
         {
             uri = null;
@@ -96,6 +105,13 @@ internal static class Formats
 
         return true;
     }
+
+    public static bool IsHttpUrl(string value) =>
+        IsUri(value, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+
+    private static bool IsDrivePath(string value) =>
+        value.Length >= 2 && value[1] == ':' && value[0] is (>= 'a' and <= 'z') or (>= 'A' and <= 'Z')
+        && (value.Length == 2 || value[2] is '/' or '\\');
 
     // Only cased letters count, so digits, symbols and letters without case (such as
     // Chinese characters) never make a string "all uppercase".

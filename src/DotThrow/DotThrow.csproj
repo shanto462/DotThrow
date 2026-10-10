@@ -1,9 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0;net10.0</TargetFrameworks>
+    <!--
+      netstandard2.0 reaches .NET Framework 4.6.1+, Unity, Mono and Xamarin.
+      netstandard2.1 adds spans for .NET Core 3.x to 7 and Unity.
+      net462 gives .NET Framework a direct asset (no facade issues).
+      net8.0, net9.0 and net10.0 get generic math, SearchValues, TimeProvider and AOT annotations.
+    -->
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net462;net8.0;net9.0;net10.0</TargetFrameworks>
     <RootNamespace>DotThrow</RootNamespace>
     <Version>2.0.0</Version>
+
+    <!-- [module: SkipLocalsInit] needs unsafe code to be allowed. The library has no unsafe blocks. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
     <IsPackable>true</IsPackable>
     <PackageId>DotThrow</PackageId>
@@ -21,6 +30,16 @@
   <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
     <IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
+
+  <!--
+    .NET Framework reference assemblies, so net462 builds on macOS and Linux too. The SDK
+    adds this package by itself when the targeting pack is missing; the explicit reference
+    pins the version through central package management and keeps it a build-time asset
+    only, so the package never gets a dependency.
+  -->
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="all" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />

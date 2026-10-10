@@ -5,34 +5,37 @@ using DotThrow.Internal;
 namespace DotThrow;
 
 // Checks for any IComparable<T>: every number type, DateTime, TimeSpan, string, Version,
-// and your own types. A null value fails with "Null", and NaN fails every check here.
+// BigInteger, Int128, UInt128, Half, char, DateOnly, TimeOnly and your own types. A null
+// value fails with "Null", and NaN fails every check here. Strings compare by ordinal, so
+// the result does not depend on the current culture. A UTC DateTime and a local DateTime
+// compare as UTC.
+//
+// A null or NaN limit, or a maximum below the minimum, is a programming error and throws
+// even in collect mode. A null limit is caught on every call; the others make every value
+// fail, so they are caught on the failure path and cost nothing on the happy path.
 public static partial class GuardExtensions
 {
     /// <summary>Fails when the value is greater than <paramref name="limit"/>.</summary>
     /// <typeparam name="T">The type of the value.</typeparam>
     /// <param name="guard">The guard.</param>
     /// <param name="limit">The largest allowed value.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{ComparisonValue}</c>.</param>
     /// <returns>The guard.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="limit"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="limit"/> is NaN.</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<T> IfGreaterThan<T>(this Guard<T> guard, T limit, string? message = null)
         where T : IComparable<T>
     {
-        Argument.NotNull(limit);
-        if (!guard.IsActive)
+        if (limit is null)
         {
-            return guard;
+            Argument.ThrowNull(nameof(limit));
         }
 
-        var value = guard.Value;
-        if (value is null)
+        if (guard.IsActive && (guard.Value is null || !Ordering.AtMost(guard.Value, limit)))
         {
-            return guard.FailNull(message);
-        }
-
-        if (Numeric.IsNaN(value) || value.CompareTo(limit) > 0)
-        {
-            return guard.FailOutOfRange(ErrorCodes.GreaterThan, message ?? Messages.GreaterThan(guard.Name, limit));
+            Argument.Limit(limit);
+            return Rejection.Content(guard, FailureKind.OutOfRange, ErrorCodes.GreaterThan, message, Placeholder.ComparisonValue, limit);
         }
 
         return guard;
@@ -42,27 +45,23 @@ public static partial class GuardExtensions
     /// <typeparam name="T">The type of the value.</typeparam>
     /// <param name="guard">The guard.</param>
     /// <param name="limit">The value must be less than this.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{ComparisonValue}</c>.</param>
     /// <returns>The guard.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="limit"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="limit"/> is NaN.</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<T> IfGreaterThanOrEqualTo<T>(this Guard<T> guard, T limit, string? message = null)
         where T : IComparable<T>
     {
-        Argument.NotNull(limit);
-        if (!guard.IsActive)
+        if (limit is null)
         {
-            return guard;
+            Argument.ThrowNull(nameof(limit));
         }
 
-        var value = guard.Value;
-        if (value is null)
+        if (guard.IsActive && (guard.Value is null || !Ordering.Below(guard.Value, limit)))
         {
-            return guard.FailNull(message);
-        }
-
-        if (Numeric.IsNaN(value) || value.CompareTo(limit) >= 0)
-        {
-            return guard.FailOutOfRange(ErrorCodes.GreaterThanOrEqualTo, message ?? Messages.GreaterThanOrEqualTo(guard.Name, limit));
+            Argument.Limit(limit);
+            return Rejection.Content(guard, FailureKind.OutOfRange, ErrorCodes.GreaterThanOrEqualTo, message, Placeholder.ComparisonValue, limit);
         }
 
         return guard;
@@ -72,27 +71,23 @@ public static partial class GuardExtensions
     /// <typeparam name="T">The type of the value.</typeparam>
     /// <param name="guard">The guard.</param>
     /// <param name="limit">The smallest allowed value.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{ComparisonValue}</c>.</param>
     /// <returns>The guard.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="limit"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="limit"/> is NaN.</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<T> IfLessThan<T>(this Guard<T> guard, T limit, string? message = null)
         where T : IComparable<T>
     {
-        Argument.NotNull(limit);
-        if (!guard.IsActive)
+        if (limit is null)
         {
-            return guard;
+            Argument.ThrowNull(nameof(limit));
         }
 
-        var value = guard.Value;
-        if (value is null)
+        if (guard.IsActive && (guard.Value is null || !Ordering.AtLeast(guard.Value, limit)))
         {
-            return guard.FailNull(message);
-        }
-
-        if (Numeric.IsNaN(value) || value.CompareTo(limit) < 0)
-        {
-            return guard.FailOutOfRange(ErrorCodes.LessThan, message ?? Messages.LessThan(guard.Name, limit));
+            Argument.Limit(limit);
+            return Rejection.Content(guard, FailureKind.OutOfRange, ErrorCodes.LessThan, message, Placeholder.ComparisonValue, limit);
         }
 
         return guard;
@@ -102,27 +97,23 @@ public static partial class GuardExtensions
     /// <typeparam name="T">The type of the value.</typeparam>
     /// <param name="guard">The guard.</param>
     /// <param name="limit">The value must be greater than this.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{ComparisonValue}</c>.</param>
     /// <returns>The guard.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="limit"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="limit"/> is NaN.</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<T> IfLessThanOrEqualTo<T>(this Guard<T> guard, T limit, string? message = null)
         where T : IComparable<T>
     {
-        Argument.NotNull(limit);
-        if (!guard.IsActive)
+        if (limit is null)
         {
-            return guard;
+            Argument.ThrowNull(nameof(limit));
         }
 
-        var value = guard.Value;
-        if (value is null)
+        if (guard.IsActive && (guard.Value is null || !Ordering.Above(guard.Value, limit)))
         {
-            return guard.FailNull(message);
-        }
-
-        if (Numeric.IsNaN(value) || value.CompareTo(limit) <= 0)
-        {
-            return guard.FailOutOfRange(ErrorCodes.LessThanOrEqualTo, message ?? Messages.LessThanOrEqualTo(guard.Name, limit));
+            Argument.Limit(limit);
+            return Rejection.Content(guard, FailureKind.OutOfRange, ErrorCodes.LessThanOrEqualTo, message, Placeholder.ComparisonValue, limit);
         }
 
         return guard;
@@ -130,34 +121,60 @@ public static partial class GuardExtensions
 
     /// <summary>
     /// Fails when the value is outside the range from <paramref name="min"/> to
-    /// <paramref name="max"/>. Both ends are allowed.
+    /// <paramref name="max"/>. Both ends are allowed (FluentValidation <c>InclusiveBetween</c>).
     /// </summary>
     /// <typeparam name="T">The type of the value.</typeparam>
     /// <param name="guard">The guard.</param>
     /// <param name="min">The smallest allowed value.</param>
     /// <param name="max">The largest allowed value.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholders: <c>{From}</c>, <c>{To}</c>.</param>
     /// <returns>The guard.</returns>
-    /// <exception cref="ArgumentOutOfRangeException"><paramref name="min"/> is greater than <paramref name="max"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="min"/> or <paramref name="max"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="min"/> is greater than <paramref name="max"/>, or either is NaN.</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<T> IfOutOfRange<T>(this Guard<T> guard, T min, T max, string? message = null)
         where T : IComparable<T>
     {
-        Argument.Range(min, max);
-        if (!guard.IsActive)
+        if (min is null || max is null)
         {
-            return guard;
+            Argument.ThrowNull(min is null ? nameof(min) : nameof(max));
         }
 
-        var value = guard.Value;
-        if (value is null)
+        if (guard.IsActive && (guard.Value is null || !(Ordering.AtLeast(guard.Value, min) && Ordering.AtMost(guard.Value, max))))
         {
-            return guard.FailNull(message);
+            Argument.Range(min, max);
+            return Rejection.Content(guard, FailureKind.OutOfRange, ErrorCodes.OutOfRange, message, Placeholder.From, min, Placeholder.To, max);
         }
 
-        if (Numeric.IsNaN(value) || value.CompareTo(min) < 0 || value.CompareTo(max) > 0)
+        return guard;
+    }
+
+    /// <summary>
+    /// Fails when the value is not strictly between <paramref name="min"/> and
+    /// <paramref name="max"/>: the ends themselves fail too (FluentValidation
+    /// <c>ExclusiveBetween</c>).
+    /// </summary>
+    /// <typeparam name="T">The type of the value.</typeparam>
+    /// <param name="guard">The guard.</param>
+    /// <param name="min">The value must be greater than this.</param>
+    /// <param name="max">The value must be less than this.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholders: <c>{From}</c>, <c>{To}</c>.</param>
+    /// <returns>The guard.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="min"/> or <paramref name="max"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="min"/> is greater than <paramref name="max"/>, or either is NaN.</exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Guard<T> IfOutOfRangeExclusive<T>(this Guard<T> guard, T min, T max, string? message = null)
+        where T : IComparable<T>
+    {
+        if (min is null || max is null)
         {
-            return guard.FailOutOfRange(ErrorCodes.OutOfRange, message ?? Messages.OutOfRange(guard.Name, min, max));
+            Argument.ThrowNull(min is null ? nameof(min) : nameof(max));
+        }
+
+        if (guard.IsActive && (guard.Value is null || !(Ordering.Above(guard.Value, min) && Ordering.Below(guard.Value, max))))
+        {
+            Argument.Range(min, max);
+            return Rejection.Content(guard, FailureKind.OutOfRange, ErrorCodes.OutOfRangeExclusive, message, Placeholder.From, min, Placeholder.To, max);
         }
 
         return guard;
@@ -171,34 +188,26 @@ public static partial class GuardExtensions
     /// <param name="guard">The guard.</param>
     /// <param name="min">The start of the rejected range.</param>
     /// <param name="max">The end of the rejected range.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholders: <c>{From}</c>, <c>{To}</c>.</param>
     /// <returns>The guard.</returns>
-    /// <exception cref="ArgumentOutOfRangeException"><paramref name="min"/> is greater than <paramref name="max"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="min"/> or <paramref name="max"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="min"/> is greater than <paramref name="max"/>, or either is NaN.</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<T> IfInRange<T>(this Guard<T> guard, T min, T max, string? message = null)
         where T : IComparable<T>
     {
+        // A reversed or NaN range would let every value pass, so it is checked on every call.
+        // With constant limits the JIT removes this check.
         Argument.Range(min, max);
-        if (!guard.IsActive)
+        if (guard.IsActive && (guard.Value is null || !(Ordering.Below(guard.Value, min) || Ordering.Above(guard.Value, max))))
         {
-            return guard;
-        }
-
-        var value = guard.Value;
-        if (value is null)
-        {
-            return guard.FailNull(message);
-        }
-
-        if (Numeric.IsNaN(value) || (value.CompareTo(min) >= 0 && value.CompareTo(max) <= 0))
-        {
-            return guard.FailOutOfRange(ErrorCodes.InRange, message ?? Messages.InRange(guard.Name, min, max));
+            return Rejection.Content(guard, FailureKind.OutOfRange, ErrorCodes.InRange, message, Placeholder.From, min, Placeholder.To, max);
         }
 
         return guard;
     }
 
-    /// <summary>Fails when the value is less than zero.</summary>
+    /// <summary>Fails when the value is less than zero. NaN fails.</summary>
     /// <typeparam name="T">A number type, or any value type whose default value means zero, like <see cref="TimeSpan"/>.</typeparam>
     /// <param name="guard">The guard.</param>
     /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
@@ -207,15 +216,15 @@ public static partial class GuardExtensions
     public static Guard<T> IfNegative<T>(this Guard<T> guard, string? message = null)
         where T : struct, IComparable<T>
     {
-        if (guard.IsActive && (Numeric.IsNaN(guard.Value) || guard.Value.CompareTo(default) < 0))
+        if (guard.IsActive && !Ordering.AtLeast(guard.Value, default(T)))
         {
-            return guard.FailOutOfRange(ErrorCodes.Negative, message ?? Messages.Negative(guard.Name));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.Negative, message);
         }
 
         return guard;
     }
 
-    /// <summary>Fails when the value is less than or equal to zero.</summary>
+    /// <summary>Fails when the value is less than or equal to zero. NaN fails.</summary>
     /// <typeparam name="T">A number type, or any value type whose default value means zero, like <see cref="TimeSpan"/>.</typeparam>
     /// <param name="guard">The guard.</param>
     /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
@@ -224,15 +233,15 @@ public static partial class GuardExtensions
     public static Guard<T> IfNegativeOrZero<T>(this Guard<T> guard, string? message = null)
         where T : struct, IComparable<T>
     {
-        if (guard.IsActive && (Numeric.IsNaN(guard.Value) || guard.Value.CompareTo(default) <= 0))
+        if (guard.IsActive && !Ordering.Above(guard.Value, default(T)))
         {
-            return guard.FailOutOfRange(ErrorCodes.NegativeOrZero, message ?? Messages.NegativeOrZero(guard.Name));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.NegativeOrZero, message);
         }
 
         return guard;
     }
 
-    /// <summary>Fails when the value is greater than zero.</summary>
+    /// <summary>Fails when the value is greater than zero. NaN fails.</summary>
     /// <typeparam name="T">A number type, or any value type whose default value means zero, like <see cref="TimeSpan"/>.</typeparam>
     /// <param name="guard">The guard.</param>
     /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
@@ -241,15 +250,15 @@ public static partial class GuardExtensions
     public static Guard<T> IfPositive<T>(this Guard<T> guard, string? message = null)
         where T : struct, IComparable<T>
     {
-        if (guard.IsActive && (Numeric.IsNaN(guard.Value) || guard.Value.CompareTo(default) > 0))
+        if (guard.IsActive && !Ordering.AtMost(guard.Value, default(T)))
         {
-            return guard.FailOutOfRange(ErrorCodes.Positive, message ?? Messages.Positive(guard.Name));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.Positive, message);
         }
 
         return guard;
     }
 
-    /// <summary>Fails when the value is greater than or equal to zero.</summary>
+    /// <summary>Fails when the value is greater than or equal to zero. NaN fails.</summary>
     /// <typeparam name="T">A number type, or any value type whose default value means zero, like <see cref="TimeSpan"/>.</typeparam>
     /// <param name="guard">The guard.</param>
     /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
@@ -258,9 +267,9 @@ public static partial class GuardExtensions
     public static Guard<T> IfPositiveOrZero<T>(this Guard<T> guard, string? message = null)
         where T : struct, IComparable<T>
     {
-        if (guard.IsActive && (Numeric.IsNaN(guard.Value) || guard.Value.CompareTo(default) >= 0))
+        if (guard.IsActive && !Ordering.Below(guard.Value, default(T)))
         {
-            return guard.FailOutOfRange(ErrorCodes.PositiveOrZero, message ?? Messages.PositiveOrZero(guard.Name));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.PositiveOrZero, message);
         }
 
         return guard;
@@ -275,9 +284,9 @@ public static partial class GuardExtensions
     public static Guard<T> IfZero<T>(this Guard<T> guard, string? message = null)
         where T : struct, IComparable<T>
     {
-        if (guard.IsActive && !Numeric.IsNaN(guard.Value) && guard.Value.CompareTo(default) == 0)
+        if (guard.IsActive && Ordering.IsZero(guard.Value))
         {
-            return guard.FailOutOfRange(ErrorCodes.Zero, message ?? Messages.Zero(guard.Name));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.Zero, message);
         }
 
         return guard;
@@ -292,7 +301,7 @@ public static partial class GuardExtensions
     {
         if (guard.IsActive && double.IsNaN(guard.Value))
         {
-            return guard.FailOutOfRange(ErrorCodes.NaN, message ?? Messages.NaN(guard.Name));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.NaN, message);
         }
 
         return guard;
@@ -307,7 +316,7 @@ public static partial class GuardExtensions
     {
         if (guard.IsActive && float.IsNaN(guard.Value))
         {
-            return guard.FailOutOfRange(ErrorCodes.NaN, message ?? Messages.NaN(guard.Name));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.NaN, message);
         }
 
         return guard;
@@ -322,7 +331,7 @@ public static partial class GuardExtensions
     {
         if (guard.IsActive && double.IsInfinity(guard.Value))
         {
-            return guard.FailOutOfRange(ErrorCodes.Infinity, message ?? Messages.Infinity(guard.Name));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.Infinity, message);
         }
 
         return guard;
@@ -337,7 +346,7 @@ public static partial class GuardExtensions
     {
         if (guard.IsActive && float.IsInfinity(guard.Value))
         {
-            return guard.FailOutOfRange(ErrorCodes.Infinity, message ?? Messages.Infinity(guard.Name));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.Infinity, message);
         }
 
         return guard;

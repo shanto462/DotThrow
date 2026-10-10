@@ -16,7 +16,7 @@
 
     <!-- Benchmarks -->
     <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
-    <!-- Benchmarks only: the libraries DotThrow is compared with. Never referenced by src. -->
+    <!-- Benchmarks and parity tests only: the libraries DotThrow is compared with. Never referenced by src. -->
     <PackageVersion Include="Ardalis.GuardClauses" Version="5.0.0" />
     <PackageVersion Include="CommunityToolkit.Diagnostics" Version="8.4.2" />
     <PackageVersion Include="FluentValidation" Version="12.1.1" />

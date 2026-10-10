@@ -84,36 +84,52 @@ public readonly ref struct Guard<T>
     /// returns a guard that skips later checks.
     /// </summary>
     /// <param name="errorCode">A stable code for the failure, for example <c>"NotSlug"</c>.</param>
-    /// <param name="message">The error message.</param>
+    /// <param name="message">The error message, used as is. Use <see cref="MessageTemplates.Format"/> to fill in placeholders.</param>
     /// <returns>The guard, marked as failed (collect mode only).</returns>
-    [MethodImpl(MethodImplOptions.NoInlining)]
-    [StackTraceHidden]
-    public Guard<T> Fail(string errorCode, string message) => Report(FailureKind.Argument, errorCode, message);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Guard<T> Fail(string errorCode, string message) => Rejection.WithMessage(this, FailureKind.Argument, errorCode, message);
 
     /// <summary>
     /// Reports a failed check like <see cref="Fail"/>, but the default exception is an
     /// <see cref="ArgumentOutOfRangeException"/> that carries the actual value.
     /// </summary>
     /// <param name="errorCode">A stable code for the failure, for example <c>"TooLarge"</c>.</param>
-    /// <param name="message">The error message.</param>
+    /// <param name="message">The error message, used as is.</param>
     /// <returns>The guard, marked as failed (collect mode only).</returns>
-    [MethodImpl(MethodImplOptions.NoInlining)]
-    [StackTraceHidden]
-    public Guard<T> FailOutOfRange(string errorCode, string message) => Report(FailureKind.OutOfRange, errorCode, message);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Guard<T> FailOutOfRange(string errorCode, string message) => Rejection.WithMessage(this, FailureKind.OutOfRange, errorCode, message);
 
     /// <summary>
     /// Reports a <see langword="null"/> value. The default exception is an
     /// <see cref="ArgumentNullException"/> and the error code is <c>"Null"</c>.
     /// </summary>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">
+    /// A custom message, or <see langword="null"/> for the default one (the
+    /// <see cref="ErrorCodes.Null"/> template of <see cref="MessageTemplates"/>). A custom
+    /// message can use the same placeholders, such as <c>{PropertyName}</c>.
+    /// </param>
     /// <returns>The guard, marked as failed (collect mode only).</returns>
-    [MethodImpl(MethodImplOptions.NoInlining)]
-    [StackTraceHidden]
-    public Guard<T> FailNull(string? message = null) =>
-        Report(FailureKind.Null, ErrorCodes.Null, message ?? Messages.Null(Name));
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Guard<T> FailNull(string? message = null) => Rejection.Fail(this, FailureKind.Null, ErrorCodes.Null, message);
+
+    // True in collect mode. In throw mode the sink of a Throw() chain is a constant null for
+    // the JIT, so this folds away and only the throwing branch of a failure remains.
+    internal bool Collects => _sink is ValidationReport;
+
+    // Records a failure in collect mode. See Rejection for how the checks use it.
+    internal Guard<T> Collect(FailureKind kind, string errorCode, string message) => Report(kind, errorCode, message);
+
+    // The sink, for the throw path of Rejection, which takes the guard apart so that no copy
+    // of the guard has to live on the stack of the calling method.
+    internal object? Sink => _sink;
+
+    // The exception for a failure in throw mode, built from the parts of a guard.
+    internal static Exception CreateException(string name, T value, object? sink, FailureKind kind, string errorCode, string message) =>
+        new Guard<T>(value, name, sink).CreateException(kind, errorCode, message);
 
     // Moves the chain to another value of a different type, keeping the name, the mode
     // and the state. Used to unwrap Nullable<T>.
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal Guard<TOther> Map<TOther>(TOther value) => new(value, Name, _sink, _state);
 
     /// <inheritdoc/>
@@ -125,8 +141,13 @@ public readonly ref struct Guard<T>
     {
         if (_sink is ValidationReport report)
         {
-            report.Add(new ValidationFailure(Name, message, errorCode));
-            return new Guard<T>(Value, Name, _sink, GuardState.Failed);
+            // Collect mode (core-validation). The report applies the options of the running
+            // Validator<T> rule (path, message, code, severity, state, attempted value) and says
+            // whether the chain stops. Rule cascade "Continue" keeps the chain running, but a
+            // null value always stops it, so null is reported once.
+            return report.AddCheckFailure(Name, message, errorCode, Value, kind == FailureKind.Null)
+                ? new Guard<T>(Value, Name, _sink, GuardState.Failed)
+                : this;
         }
 
         throw CreateException(kind, errorCode, message);
@@ -158,9 +179,12 @@ public readonly ref struct Guard<T>
 /// </summary>
 /// <typeparam name="T">The type of the checked value.</typeparam>
 /// <param name="guard">The guard to run the checks on.</param>
-/// <returns>The guard returned by the last check.</returns>
 /// <example><c>email => email.IfNullOrWhiteSpace().IfNotEmailAddress()</c></example>
-public delegate Guard<T> GuardChain<T>(Guard<T> guard);
+/// <remarks>
+/// The chain returns nothing, so a check may change the guard type on the way, for example
+/// <c>count => count.IfNull().IfNegative()</c> on an <c>int?</c> property.
+/// </remarks>
+public delegate void GuardChain<T>(Guard<T> guard);
 
 internal enum GuardState : byte
 {

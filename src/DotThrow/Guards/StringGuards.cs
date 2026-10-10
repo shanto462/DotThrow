@@ -8,7 +8,9 @@ namespace DotThrow;
 
 // String checks. A null string fails every check here with the "Null" code. Call
 // AllowNull() first to let null pass. Messages never include the string itself, so
-// passwords and tokens do not leak into logs.
+// passwords and tokens do not leak into logs. Substrings and patterns that a check is
+// given (IfContains("@"), IfMatches(pattern)) do appear in the default message, because
+// they are part of the rule; pass a custom message if one of them is a secret.
 public static partial class GuardExtensions
 {
     /// <summary>Fails when the string is <see langword="null"/> or empty.</summary>
@@ -18,19 +20,10 @@ public static partial class GuardExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<string> IfNullOrEmpty(this Guard<string> guard, string? message = null)
     {
-        if (!guard.IsActive)
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || text.Length == 0))
         {
-            return guard;
-        }
-
-        if (guard.Value is null)
-        {
-            return guard.FailNull(message);
-        }
-
-        if (guard.Value.Length == 0)
-        {
-            return guard.Fail(ErrorCodes.Empty, message ?? Messages.Empty(guard.Name));
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.Empty, message);
         }
 
         return guard;
@@ -43,19 +36,10 @@ public static partial class GuardExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<string> IfNullOrWhiteSpace(this Guard<string> guard, string? message = null)
     {
-        if (!guard.IsActive)
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || string.IsNullOrWhiteSpace(text)))
         {
-            return guard;
-        }
-
-        if (guard.Value is null)
-        {
-            return guard.FailNull(message);
-        }
-
-        if (string.IsNullOrWhiteSpace(guard.Value))
-        {
-            return guard.Fail(ErrorCodes.WhiteSpace, message ?? Messages.WhiteSpace(guard.Name));
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.WhiteSpace, message);
         }
 
         return guard;
@@ -64,25 +48,17 @@ public static partial class GuardExtensions
     /// <summary>Fails when the string has more than <paramref name="maxLength"/> characters.</summary>
     /// <param name="guard">The guard.</param>
     /// <param name="maxLength">The largest allowed length.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholders: <c>{MaxLength}</c>, <c>{TotalLength}</c>.</param>
     /// <returns>The guard.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<string> IfLongerThan(this Guard<string> guard, int maxLength, string? message = null)
     {
-        Argument.NotNegative(maxLength);
-        if (!guard.IsActive)
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || text.Length > maxLength))
         {
-            return guard;
-        }
-
-        if (guard.Value is null)
-        {
-            return guard.FailNull(message);
-        }
-
-        if (guard.Value.Length > maxLength)
-        {
-            return guard.Fail(ErrorCodes.LongerThan, message ?? Messages.LongerThan(guard.Name, maxLength));
+            // A negative maximum fails every string, so it is caught here.
+            Argument.NotNegative(maxLength);
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.LongerThan, message, Placeholder.MaxLength, maxLength, Placeholder.TotalLength, text?.Length ?? 0);
         }
 
         return guard;
@@ -91,25 +67,16 @@ public static partial class GuardExtensions
     /// <summary>Fails when the string has fewer than <paramref name="minLength"/> characters.</summary>
     /// <param name="guard">The guard.</param>
     /// <param name="minLength">The smallest allowed length.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholders: <c>{MinLength}</c>, <c>{TotalLength}</c>.</param>
     /// <returns>The guard.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<string> IfShorterThan(this Guard<string> guard, int minLength, string? message = null)
     {
         Argument.NotNegative(minLength);
-        if (!guard.IsActive)
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || text.Length < minLength))
         {
-            return guard;
-        }
-
-        if (guard.Value is null)
-        {
-            return guard.FailNull(message);
-        }
-
-        if (guard.Value.Length < minLength)
-        {
-            return guard.Fail(ErrorCodes.ShorterThan, message ?? Messages.ShorterThan(guard.Name, minLength));
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.ShorterThan, message, Placeholder.MinLength, minLength, Placeholder.TotalLength, text?.Length ?? 0);
         }
 
         return guard;
@@ -118,25 +85,17 @@ public static partial class GuardExtensions
     /// <summary>Fails when the string does not have exactly <paramref name="length"/> characters.</summary>
     /// <param name="guard">The guard.</param>
     /// <param name="length">The required length.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholders: <c>{Length}</c> (also as <c>{MinLength}</c> and <c>{MaxLength}</c>), <c>{TotalLength}</c>.</param>
     /// <returns>The guard.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<string> IfLengthNotEqualTo(this Guard<string> guard, int length, string? message = null)
     {
-        Argument.NotNegative(length);
-        if (!guard.IsActive)
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || text.Length != length))
         {
-            return guard;
-        }
-
-        if (guard.Value is null)
-        {
-            return guard.FailNull(message);
-        }
-
-        if (guard.Value.Length != length)
-        {
-            return guard.Fail(ErrorCodes.LengthNotEqualTo, message ?? Messages.LengthNotEqualTo(guard.Name, length));
+            // A negative length fails every string, so it is caught here.
+            Argument.NotNegative(length);
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.LengthNotEqualTo, message, Placeholder.Length, length, Placeholder.MinLength, length, Placeholder.MaxLength, length, Placeholder.TotalLength, text?.Length ?? 0);
         }
 
         return guard;
@@ -149,58 +108,58 @@ public static partial class GuardExtensions
     /// <param name="guard">The guard.</param>
     /// <param name="minLength">The smallest allowed length.</param>
     /// <param name="maxLength">The largest allowed length.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholders: <c>{MinLength}</c>, <c>{MaxLength}</c>, <c>{TotalLength}</c>.</param>
     /// <returns>The guard.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<string> IfLengthOutOfRange(this Guard<string> guard, int minLength, int maxLength, string? message = null)
     {
         Argument.NotNegative(minLength);
-        Argument.Range(minLength, maxLength);
-        if (!guard.IsActive)
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || text.Length < minLength || text.Length > maxLength))
         {
-            return guard;
-        }
-
-        if (guard.Value is null)
-        {
-            return guard.FailNull(message);
-        }
-
-        if (guard.Value.Length < minLength || guard.Value.Length > maxLength)
-        {
-            return guard.Fail(ErrorCodes.LengthOutOfRange, message ?? Messages.LengthOutOfRange(guard.Name, minLength, maxLength));
+            // A maximum below the minimum fails every string, so it is caught here.
+            Argument.Range(minLength, maxLength);
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.LengthOutOfRange, message, Placeholder.MinLength, minLength, Placeholder.MaxLength, maxLength, Placeholder.TotalLength, text?.Length ?? 0);
         }
 
         return guard;
     }
 
-    /// <summary>Fails when the string equals <paramref name="other"/> under <paramref name="comparison"/>.</summary>
+    /// <summary>
+    /// Fails when the string equals <paramref name="other"/> under <paramref name="comparison"/>.
+    /// The default message does not show <paramref name="other"/>, which may be a secret;
+    /// a custom message can use <c>{ComparisonValue}</c>.
+    /// </summary>
     /// <param name="guard">The guard.</param>
     /// <param name="other">The rejected string.</param>
     /// <param name="comparison">How to compare, for example <see cref="StringComparison.OrdinalIgnoreCase"/>.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{ComparisonValue}</c>.</param>
     /// <returns>The guard.</returns>
     public static Guard<string> IfEqualTo(this Guard<string> guard, string? other, StringComparison comparison, string? message = null)
     {
         if (guard.IsActive && string.Equals(guard.Value, other, comparison))
         {
-            return guard.Fail(ErrorCodes.EqualTo, message ?? Messages.EqualTo(guard.Name, other));
+            return Rejection.Fail(guard, FailureKind.Argument, ErrorCodes.EqualTo, message, Placeholder.ComparisonValue, other);
         }
 
         return guard;
     }
 
-    /// <summary>Fails when the string does not equal <paramref name="other"/> under <paramref name="comparison"/>.</summary>
+    /// <summary>
+    /// Fails when the string does not equal <paramref name="other"/> under <paramref name="comparison"/>.
+    /// The default message does not show <paramref name="other"/>, which may be a secret;
+    /// a custom message can use <c>{ComparisonValue}</c>.
+    /// </summary>
     /// <param name="guard">The guard.</param>
     /// <param name="other">The required string.</param>
     /// <param name="comparison">How to compare, for example <see cref="StringComparison.OrdinalIgnoreCase"/>.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{ComparisonValue}</c>.</param>
     /// <returns>The guard.</returns>
     public static Guard<string> IfNotEqualTo(this Guard<string> guard, string? other, StringComparison comparison, string? message = null)
     {
         if (guard.IsActive && !string.Equals(guard.Value, other, comparison))
         {
-            return guard.Fail(ErrorCodes.NotEqualTo, message ?? Messages.NotEqualTo(guard.Name, other));
+            return Rejection.Fail(guard, FailureKind.Argument, ErrorCodes.NotEqualTo, message, Placeholder.ComparisonValue, other);
         }
 
         return guard;
@@ -210,24 +169,15 @@ public static partial class GuardExtensions
     /// <param name="guard">The guard.</param>
     /// <param name="value">The rejected substring.</param>
     /// <param name="comparison">How to compare. The default is <see cref="StringComparison.Ordinal"/>.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Value}</c>.</param>
     /// <returns>The guard.</returns>
     public static Guard<string> IfContains(this Guard<string> guard, string value, StringComparison comparison = StringComparison.Ordinal, string? message = null)
     {
-        Argument.NotNull(value);
-        if (!guard.IsActive)
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || Formats.Contains(text, value, comparison)))
         {
-            return guard;
-        }
-
-        if (guard.Value is null)
-        {
-            return guard.FailNull(message);
-        }
-
-        if (Formats.Contains(guard.Value, value, comparison))
-        {
-            return guard.Fail(ErrorCodes.Contains, message ?? Messages.Contains(guard.Name, value));
+            Argument.NotNull(value);
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.Contains, message, Placeholder.Value, value, TemplateKeys.ContainsValue);
         }
 
         return guard;
@@ -237,24 +187,15 @@ public static partial class GuardExtensions
     /// <param name="guard">The guard.</param>
     /// <param name="value">The required substring.</param>
     /// <param name="comparison">How to compare. The default is <see cref="StringComparison.Ordinal"/>.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Value}</c>.</param>
     /// <returns>The guard.</returns>
     public static Guard<string> IfNotContains(this Guard<string> guard, string value, StringComparison comparison = StringComparison.Ordinal, string? message = null)
     {
-        Argument.NotNull(value);
-        if (!guard.IsActive)
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || !Formats.Contains(text, value, comparison)))
         {
-            return guard;
-        }
-
-        if (guard.Value is null)
-        {
-            return guard.FailNull(message);
-        }
-
-        if (!Formats.Contains(guard.Value, value, comparison))
-        {
-            return guard.Fail(ErrorCodes.NotContains, message ?? Messages.NotContains(guard.Name, value));
+            Argument.NotNull(value);
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.NotContains, message, Placeholder.Value, value, TemplateKeys.NotContainsValue);
         }
 
         return guard;
@@ -264,24 +205,15 @@ public static partial class GuardExtensions
     /// <param name="guard">The guard.</param>
     /// <param name="value">The rejected prefix.</param>
     /// <param name="comparison">How to compare. The default is <see cref="StringComparison.Ordinal"/>.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Value}</c>.</param>
     /// <returns>The guard.</returns>
     public static Guard<string> IfStartsWith(this Guard<string> guard, string value, StringComparison comparison = StringComparison.Ordinal, string? message = null)
     {
-        Argument.NotNull(value);
-        if (!guard.IsActive)
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || text.StartsWith(value, comparison)))
         {
-            return guard;
-        }
-
-        if (guard.Value is null)
-        {
-            return guard.FailNull(message);
-        }
-
-        if (guard.Value.StartsWith(value, comparison))
-        {
-            return guard.Fail(ErrorCodes.StartsWith, message ?? Messages.StartsWith(guard.Name, value));
+            Argument.NotNull(value);
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.StartsWith, message, Placeholder.Value, value);
         }
 
         return guard;
@@ -291,24 +223,15 @@ public static partial class GuardExtensions
     /// <param name="guard">The guard.</param>
     /// <param name="value">The required prefix.</param>
     /// <param name="comparison">How to compare. The default is <see cref="StringComparison.Ordinal"/>.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Value}</c>.</param>
     /// <returns>The guard.</returns>
     public static Guard<string> IfNotStartsWith(this Guard<string> guard, string value, StringComparison comparison = StringComparison.Ordinal, string? message = null)
     {
-        Argument.NotNull(value);
-        if (!guard.IsActive)
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || !text.StartsWith(value, comparison)))
         {
-            return guard;
-        }
-
-        if (guard.Value is null)
-        {
-            return guard.FailNull(message);
-        }
-
-        if (!guard.Value.StartsWith(value, comparison))
-        {
-            return guard.Fail(ErrorCodes.NotStartsWith, message ?? Messages.NotStartsWith(guard.Name, value));
+            Argument.NotNull(value);
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.NotStartsWith, message, Placeholder.Value, value);
         }
 
         return guard;
@@ -318,24 +241,15 @@ public static partial class GuardExtensions
     /// <param name="guard">The guard.</param>
     /// <param name="value">The rejected suffix.</param>
     /// <param name="comparison">How to compare. The default is <see cref="StringComparison.Ordinal"/>.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Value}</c>.</param>
     /// <returns>The guard.</returns>
     public static Guard<string> IfEndsWith(this Guard<string> guard, string value, StringComparison comparison = StringComparison.Ordinal, string? message = null)
     {
-        Argument.NotNull(value);
-        if (!guard.IsActive)
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || text.EndsWith(value, comparison)))
         {
-            return guard;
-        }
-
-        if (guard.Value is null)
-        {
-            return guard.FailNull(message);
-        }
-
-        if (guard.Value.EndsWith(value, comparison))
-        {
-            return guard.Fail(ErrorCodes.EndsWith, message ?? Messages.EndsWith(guard.Name, value));
+            Argument.NotNull(value);
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.EndsWith, message, Placeholder.Value, value);
         }
 
         return guard;
@@ -345,24 +259,15 @@ public static partial class GuardExtensions
     /// <param name="guard">The guard.</param>
     /// <param name="value">The required suffix.</param>
     /// <param name="comparison">How to compare. The default is <see cref="StringComparison.Ordinal"/>.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Value}</c>.</param>
     /// <returns>The guard.</returns>
     public static Guard<string> IfNotEndsWith(this Guard<string> guard, string value, StringComparison comparison = StringComparison.Ordinal, string? message = null)
     {
-        Argument.NotNull(value);
-        if (!guard.IsActive)
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || !text.EndsWith(value, comparison)))
         {
-            return guard;
-        }
-
-        if (guard.Value is null)
-        {
-            return guard.FailNull(message);
-        }
-
-        if (!guard.Value.EndsWith(value, comparison))
-        {
-            return guard.Fail(ErrorCodes.NotEndsWith, message ?? Messages.NotEndsWith(guard.Name, value));
+            Argument.NotNull(value);
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.NotEndsWith, message, Placeholder.Value, value);
         }
 
         return guard;
@@ -372,24 +277,15 @@ public static partial class GuardExtensions
     /// <param name="guard">The guard.</param>
     /// <param name="pattern">The rejected pattern.</param>
     /// <param name="options">The regular expression options.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Pattern}</c>.</param>
     /// <returns>The guard.</returns>
     public static Guard<string> IfMatches(this Guard<string> guard, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern, RegexOptions options = RegexOptions.None, string? message = null)
     {
         Argument.NotNull(pattern);
-        if (!guard.IsActive)
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || Regex.IsMatch(text, pattern, options)))
         {
-            return guard;
-        }
-
-        if (guard.Value is null)
-        {
-            return guard.FailNull(message);
-        }
-
-        if (Regex.IsMatch(guard.Value, pattern, options))
-        {
-            return guard.Fail(ErrorCodes.Matches, message ?? Messages.Matches(guard.Name, pattern));
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.Matches, message, Placeholder.Pattern, pattern);
         }
 
         return guard;
@@ -398,24 +294,15 @@ public static partial class GuardExtensions
     /// <summary>Fails when the string matches <paramref name="regex"/>.</summary>
     /// <param name="guard">The guard.</param>
     /// <param name="regex">The rejected pattern, for example one made by the <c>[GeneratedRegex]</c> source generator.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Pattern}</c>.</param>
     /// <returns>The guard.</returns>
     public static Guard<string> IfMatches(this Guard<string> guard, Regex regex, string? message = null)
     {
         Argument.NotNull(regex);
-        if (!guard.IsActive)
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || regex.IsMatch(text)))
         {
-            return guard;
-        }
-
-        if (guard.Value is null)
-        {
-            return guard.FailNull(message);
-        }
-
-        if (regex.IsMatch(guard.Value))
-        {
-            return guard.Fail(ErrorCodes.Matches, message ?? Messages.Matches(guard.Name, regex.ToString()));
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.Matches, message, Placeholder.Pattern, regex.ToString());
         }
 
         return guard;
@@ -425,24 +312,15 @@ public static partial class GuardExtensions
     /// <param name="guard">The guard.</param>
     /// <param name="pattern">The required pattern.</param>
     /// <param name="options">The regular expression options.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Pattern}</c>.</param>
     /// <returns>The guard.</returns>
     public static Guard<string> IfNotMatches(this Guard<string> guard, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern, RegexOptions options = RegexOptions.None, string? message = null)
     {
         Argument.NotNull(pattern);
-        if (!guard.IsActive)
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || !Regex.IsMatch(text, pattern, options)))
         {
-            return guard;
-        }
-
-        if (guard.Value is null)
-        {
-            return guard.FailNull(message);
-        }
-
-        if (!Regex.IsMatch(guard.Value, pattern, options))
-        {
-            return guard.Fail(ErrorCodes.NotMatches, message ?? Messages.NotMatches(guard.Name, pattern));
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.NotMatches, message, Placeholder.Pattern, pattern);
         }
 
         return guard;
@@ -451,24 +329,15 @@ public static partial class GuardExtensions
     /// <summary>Fails when the string does not match <paramref name="regex"/>.</summary>
     /// <param name="guard">The guard.</param>
     /// <param name="regex">The required pattern, for example one made by the <c>[GeneratedRegex]</c> source generator.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Pattern}</c>.</param>
     /// <returns>The guard.</returns>
     public static Guard<string> IfNotMatches(this Guard<string> guard, Regex regex, string? message = null)
     {
         Argument.NotNull(regex);
-        if (!guard.IsActive)
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || !regex.IsMatch(text)))
         {
-            return guard;
-        }
-
-        if (guard.Value is null)
-        {
-            return guard.FailNull(message);
-        }
-
-        if (!regex.IsMatch(guard.Value))
-        {
-            return guard.Fail(ErrorCodes.NotMatches, message ?? Messages.NotMatches(guard.Name, regex.ToString()));
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.NotMatches, message, Placeholder.Pattern, regex.ToString());
         }
 
         return guard;
@@ -484,19 +353,10 @@ public static partial class GuardExtensions
     /// <returns>The guard.</returns>
     public static Guard<string> IfNotEmailAddress(this Guard<string> guard, string? message = null)
     {
-        if (!guard.IsActive)
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || !Formats.IsEmailAddress(text)))
         {
-            return guard;
-        }
-
-        if (guard.Value is null)
-        {
-            return guard.FailNull(message);
-        }
-
-        if (!Formats.IsEmailAddress(guard.Value))
-        {
-            return guard.Fail(ErrorCodes.NotEmailAddress, message ?? Messages.NotEmailAddress(guard.Name));
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.NotEmailAddress, message);
         }
 
         return guard;
@@ -511,19 +371,10 @@ public static partial class GuardExtensions
     /// <returns>The guard.</returns>
     public static Guard<string> IfNotJson(this Guard<string> guard, string? message = null)
     {
-        if (!guard.IsActive)
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || !Json.IsValid(text)))
         {
-            return guard;
-        }
-
-        if (guard.Value is null)
-        {
-            return guard.FailNull(message);
-        }
-
-        if (!Json.IsValid(guard.Value))
-        {
-            return guard.Fail(ErrorCodes.NotJson, message ?? Messages.NotJson(guard.Name));
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.NotJson, message);
         }
 
         return guard;
@@ -538,19 +389,10 @@ public static partial class GuardExtensions
     /// <returns>The guard.</returns>
     public static Guard<string> IfNotXml(this Guard<string> guard, string? message = null)
     {
-        if (!guard.IsActive)
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || !Formats.IsXml(text)))
         {
-            return guard;
-        }
-
-        if (guard.Value is null)
-        {
-            return guard.FailNull(message);
-        }
-
-        if (!Formats.IsXml(guard.Value))
-        {
-            return guard.Fail(ErrorCodes.NotXml, message ?? Messages.NotXml(guard.Name));
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.NotXml, message);
         }
 
         return guard;
@@ -561,25 +403,22 @@ public static partial class GuardExtensions
     /// <c>/etc/hosts</c> or <c>C:\temp</c> is not treated as an absolute URI. Write
     /// <c>file:///etc/hosts</c> for a file URI.
     /// </summary>
+    /// <remarks>
+    /// The same rules hold on every operating system: an empty or white-space string fails
+    /// (even though RFC 3986 allows an empty relative reference), a backslash fails anywhere
+    /// in the string (RFC 3986 does not allow it), and a Windows drive path such as
+    /// <c>C:\temp</c> or <c>C:/temp</c> fails for every kind.
+    /// </remarks>
     /// <param name="guard">The guard.</param>
     /// <param name="kind">The required kind. The default is <see cref="UriKind.Absolute"/>.</param>
     /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
     /// <returns>The guard.</returns>
     public static Guard<string> IfNotUri(this Guard<string> guard, UriKind kind = UriKind.Absolute, string? message = null)
     {
-        if (!guard.IsActive)
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || !Formats.IsUri(text, kind, out _)))
         {
-            return guard;
-        }
-
-        if (guard.Value is null)
-        {
-            return guard.FailNull(message);
-        }
-
-        if (!Formats.IsUri(guard.Value, kind, out _))
-        {
-            return guard.Fail(ErrorCodes.NotUri, message ?? Messages.NotUri(guard.Name, kind));
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.NotUri, message, NotUriKey(kind));
         }
 
         return guard;
@@ -591,20 +430,10 @@ public static partial class GuardExtensions
     /// <returns>The guard.</returns>
     public static Guard<string> IfNotHttpUrl(this Guard<string> guard, string? message = null)
     {
-        if (!guard.IsActive)
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || !Formats.IsHttpUrl(text)))
         {
-            return guard;
-        }
-
-        if (guard.Value is null)
-        {
-            return guard.FailNull(message);
-        }
-
-        if (!Formats.IsUri(guard.Value, UriKind.Absolute, out var uri)
-            || (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
-        {
-            return guard.Fail(ErrorCodes.NotHttpUrl, message ?? Messages.NotHttpUrl(guard.Name));
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.NotHttpUrl, message);
         }
 
         return guard;
@@ -618,24 +447,15 @@ public static partial class GuardExtensions
     /// <typeparam name="TResult">The type to parse into.</typeparam>
     /// <param name="guard">The guard.</param>
     /// <param name="provider">The format provider. The default is <see cref="System.Globalization.CultureInfo.InvariantCulture"/>.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{Type}</c>.</param>
     /// <returns>The guard.</returns>
     public static Guard<string> IfNotParsable<TResult>(this Guard<string> guard, IFormatProvider? provider = null, string? message = null)
         where TResult : IParsable<TResult>
     {
-        if (!guard.IsActive)
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || !TResult.TryParse(text, provider ?? System.Globalization.CultureInfo.InvariantCulture, out _)))
         {
-            return guard;
-        }
-
-        if (guard.Value is null)
-        {
-            return guard.FailNull(message);
-        }
-
-        if (!TResult.TryParse(guard.Value, provider ?? System.Globalization.CultureInfo.InvariantCulture, out _))
-        {
-            return guard.Fail(ErrorCodes.NotParsable, message ?? Messages.NotParsable(guard.Name, typeof(TResult)));
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.NotParsable, message, Placeholder.Type, typeof(TResult).Name);
         }
 
         return guard;
@@ -651,19 +471,10 @@ public static partial class GuardExtensions
     /// <returns>The guard.</returns>
     public static Guard<string> IfAllUpperCase(this Guard<string> guard, string? message = null)
     {
-        if (!guard.IsActive)
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || Formats.AllLettersAre(text, upper: true)))
         {
-            return guard;
-        }
-
-        if (guard.Value is null)
-        {
-            return guard.FailNull(message);
-        }
-
-        if (Formats.AllLettersAre(guard.Value, upper: true))
-        {
-            return guard.Fail(ErrorCodes.AllUpperCase, message ?? Messages.AllUpperCase(guard.Name));
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.AllUpperCase, message);
         }
 
         return guard;
@@ -678,21 +489,19 @@ public static partial class GuardExtensions
     /// <returns>The guard.</returns>
     public static Guard<string> IfAllLowerCase(this Guard<string> guard, string? message = null)
     {
-        if (!guard.IsActive)
+        var text = guard.Value;
+        if (guard.IsActive && (text is null || Formats.AllLettersAre(text, upper: false)))
         {
-            return guard;
-        }
-
-        if (guard.Value is null)
-        {
-            return guard.FailNull(message);
-        }
-
-        if (Formats.AllLettersAre(guard.Value, upper: false))
-        {
-            return guard.Fail(ErrorCodes.AllLowerCase, message ?? Messages.AllLowerCase(guard.Name));
+            return Rejection.Content(guard, FailureKind.Argument, ErrorCodes.AllLowerCase, message);
         }
 
         return guard;
     }
+
+    private static string? NotUriKey(UriKind kind) => kind switch
+    {
+        UriKind.Absolute => TemplateKeys.NotUriAbsolute,
+        UriKind.Relative => TemplateKeys.NotUriRelative,
+        _ => null,
+    };
 }

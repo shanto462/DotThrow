@@ -7,19 +7,22 @@ namespace DotThrow;
 // Date and time checks. IfBefore and IfAfter read better than IfLessThan and
 // IfGreaterThan for dates. IfInPast and IfInFuture compare with the current time;
 // on .NET 8 and later, pass a TimeProvider to control "now" in tests.
+//
+// DateTime and Kind: when both values have a known Kind (Utc or Local) and the kinds
+// differ, they are compared in UTC. An Unspecified value is compared as it is.
 public static partial class GuardExtensions
 {
     /// <summary>Fails when the value is earlier than <paramref name="limit"/>.</summary>
     /// <param name="guard">The guard.</param>
     /// <param name="limit">The earliest allowed value.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{ComparisonValue}</c>.</param>
     /// <returns>The guard.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<DateTime> IfBefore(this Guard<DateTime> guard, DateTime limit, string? message = null)
     {
-        if (guard.IsActive && guard.Value < limit)
+        if (guard.IsActive && Ordering.Compare(guard.Value, limit) < 0)
         {
-            return guard.FailOutOfRange(ErrorCodes.Before, message ?? Messages.Before(guard.Name, limit));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.Before, message, Placeholder.ComparisonValue, limit);
         }
 
         return guard;
@@ -28,14 +31,14 @@ public static partial class GuardExtensions
     /// <summary>Fails when the value is later than <paramref name="limit"/>.</summary>
     /// <param name="guard">The guard.</param>
     /// <param name="limit">The latest allowed value.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{ComparisonValue}</c>.</param>
     /// <returns>The guard.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<DateTime> IfAfter(this Guard<DateTime> guard, DateTime limit, string? message = null)
     {
-        if (guard.IsActive && guard.Value > limit)
+        if (guard.IsActive && Ordering.Compare(guard.Value, limit) > 0)
         {
-            return guard.FailOutOfRange(ErrorCodes.After, message ?? Messages.After(guard.Name, limit));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.After, message, Placeholder.ComparisonValue, limit);
         }
 
         return guard;
@@ -44,14 +47,14 @@ public static partial class GuardExtensions
     /// <summary>Fails when the value is earlier than <paramref name="limit"/>.</summary>
     /// <param name="guard">The guard.</param>
     /// <param name="limit">The earliest allowed value.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{ComparisonValue}</c>.</param>
     /// <returns>The guard.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<DateTimeOffset> IfBefore(this Guard<DateTimeOffset> guard, DateTimeOffset limit, string? message = null)
     {
         if (guard.IsActive && guard.Value < limit)
         {
-            return guard.FailOutOfRange(ErrorCodes.Before, message ?? Messages.Before(guard.Name, limit));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.Before, message, Placeholder.ComparisonValue, limit);
         }
 
         return guard;
@@ -60,14 +63,14 @@ public static partial class GuardExtensions
     /// <summary>Fails when the value is later than <paramref name="limit"/>.</summary>
     /// <param name="guard">The guard.</param>
     /// <param name="limit">The latest allowed value.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{ComparisonValue}</c>.</param>
     /// <returns>The guard.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<DateTimeOffset> IfAfter(this Guard<DateTimeOffset> guard, DateTimeOffset limit, string? message = null)
     {
         if (guard.IsActive && guard.Value > limit)
         {
-            return guard.FailOutOfRange(ErrorCodes.After, message ?? Messages.After(guard.Name, limit));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.After, message, Placeholder.ComparisonValue, limit);
         }
 
         return guard;
@@ -84,7 +87,7 @@ public static partial class GuardExtensions
     {
         if (guard.IsActive && guard.Value < Now(guard.Value.Kind))
         {
-            return guard.FailOutOfRange(ErrorCodes.InPast, message ?? Messages.InPast(guard.Name));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.InPast, message);
         }
 
         return guard;
@@ -101,7 +104,7 @@ public static partial class GuardExtensions
     {
         if (guard.IsActive && guard.Value > Now(guard.Value.Kind))
         {
-            return guard.FailOutOfRange(ErrorCodes.InFuture, message ?? Messages.InFuture(guard.Name));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.InFuture, message);
         }
 
         return guard;
@@ -115,7 +118,7 @@ public static partial class GuardExtensions
     {
         if (guard.IsActive && guard.Value < DateTimeOffset.UtcNow)
         {
-            return guard.FailOutOfRange(ErrorCodes.InPast, message ?? Messages.InPast(guard.Name));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.InPast, message);
         }
 
         return guard;
@@ -129,7 +132,7 @@ public static partial class GuardExtensions
     {
         if (guard.IsActive && guard.Value > DateTimeOffset.UtcNow)
         {
-            return guard.FailOutOfRange(ErrorCodes.InFuture, message ?? Messages.InFuture(guard.Name));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.InFuture, message);
         }
 
         return guard;
@@ -151,7 +154,7 @@ public static partial class GuardExtensions
         Argument.NotNull(timeProvider);
         if (guard.IsActive && guard.Value < Now(guard.Value.Kind, timeProvider))
         {
-            return guard.FailOutOfRange(ErrorCodes.InPast, message ?? Messages.InPast(guard.Name));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.InPast, message);
         }
 
         return guard;
@@ -170,7 +173,7 @@ public static partial class GuardExtensions
         Argument.NotNull(timeProvider);
         if (guard.IsActive && guard.Value > Now(guard.Value.Kind, timeProvider))
         {
-            return guard.FailOutOfRange(ErrorCodes.InFuture, message ?? Messages.InFuture(guard.Name));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.InFuture, message);
         }
 
         return guard;
@@ -186,7 +189,7 @@ public static partial class GuardExtensions
         Argument.NotNull(timeProvider);
         if (guard.IsActive && guard.Value < timeProvider.GetUtcNow())
         {
-            return guard.FailOutOfRange(ErrorCodes.InPast, message ?? Messages.InPast(guard.Name));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.InPast, message);
         }
 
         return guard;
@@ -202,7 +205,7 @@ public static partial class GuardExtensions
         Argument.NotNull(timeProvider);
         if (guard.IsActive && guard.Value > timeProvider.GetUtcNow())
         {
-            return guard.FailOutOfRange(ErrorCodes.InFuture, message ?? Messages.InFuture(guard.Name));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.InFuture, message);
         }
 
         return guard;
@@ -211,14 +214,14 @@ public static partial class GuardExtensions
     /// <summary>Fails when the date is earlier than <paramref name="limit"/>.</summary>
     /// <param name="guard">The guard.</param>
     /// <param name="limit">The earliest allowed date.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{ComparisonValue}</c>.</param>
     /// <returns>The guard.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<DateOnly> IfBefore(this Guard<DateOnly> guard, DateOnly limit, string? message = null)
     {
         if (guard.IsActive && guard.Value < limit)
         {
-            return guard.FailOutOfRange(ErrorCodes.Before, message ?? Messages.Before(guard.Name, limit));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.Before, message, Placeholder.ComparisonValue, limit);
         }
 
         return guard;
@@ -227,14 +230,14 @@ public static partial class GuardExtensions
     /// <summary>Fails when the date is later than <paramref name="limit"/>.</summary>
     /// <param name="guard">The guard.</param>
     /// <param name="limit">The latest allowed date.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{ComparisonValue}</c>.</param>
     /// <returns>The guard.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<DateOnly> IfAfter(this Guard<DateOnly> guard, DateOnly limit, string? message = null)
     {
         if (guard.IsActive && guard.Value > limit)
         {
-            return guard.FailOutOfRange(ErrorCodes.After, message ?? Messages.After(guard.Name, limit));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.After, message, Placeholder.ComparisonValue, limit);
         }
 
         return guard;
@@ -264,7 +267,7 @@ public static partial class GuardExtensions
         Argument.NotNull(timeProvider);
         if (guard.IsActive && guard.Value < Today(timeProvider))
         {
-            return guard.FailOutOfRange(ErrorCodes.InPast, message ?? Messages.InPast(guard.Name));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.InPast, message);
         }
 
         return guard;
@@ -280,7 +283,7 @@ public static partial class GuardExtensions
         Argument.NotNull(timeProvider);
         if (guard.IsActive && guard.Value > Today(timeProvider))
         {
-            return guard.FailOutOfRange(ErrorCodes.InFuture, message ?? Messages.InFuture(guard.Name));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.InFuture, message);
         }
 
         return guard;
@@ -289,14 +292,14 @@ public static partial class GuardExtensions
     /// <summary>Fails when the time is earlier than <paramref name="limit"/>.</summary>
     /// <param name="guard">The guard.</param>
     /// <param name="limit">The earliest allowed time.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{ComparisonValue}</c>.</param>
     /// <returns>The guard.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<TimeOnly> IfBefore(this Guard<TimeOnly> guard, TimeOnly limit, string? message = null)
     {
         if (guard.IsActive && guard.Value < limit)
         {
-            return guard.FailOutOfRange(ErrorCodes.Before, message ?? Messages.Before(guard.Name, limit));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.Before, message, Placeholder.ComparisonValue, limit);
         }
 
         return guard;
@@ -305,14 +308,14 @@ public static partial class GuardExtensions
     /// <summary>Fails when the time is later than <paramref name="limit"/>.</summary>
     /// <param name="guard">The guard.</param>
     /// <param name="limit">The latest allowed time.</param>
-    /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>
+    /// <param name="message">A custom message, or <see langword="null"/> for the default one. Placeholder: <c>{ComparisonValue}</c>.</param>
     /// <returns>The guard.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guard<TimeOnly> IfAfter(this Guard<TimeOnly> guard, TimeOnly limit, string? message = null)
     {
         if (guard.IsActive && guard.Value > limit)
         {
-            return guard.FailOutOfRange(ErrorCodes.After, message ?? Messages.After(guard.Name, limit));
+            return Rejection.Fail(guard, FailureKind.OutOfRange, ErrorCodes.After, message, Placeholder.ComparisonValue, limit);
         }
 
         return guard;
