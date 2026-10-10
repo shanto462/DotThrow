@@ -1,10 +1,12 @@
 using System;
 using System.Linq;
 using System.Net;
-using System.Net.Sockets;
 using DotThrow.Internal;
 using DotThrow.Tests.Support;
 using Xunit;
+#if NET
+using System.Net.Sockets;
+#endif
 
 namespace DotThrow.Tests.Guards;
 
@@ -31,6 +33,12 @@ public sealed class TextDifferentialTests
         }
     }
 
+#if NET
+    // Differential tests against the runtime run on .NET only. DotThrow parses Base64 and IP
+    // addresses with its own strict code, the same on every runtime on purpose (D30), and it
+    // follows the modern .NET behavior; .NET Framework's Convert.FromBase64String and
+    // IPAddress.TryParse accept and reject different inputs. The fixed-case tests below check
+    // DotThrow's own behavior on every runtime.
     [Fact]
     public void Base64_matches_Convert_on_random_input()
     {
@@ -65,6 +73,27 @@ public sealed class TextDifferentialTests
             Assert.True(expected == Text.IsBase64(text), $"'{text}' expected {expected}");
         }
     }
+#endif
+
+    [Theory]
+    [InlineData("QWRh", true)]
+    [InlineData("QWRhIExvdmVsYWNl", true)]
+    [InlineData("QQ==", true)]
+    [InlineData("QWE=", true)]
+    [InlineData("QW Rh\r\n", true)]
+    [InlineData(" QWRh ", true)]
+    [InlineData("", false)]
+    [InlineData("   ", false)]
+    [InlineData("QWR", false)]
+    [InlineData("QWRh=", false)]
+    [InlineData("QQ=", false)]
+    [InlineData("Q===", false)]
+    [InlineData("QQ==QQ==", false)]
+    [InlineData("QW-h", false)]
+    [InlineData("QW_h", false)]
+    [InlineData("QW*h", false)]
+    public void Base64_fixed_cases_on_every_runtime(string text, bool valid) =>
+        Assert.Equal(valid, Text.IsBase64(text));
 
     [Fact]
     public void Version_matches_Version_TryParse_for_digits_and_dots()
@@ -124,6 +153,8 @@ public sealed class TextDifferentialTests
         }
     }
 
+#if NET
+    // See the note at Base64_matches_Convert_on_random_input: .NET only.
     [Fact]
     public void IPv6_never_accepts_what_IPAddress_rejects()
     {
@@ -144,21 +175,18 @@ public sealed class TextDifferentialTests
             }
         }
 
-        string[] samples =
-        [
-            "::", "::1", "1::", "1:2:3:4:5:6:7:8", "::ffff:1.2.3.4", "fe80::1%eth0", "abcd:ef01:2345:6789:abcd:ef01:2345:6789",
-            "1:2:3:4:5:6:1.2.3.4", "1:2:3:4:5:6:7::", "::1.2.3.4",
-        ];
-        foreach (var text in samples)
+        foreach (var text in AcceptedIPv6)
         {
-            Assert.True(Text.IsIPAddress(text), text);
             Assert.True(IPAddress.TryParse(text, out _), text);
         }
+    }
+#endif
 
-        foreach (var text in new[] { "1:2:3:4:5:6:7:8:9", "1::2::3", "::ffff:1.2.3", "12345::", ":1", "1:", ":::", "1:2:3:4:5:6:7:1.2.3.4", "::01.2.3.4", "1:2:3:4:5:6:7:8::" })
-        {
-            Assert.False(Text.IsIPAddress(text), text);
-        }
+    [Fact]
+    public void IPv6_fixed_cases_on_every_runtime()
+    {
+        Assert.All(AcceptedIPv6, text => Assert.True(Text.IsIPAddress(text), text));
+        Assert.All(RejectedIPv6, text => Assert.False(Text.IsIPAddress(text), text));
     }
 
     [Fact]
@@ -177,6 +205,18 @@ public sealed class TextDifferentialTests
         }
     }
 
+    private static readonly string[] AcceptedIPv6 =
+    [
+        "::", "::1", "1::", "1:2:3:4:5:6:7:8", "::ffff:1.2.3.4", "fe80::1%eth0", "abcd:ef01:2345:6789:abcd:ef01:2345:6789",
+        "1:2:3:4:5:6:1.2.3.4", "1:2:3:4:5:6:7::", "::1.2.3.4",
+    ];
+
+    private static readonly string[] RejectedIPv6 =
+    [
+        "1:2:3:4:5:6:7:8:9", "1::2::3", "::ffff:1.2.3", "12345::", ":1", "1:", ":::", "1:2:3:4:5:6:7:1.2.3.4", "::01.2.3.4", "1:2:3:4:5:6:7:8::",
+    ];
+
+#if NET
     private static bool IsConvertible(string text)
     {
         try
@@ -189,4 +229,5 @@ public sealed class TextDifferentialTests
             return false;
         }
     }
+#endif
 }
