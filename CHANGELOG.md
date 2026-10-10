@@ -156,6 +156,12 @@ Changed and Removed below.
 - The package targeted only `net6.0`, which is out of support, so .NET Framework
   and .NET Standard projects could not use it.
 
+## [2.0.0-rc.1] - 2026-10-10
+
+Release candidate of 2.0.0, published to rehearse the release: it contains the
+changes listed under 2.0.0 above and is the first publish of the
+DotThrow.DependencyInjection and DotThrow.AspNetCore packages.
+
 ## [1.0.2] - 2022-03-26
 
 ### Added
@@ -195,6 +201,7 @@ First release (.NET 6).
 
 [Unreleased]: https://github.com/shanto462/DotThrow/compare/v2.0.0...HEAD
 [2.0.0]: https://github.com/shanto462/DotThrow/compare/v1.0.2...v2.0.0
+[2.0.0-rc.1]: https://github.com/shanto462/DotThrow/compare/v1.0.2...v2.0.0-rc.1
 [1.0.2]: https://github.com/shanto462/DotThrow/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/shanto462/DotThrow/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/shanto462/DotThrow/releases/tag/v1.0.0

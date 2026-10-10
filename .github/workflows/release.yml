@@ -51,13 +51,21 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      # Only a commit that is already on main may be released. A tag ruleset limits who can
-      # create v* tags; this check stops a tag on any other commit, for example on a branch.
+      # Only a commit that is already on main may get a stable release. A tag ruleset limits
+      # who can create v* tags; this check stops a stable tag on any other commit, for example
+      # on a branch. Prerelease tags (vX.Y.Z-rc.N) may come from a branch, so a release can be
+      # rehearsed before the branch is merged.
       - name: Check that the tagged commit is on main
         if: github.event_name == 'push'
         env:
           REF_NAME: ${{ github.ref_name }}
         run: |
+          case "$REF_NAME" in
+            *-*)
+              echo "Prerelease tag $REF_NAME: the commit does not have to be on main."
+              exit 0
+              ;;
+          esac
           git rev-parse --verify --quiet origin/main > /dev/null || {
             echo "::error::origin/main was not fetched"
             exit 1
