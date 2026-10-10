@@ -8,8 +8,9 @@ the same checks record every error in a report that you can return from an API.
 - More than 110 checks: strings, numbers, dates, collections, dictionaries, enums, URIs,
   IP addresses, streams and types.
 - MIT licensed, no dependencies.
-- The common checks allocate nothing when they pass.
-- Message templates with placeholders, and translations for 58 languages.
+- Checks on numbers, strings, dates, enums and in-memory collections allocate nothing when
+  they pass.
+- Message templates with placeholders, and translations for 58 cultures in 54 languages.
 - Rules from JSON or `IConfiguration` (`DotThrow.Dynamic`), updated at run time.
 - Roslyn analyzers and code fixes in the package, for example for a chain without checks.
 - Targets netstandard2.0, netstandard2.1, net462, net8.0, net9.0 and net10.0. Trimming

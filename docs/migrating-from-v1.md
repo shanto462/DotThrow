@@ -198,8 +198,8 @@ null through, call `WhenPresent()` first. See [guards.md](guards.md#null-values)
 - `IfNotJson()` follows RFC 8259 and accepts any JSON value, such as `42` or `"text"`.
   v1 accepted only objects and arrays, and its Newtonsoft.Json parser also accepted some
   input that is not standard JSON.
-- `IfNotXml()` rejects documents with a DTD (`<!DOCTYPE ...>`), so it is safe for
-  untrusted input.
+- `IfNotXml()` rejects documents with a DTD (`<!DOCTYPE ...>`) and never resolves
+  external entities. For untrusted input, use `IfNotXml(maxCharacters)` to limit the size.
 
 ### Target frameworks
 

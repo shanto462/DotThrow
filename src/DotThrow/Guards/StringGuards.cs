@@ -440,10 +440,12 @@ public static partial class GuardExtensions
     }
 
     /// <summary>
-    /// Fails when the string is not a plausible email address: exactly one <c>@</c> with text
-    /// on both sides; no white-space or control characters anywhere; and on each side of the
-    /// <c>@</c>, no dot at the start or end and no two dots in a row. This is a format check
-    /// only. Send a confirmation email to prove that an address exists.
+    /// Fails when the string is not an email address in the RFC 5321 form (with the non-ASCII
+    /// letters and digits of RFC 6531): a local part that is a dot-atom or a quoted string (at
+    /// most 64 bytes), an <c>@</c>, and a domain of letter, digit and hyphen labels (1 to 63
+    /// characters, no hyphen at either end, at most 253 in total) or a valid address literal
+    /// such as <c>[192.0.2.1]</c> or <c>[IPv6:2001:db8::1]</c>; at most 254 bytes in total.
+    /// This is a format check only. Send a confirmation email to prove that an address exists.
     /// </summary>
     /// <param name="guard">The guard.</param>
     /// <param name="message">A custom message, or <see langword="null"/> for the default one.</param>

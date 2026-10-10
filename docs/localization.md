@@ -116,7 +116,10 @@ form that reads back to the same number, and dates and times for people: `2026-0
 (a `DateOnly`, or a `DateTime` at midnight), `2026-05-02 14:30:00`, `2026-05-02 14:30:00Z`
 (a UTC `DateTime`), `2026-05-02 14:30:00 +02:00` (a `DateTimeOffset`) and `14:30:00`
 (a `TimeOnly`). Fractions of a second appear only when they are not zero. To show a date
-in another way, use a format in your template, such as `{ComparisonValue:dd.MM.yyyy}`. A placeholder can carry a format: `{From:N2}`. A placeholder without a
+in another way, use a format in your template, such as `{ComparisonValue:dd.MM.yyyy}`.
+A format that does not fit the value prints as written instead of throwing, and
+`MessageTemplates.Set` throws an `ArgumentException` for a template whose format no value
+can use, such as `{From:Q}`. A placeholder can carry a format: `{From:N2}`. A placeholder without a
 value, and any other text in braces, stays as written.
 
 ## Messages for one check or one rule
@@ -130,7 +133,8 @@ pageSize.Throw().IfGreaterThan(100, "Ask for at most {ComparisonValue} items per
 
 In a `Validator<T>`, `rule => rule.WithMessage(...)` replaces the message of the whole
 rule. It takes `{PropertyName}`, `{PropertyPath}`, `{PropertyValue}`,
-`{CollectionIndex}`, and the arguments added with `context.AppendArgument` (see
+`{CollectionIndex}`, the values of the failing check (such as `{MaxLength}`), and the
+arguments added with `context.AppendArgument`, filled like FluentValidation 12 (see
 [validation.md](validation.md#rule-options)).
 
 ## Templates in your own checks
@@ -164,8 +168,8 @@ your own placeholders. See [custom-checks.md](custom-checks.md).
 
 ## Built-in translations
 
-DotThrow ships translations of every default template for 58 languages, the set that
-FluentValidation ships: `ar`, `az`, `be`, `bg`, `bn`, `bs`, `ca`, `cs`, `cy`, `da`, `de`,
+DotThrow ships translations of every default template for 58 cultures in 54 languages,
+the set that FluentValidation ships: `ar`, `az`, `be`, `bg`, `bn`, `bs`, `ca`, `cs`, `cy`, `da`, `de`,
 `el`, `es`, `et`, `fa`, `fi`, `fr`, `he`, `hi`, `hr`, `hu`, `id`, `is`, `it`, `ja`, `ka`,
 `kk`, `km`, `ko`, `lt`, `lv`, `mk`, `nb`, `nl`, `nn`, `pl`, `pt`, `pt-BR`, `rm`, `ro`,
 `ru`, `sk`, `sl`, `sq`, `sr`, `sr-Latn`, `sv`, `ta`, `te`, `tg`, `th`, `tr`, `uk`, `uz`,

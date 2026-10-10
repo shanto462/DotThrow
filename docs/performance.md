@@ -1,7 +1,8 @@
 # Performance
 
 DotThrow is built so that a check that passes costs about as much as the `if` you would
-write by hand, does not allocate, and does all the expensive work (building a message,
+write by hand, does not allocate for numbers, strings, dates, enums and in-memory
+collections, and does all the expensive work (building a message,
 looking up a template) only when a check fails. This page explains how, and shows the
 numbers next to hand-written code, the .NET built-in throw helpers, other guard libraries
 and FluentValidation.
@@ -16,6 +17,7 @@ and use [BenchmarkDotNet](https://benchmarkdotnet.org/).
 - [Validation](#validation)
 - [Single checks](#single-checks)
 - [Reading the numbers](#reading-the-numbers)
+- [What allocates](#what-allocates)
 - [Run the benchmarks](#run-the-benchmarks)
 
 ## How DotThrow stays fast
@@ -191,6 +193,23 @@ Mean time per check, with valid input. The .NET code is the baseline.
   `IPAddress.TryParse`, and allocates nothing.
 
 These numbers come from one machine. Run the benchmarks on yours before you rely on them.
+
+## What allocates
+
+Guard chains on numbers, strings, dates, enums and in-memory collections allocate nothing
+when the checks pass. These allocate by design:
+
+- `IfNotXml` (the XML reader) and `IfNotUri` and `IfNotHttpUrl` (a `Uri` object);
+- regular expression checks (`IfMatches`, `IfNotMatches`);
+- `IfHasDuplicates` on a collection with two or more items (a `HashSet`);
+- checks on lazy sequences or collections typed as an interface (an enumerator);
+- `Uri.IfLoopback` for an IPv6 host;
+- `params T[]` calls such as `IfNotOneOf(1, 2, 3)` with a compiler older than C# 13 (the
+  array);
+- on netstandard2.0, netstandard2.1 and net462 only: the enum checks,
+  `IfPrecisionScaleExceeded` and the IP address checks (their bytes).
+
+A failed check allocates its message and, in collect mode, the failure.
 
 ## Run the benchmarks
 

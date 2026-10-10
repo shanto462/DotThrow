@@ -48,10 +48,11 @@ DotThrow is MIT licensed, has no dependencies, runs on every .NET from .NET Fram
 - **Rules as data.** Load rules from JSON or `IConfiguration`, update them at run time,
   and get the same failures as from code.
 - **Fast.** A passing guard chain compiles to about the same code as a hand-written `if`
-  and allocates nothing, and `Validator<T>` was 2.7 to 7 times faster than
+  and allocates nothing for numbers, strings, dates, enums and in-memory collections, and
+  `Validator<T>` was 2.7 to 7 times faster than
   FluentValidation in [our benchmarks](#performance).
 - **Safe defaults.** Null fails content checks, NaN fails range checks, default messages
-  never contain the checked value, and the XML check rejects DTDs.
+  leave out the checked value, and the XML check rejects DTDs.
 
 ## Install
 
@@ -61,7 +62,7 @@ dotnet add package DotThrow
 
 | Package | What it has | Targets |
 | --- | --- | --- |
-| `DotThrow` | Guard clauses, collect mode, `Validator<T>`, dynamic rules (`DotThrow.Dynamic`), message templates with 58 built-in languages, test helpers (`DotThrow.Testing`), an assembly scanner (`DotThrow.Scanning`), and Roslyn analyzers with code fixes. No dependencies. | netstandard2.0, netstandard2.1, net462, net8.0, net9.0, net10.0 |
+| `DotThrow` | Guard clauses, collect mode, `Validator<T>`, dynamic rules (`DotThrow.Dynamic`), message templates with translations for 58 cultures (54 languages), test helpers (`DotThrow.Testing`), an assembly scanner (`DotThrow.Scanning`), and Roslyn analyzers with code fixes. No dependencies. | netstandard2.0, netstandard2.1, net462, net8.0, net9.0, net10.0 |
 | [`DotThrow.DependencyInjection`](src/DotThrow.DependencyInjection/README.md) | `AddValidatorsFromAssemblyContaining<T>()`, `AddValidator<TModel, TValidator>()` (trimming safe), options validation with `ValidateOnStart`, and dynamic validators from configuration with reload. | netstandard2.0, net462, net8.0, net9.0, net10.0 |
 | [`DotThrow.AspNetCore`](src/DotThrow.AspNetCore/README.md) | `.WithValidation<T>()` for minimal API endpoints and route groups, an MVC filter and `[ValidateWithDotThrow]`, and validation problem helpers. | net8.0, net9.0, net10.0 |
 
@@ -294,7 +295,7 @@ later).
 | DT0002 | A manual `if (...) throw` guard that can be one DotThrow check | Info |
 | DT0003 | A name argument the compiler fills in anyway | Info |
 | DT0004 | A validator with async rules run with `Validate` | Warning |
-| DT0005 | An invalid constant regex pattern | Error |
+| DT0005 | An invalid constant regex pattern | Warning |
 | DT0006 | A constant pattern that can use the regex source generator | Info |
 | DT0007 | A check argument that is never valid, such as `IfOutOfRange(10, 5)` | Error |
 | DT0008 | `IfBefore(DateTime.Now)` that should be `IfInPast()` | Info |
@@ -335,7 +336,7 @@ MessageTemplates.Set(ErrorCodes.LongerThan, "'{PropertyName}' darf höchstens {M
 
 The message culture follows `CultureInfo.CurrentUICulture` per request or thread, with a
 fallback chain (`de-AT`, then `de`, then English). DotThrow ships machine-assisted
-translations for 58 languages, the set FluentValidation ships; templates you set always
+translations for 58 cultures in 54 languages, the set FluentValidation ships; templates you set always
 win over them. Every failure also has a stable error code, such as `LongerThan`, so
 clients can translate on their side. See [localization.md](docs/localization.md).
 
@@ -367,8 +368,10 @@ where noted.
 | Small model, `ValidateAsync`, valid | 298.60 ns, 776 B | **91.55 ns, 112 B** |
 | Small model and an async rule, valid | 462.26 ns, 1,336 B | **114.23 ns, 208 B** |
 
-A DotThrow guard chain costs about as much as the hand-written `if` (at most 0.1 ns more
-in these cases) and allocates nothing. `Validator<T>` was 2.7 to 7 times faster than FluentValidation and allocated 6%
+In these cases a DotThrow guard chain costs about as much as the hand-written `if` (at
+most 0.1 ns more) and allocates nothing.
+[Performance](docs/performance.md#what-allocates) lists the few checks that allocate by
+design. `Validator<T>` was 2.7 to 7 times faster than FluentValidation and allocated 6%
 to 16% of its memory. Other work was running on the machine, so absolute times may be a
 little high.
 
@@ -430,18 +433,31 @@ In trimmed and Native AOT apps, use `AddValidator` and a `PropertyMap<T>` instea
 
 ## Security
 
-- **No secrets in messages.** Default messages never contain the checked value, and never
-  contain a compared value of a reference type (`IfEqualTo`, collection `IfContains`,
-  `IfContainsKey`). `{PropertyValue}` appears only in a message you write.
-  `ArgumentOutOfRangeException.ActualValue` is set for value types only.
-  `ValidationFailure.AttemptedValue` does hold the value, so do not log it as is.
+- **No secrets in messages.** Default messages never contain a string or any other
+  reference-type value, including compared values (`IfEqualTo`, collection `IfContains`,
+  `IfContainsKey`). For value types (numbers, dates, enums) the default message leaves the
+  value out too, but `ArgumentOutOfRangeException.ActualValue` holds it, and .NET adds
+  `Actual value was ...` to that exception's message, formatted with the current culture.
+  `{PropertyValue}` appears only in a message you write. `ValidationFailure.AttemptedValue`
+  holds the value, so do not log it as is.
 - **XML is safe to check.** `IfNotXml` rejects DTDs and never resolves external entities.
+  Parsing allocates several times the size of the text, so use `IfNotXml(maxCharacters)`
+  for untrusted input.
 - **Strict parsing.** JSON is checked by DotThrow's own RFC 8259 recognizer, which is
-  iterative (deep nesting cannot overflow the stack) and allocates nothing. IP addresses
-  and version strings are parsed by DotThrow's own strict code, so the answer is the same
-  on every runtime. URI checks reject bare file paths and backslashes.
+  iterative (deep nesting cannot overflow the stack) and allocates nothing. IP addresses,
+  version strings and email addresses (an RFC 5321 subset) are checked by DotThrow's own
+  code, so the answer is the same on every runtime. URI checks validate the text as
+  written: no white space around it, no control characters, only RFC 3986 characters and
+  valid percent escapes, and no bare file paths or backslashes.
+- **Regex timeouts.** `IfMatches` and `IfNotMatches` take a `matchTimeout`. A match that
+  times out fails the check with its normal error code; it never throws. Patterns in
+  dynamic rules always get a one-second timeout.
+- **Not SSRF protection on their own.** `IfLoopback` and `IfPrivate` check an address or a
+  host as written. A host name can resolve to any address, so check every address it
+  resolves to when you connect.
 - **Limits on nesting.** A validator that includes itself is rejected when you build it,
-  and nesting deeper than `ValidatorDefaults.MaxDepth` (256) stops with a clear error
+  and every level of nesting checks the stack, with a limit of
+  `ValidatorDefaults.MaxDepth` (10,000 by default), so a cycle stops with a clear error
   instead of a stack overflow.
 
 To report a security problem, see [SECURITY.md](SECURITY.md).

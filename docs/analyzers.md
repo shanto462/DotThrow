@@ -11,7 +11,7 @@ DotThrow, on every target framework. They need the .NET 8 SDK or later (Visual S
 | [DT0002](#dt0002) | Use a DotThrow check instead of a manual guard | Info | Style | Yes |
 | [DT0003](#dt0003) | Remove the name argument that the compiler fills in | Info | Style | Yes |
 | [DT0004](#dt0004) | Validator with async rules is run synchronously | Warning | Usage | Yes (in async code) |
-| [DT0005](#dt0005) | Regular expression pattern is not valid | Error | Usage | No |
+| [DT0005](#dt0005) | Regular expression pattern is not valid | Warning | Usage | No |
 | [DT0006](#dt0006) | Use a generated regular expression for a constant pattern | Info | Performance | Yes |
 | [DT0007](#dt0007) | Check argument is never valid | Error | Usage | No |
 | [DT0008](#dt0008) | Use IfInPast or IfInFuture to compare with the current time | Info | Style | Yes |
@@ -19,7 +19,8 @@ DotThrow, on every target framework. They need the .NET 8 SDK or later (Visual S
 | [DT0010](#dt0010) | Validation result is not used | Warning | Usage | Yes (most cases) |
 | [DT0011](#dt0011) | Unwrapped nullable value is converted back to a nullable | Warning | Usage | Yes (simple values) |
 
-Info diagnostics show in the IDE as suggestions; `dotnet build` prints warnings and errors.
+All rules shipped in DotThrow 2.0.0. Info diagnostics show in the IDE as suggestions;
+`dotnet build` prints warnings and errors.
 The code fixes run from the light bulb in the IDE, one place at a time or for the whole
 document, project or solution.
 
@@ -199,7 +200,7 @@ method, for example `var report = await validator.ValidateAsync(order);`.
 
 ## DT0005
 
-**Regular expression pattern is not valid** (Error)
+**Regular expression pattern is not valid** (Warning)
 
 `IfMatches` and `IfNotMatches` build a `Regex` from the pattern every time they run. A
 constant pattern that does not parse (or a constant options value the engine rejects, or
@@ -213,9 +214,9 @@ void Example(string code)
 }
 ```
 
-The pattern is checked with the regular expression engine that runs the compiler, which
-is the same engine family as your app on .NET; very old .NET Framework hosts may parse a
-rare pattern differently.
+The pattern is checked with the regular expression engine that runs the compiler. That
+engine can differ between hosts (`msbuild` on .NET Framework and `dotnet build`), so the
+rule is a warning, not an error.
 
 ## DT0006
 

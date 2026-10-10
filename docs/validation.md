@@ -52,7 +52,8 @@ Age: You must be 13 or older. [LessThan]
 - A failed check adds a `ValidationFailure` to the report and skips the rest of its
   chain, so each value reports at most one failure.
 - `Check(form, f => f.Name)` names the failure after the property path, `Name`, as a
-  validator does. `Check(form.Name)` names it after the expression, `form.Name`, and
+  validator does. The selector text is read once and cached, so later calls do not
+  allocate. `Check(form.Name)` names it after the expression, `form.Name`, and
   `Check(form.Name, "Name")` uses the name you pass.
 - A report is not thread-safe. Use one report per validation run.
 
@@ -61,7 +62,7 @@ Age: You must be 13 or older. [LessThan]
 | Member | What it does |
 | --- | --- |
 | `IsValid` | `true` when nothing failed (failures of every severity count). |
-| `Failures` | The failures in the order the checks ran. |
+| `Failures` | The failures in the order the checks ran, as a read-only list. |
 | `ToDictionary()` | Groups the messages by name: `Dictionary<string, string[]>`, the shape ASP.NET Core uses for validation problems. |
 | `ThrowIfInvalid()` | Throws a `ValidationFailedException` with every failure when the report is not valid. |
 | `Add(name, message, errorCode?)`, `Add(failure)` | Adds your own failure. The code defaults to `Invalid`. |
@@ -312,7 +313,7 @@ var signUpRules = new Validator<SignUpForm>()
 | --- | --- |
 | `WithName(name)`, `WithName(x => ...)` | The name in messages (`{PropertyName}`). The failure name stays the property path. |
 | `OverridePropertyName(path)` | The failure name, for example for a computed selector. |
-| `WithMessage(text)`, `WithMessage(x => ...)`, `WithMessage((x, value) => ...)` | Replaces the message of every check in the rule. Placeholders: `{PropertyName}`, `{PropertyPath}`, `{PropertyValue}`, `{CollectionIndex}` and appended arguments. To word one check, pass `message:` to that check instead. |
+| `WithMessage(text)`, `WithMessage(x => ...)`, `WithMessage((x, value) => ...)` | Replaces the message of every check in the rule. Placeholders, filled like FluentValidation 12: `{PropertyName}`, `{PropertyPath}`, `{PropertyValue}`, `{CollectionIndex}`, the values of the failing check (such as `{MaxLength}` or `{ComparisonValue}`), and appended arguments. To word one check, pass `message:` to that check instead. |
 | `WithErrorCode(code)` | Replaces the error code. |
 | `WithSeverity(...)`, `WithState(...)` | See [Severity and state](#severity-and-state). |
 | `When(...)`, `Unless(...)`, `WhenAsync(...)`, `UnlessAsync(...)` | See [Conditions](#conditions). |
@@ -457,7 +458,7 @@ Options:
 | `IncludeGroups(...)`, `IncludeDefaultGroup()`, `IncludeAllGroups()` | Selects groups. |
 | `IncludeProperties(x => x.Email)`, `IncludeProperties("ShippingAddress.City", "Lines[].Quantity")` | Runs only the rules for these properties, for example the field a user just edited. `[]` matches every index. |
 | `ThrowOnFailure()` | Throws instead of returning a report. |
-| `Items` | Values that `Custom` rules and conditions read through `context.Items`. |
+| `Items` | Values that `Custom` rules and conditions read through `context.Items`. Each run gets its own copy, so a rule that changes them does not change the next run. |
 | `UseRuleSelector(selector)` | Your own `IRuleSelector` decides which rules run. |
 | `ClassCascade` | Overrides the class cascade for this run. |
 
@@ -469,6 +470,10 @@ var emailOnly = orderRules.Validate(edited, options => options.IncludeProperties
 Console.WriteLine(emailOnly.Failures.Count);   // 1
 ```
 
+With a C# compiler older than 13, `Validate(x, null)` and `ValidateAsync(x, null, ct)`
+are ambiguous (the overloads use `[OverloadResolutionPriority]`). Use C# 13 or later, cast
+the `null` (`(ValidationOptions?)null`), or call through `IValidator<T>`.
+
 Validating `null` throws an `ArgumentNullException`, unless an overridden `PreValidate` handles it (see [Hooks and defaults](#hooks-and-defaults)).
 
 ## Async rules
@@ -477,7 +482,8 @@ Validating `null` throws an `ArgumentNullException`, unless an overridden `PreVa
 validator with async rules with `ValidateAsync`. `Validate` throws an
 `AsyncRuleInvokedSynchronouslyException` (an `InvalidOperationException`) when it reaches
 an async rule that the selected groups and properties include.
-`Describe().HasAsyncRules` tells you in advance whether a validator has async rules.
+`Describe().HasAsyncRules` tells you in advance whether a validator has async rules; it
+also looks into child, item, included, polymorphic and dynamic validators.
 
 ## Hooks and defaults
 
@@ -500,7 +506,7 @@ A subclass can override:
 | `PropertyChainSeparator` | `"."` | Separator of nested paths. |
 | `ErrorCodeResolver` | none | Maps check codes to your own codes. |
 | `OnFailureCreated` | none | Changes or replaces every failure, for example to add a code prefix. |
-| `MaxDepth` | 256 | How deep child validators may nest before a clear `InvalidOperationException`. |
+| `MaxDepth` | 10,000 | How deep child validators may nest before a clear `InvalidOperationException`. Every level also checks the stack, so a run that would overflow it stops earlier with the same kind of error. |
 
 `ValidatorDefaults.Reset()` puts every setting back.
 

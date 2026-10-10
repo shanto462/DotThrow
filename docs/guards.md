@@ -39,8 +39,10 @@ public sealed class Customer
   the next check.
 - The first check that fails throws. The checks after it do not run.
 - The chain converts to the value, so you can assign it directly, as above.
-- The chain is a `Guard<T>`, a `ref struct`. It never allocates. You cannot keep it in a
-  field, so use it in one expression.
+- The chain is a `Guard<T>`, a `ref struct`. It never allocates, and neither do the checks
+  on numbers, strings, dates, enums and in-memory collections; a few checks allocate by
+  design ([performance.md](performance.md#what-allocates) lists them). You cannot keep a
+  guard in a field, so use it in one expression.
 
 ## What is thrown
 
@@ -52,7 +54,8 @@ public sealed class Customer
 
 - `ParamName` is always set to the name of the value.
 - `ArgumentOutOfRangeException.ActualValue` holds the value when it is a value type (a
-  number, date or enum). For a reference type, such as a string, it stays null.
+  number, date or enum), and .NET adds `Actual value was ...` to the message, formatted
+  with the current culture. For a reference type, such as a string, it stays null.
 - All three types derive from `ArgumentException`, so `catch (ArgumentException)` catches
   every DotThrow failure.
 
@@ -90,11 +93,12 @@ System.ArgumentException: title has 35 characters; keep it under 20. (Parameter 
 To reword or translate the default messages for the whole app, see
 [localization.md](localization.md).
 
-Default messages never contain the checked value, and never contain a compared value of
-a reference type (the `other` of `IfEqualTo` and `IfNotEqualTo`, the `item` of a
-collection `IfContains`, the `key` of `IfContainsKey`), so passwords and tokens do not end
-up in logs. Limits and rules that you pass, such as `150`, `'ORD-'` or a pattern, do
-appear. `{PropertyValue}` shows the value only when you write it in your own message.
+Default messages never contain a string or any other reference-type value: not the
+checked value, and not a compared value (the `other` of `IfEqualTo` and `IfNotEqualTo`, the
+`item` of a collection `IfContains`, the `key` of `IfContainsKey`), so passwords and
+tokens do not end up in logs. For value types the default message leaves the value out
+too, but `ArgumentOutOfRangeException` carries it, as said above. Limits and rules that you
+pass, such as `150`, `'ORD-'` or a pattern, do appear. `{PropertyValue}` shows the value only when you write it in your own message.
 
 .NET adds ` (Parameter 'name')` to the message, and `ArgumentOutOfRangeException` adds a
 second line such as `Actual value was 200.`
@@ -304,16 +308,18 @@ A null string fails every check here with the code `Null`, except `IfEqualTo` an
 | `IfNotStartsWith(value, comparison?)` | `string` | the string does not start with `value`. | Argument | `NotStartsWith` | fails, `Null` | `{Value}` |
 | `IfEndsWith(value, comparison?)` | `string` | the string ends with `value`. | Argument | `EndsWith` | fails, `Null` | `{Value}` |
 | `IfNotEndsWith(value, comparison?)` | `string` | the string does not end with `value`. | Argument | `NotEndsWith` | fails, `Null` | `{Value}` |
-| `IfMatches(pattern, options?)`<br>`IfMatches(regex)` | `string` | the string matches the regular expression `pattern`. | Argument | `Matches` | fails, `Null` | `{Pattern}` |
-| `IfNotMatches(pattern, options?)`<br>`IfNotMatches(regex)` | `string` | the string does not match the regular expression `pattern`. | Argument | `NotMatches` | fails, `Null` | `{Pattern}` |
-| `IfNotEmailAddress()` | `string` | the string is not a plausible email address: exactly one `@` with text on both sides; no white-space or control characters anywhere; and on each side of the `@`, no dot at the start or end and no two dots in a row. This is a format check only. Send a confirmation email to prove that an address exists. | Argument | `NotEmailAddress` | fails, `Null` | - |
+| `IfMatches(pattern, options?)`<br>`IfMatches(regex)`<br>`IfMatches(pattern, matchTimeout, options?)` | `string` | the string matches the regular expression `pattern`. | Argument | `Matches` | fails, `Null` | `{Pattern}` |
+| `IfNotMatches(pattern, options?)`<br>`IfNotMatches(regex)`<br>`IfNotMatches(pattern, matchTimeout, options?)` | `string` | the string does not match the regular expression `pattern`. | Argument | `NotMatches` | fails, `Null` | `{Pattern}` |
+| `IfNotEmailAddress()` | `string` | the string is not an email address in a subset of RFC 5321, with the international letters of RFC 6531: a local part that is a dot-atom (letters, digits and the special characters RFC 5321 allows, in dot-separated parts) or a quoted string, at most 64 bytes; a domain of labels of letters, digits and hyphens (1 to 63 characters, no hyphen at either end) or an address literal such as `[192.0.2.1]`; at most 254 bytes in total. This is a format check only. Send a confirmation email to prove that an address exists. | Argument | `NotEmailAddress` | fails, `Null` | - |
 | `IfNotJson()` | `string` | the string is not valid JSON (RFC 8259). Any JSON value passes, including `42`, `"text"` and `null`. The check does not allocate. | Argument | `NotJson` | fails, `Null` | - |
-| `IfNotXml()` | `string` | the string is not a well-formed XML document. DTDs are rejected and external entities are never resolved, so the check is safe for untrusted input. | Argument | `NotXml` | fails, `Null` | - |
+| `IfNotXml()`<br>`IfNotXml(maxCharacters)` | `string` | the string is not a well-formed XML document. DTDs are rejected and external entities are never resolved, so entity attacks (XXE, billion laughs) do not work. This overload has no size limit, and parsing allocates several times the size of the text: for untrusted input use `IfNotXml` with a limit. | Argument | `NotXml` | fails, `Null` | - |
 | `IfNotUri(kind?)` | `string` | the string is not a URI of the given kind. A bare file path such as `/etc/hosts` or `C:\temp` is not treated as an absolute URI. Write `file:///etc/hosts` for a file URI. | Argument | `NotUri` | fails, `Null` | - |
 | `IfNotHttpUrl()` | `string` | the string is not an absolute `http` or `https` URL. | Argument | `NotHttpUrl` | fails, `Null` | - |
 | `IfNotParsable<T>(provider?)` (.NET 8+) | `string` | the string cannot be parsed into `TResult`, for example `int`, `decimal`, `Guid` or `DateOnly`. | Argument | `NotParsable` | fails, `Null` | `{Type}` |
 | `IfAllUpperCase()` | `string` | the string has at least one letter and every letter is uppercase. Digits and symbols are ignored. | Argument | `AllUpperCase` | fails, `Null` | - |
 | `IfAllLowerCase()` | `string` | the string has at least one letter and every letter is lowercase. Digits and symbols are ignored. | Argument | `AllLowerCase` | fails, `Null` | - |
+
+`IfNotUri` and `IfNotHttpUrl` check the text as written: no white space around it, no control or format characters, only the characters RFC 3986 allows (and non-ASCII letters, as in IRIs), `%` only in valid escapes, and at most one `#`. `Uri.TryCreate` alone trims and escapes, so it accepts text that is not a URI. Give `IfMatches` and `IfNotMatches` a `matchTimeout` when the pattern runs on untrusted input: a match that times out fails the check with its normal code, and `RegexMatchTimeoutException` never escapes.
 
 ### String formats and characters
 
@@ -355,8 +361,10 @@ Work on arrays, lists, sets, dictionaries and any other `IEnumerable`. The count
 | `IfNotContains(item, comparer?)` | collections | the collection does not contain `item`. | Argument | `NotContains` | fails, `Null` | `{Value}` |
 | `IfContainsNull()` | collections | any item in the collection is null. | Argument | `ContainsNull` | fails, `Null` | - |
 | `IfHasDuplicates()` | collections | two items in the collection are equal, by their own `Equals`. This check allocates a `HashSet` for collections with two or more items. | Argument | `HasDuplicates` | fails, `Null` | - |
-| `IfAny(predicate)` | collections | any item in the collection matches `predicate`. | Argument | `Any` | fails, `Null` | `{Condition}` |
-| `IfNone(predicate)` | collections | no item in the collection matches `predicate` (an empty collection fails). | Argument | `None` | fails, `Null` | `{Condition}` |
+| `IfAny(predicate)` | collections, dictionaries | any item in the collection matches `predicate`. | Argument | `Any` | fails, `Null` | `{Condition}` |
+| `IfNone(predicate)` | collections, dictionaries | no item in the collection matches `predicate` (an empty collection fails). | Argument | `None` | fails, `Null` | `{Condition}` |
+
+`IfAny` and `IfNone` infer the item type for the common collection shapes, so a plain lambda works: `tags.Throw().IfAny(t => t.Length > 20)`.
 
 ### Dictionaries
 
@@ -411,8 +419,10 @@ Checks on a `Uri` object. To check text, use the string checks `IfNotUri` and `I
 | `IfRelative()` | `Uri` | the URI is relative (`Uri.IsAbsoluteUri` is false). | Argument | `Relative` | fails, `Null` | - |
 | `IfNotHttps()` | `Uri` | the URI is not an absolute `https` URI. A relative URI fails. | Argument | `NotHttps` | fails, `Null` | - |
 | `IfNotHttpOrHttps()` | `Uri` | the URI is not an absolute `http` or `https` URI. A relative URI fails. | Argument | `NotHttpOrHttps` | fails, `Null` | - |
-| `IfLoopback()` | `Uri` | the URI points to the local machine: the host is `localhost`, a name ending in `.localhost`, or a loopback IP address (`127.0.0.0/8`, `::1`). A relative URI has no host, so it passes. | Argument | `Loopback` | fails, `Null` | - |
+| `IfLoopback()` | `Uri` | the URI points to the local machine: the host is `localhost`, a name ending in `.localhost` (also with a trailing dot, `localhost.`), or a loopback IP address (`127.0.0.0/8`, `::1`, an IPv4-mapped `::ffff:127.x.x.x`, also written `127.0.0.1.`). A relative URI has no host, so it passes. | Argument | `Loopback` | fails, `Null` | - |
 | `IfNotScheme(schemes)` | `Uri` | the URI is relative or its scheme is not one of `schemes` (compared without case). | Argument | `NotScheme` | fails, `Null` | `{Schemes}` |
+
+`IfLoopback` checks the host as written. It is not protection against server-side request forgery (SSRF) on its own: a host name can resolve to any address, so check the addresses a name resolves to when you connect.
 
 ### IP addresses
 
@@ -421,9 +431,11 @@ Checks on an `IPAddress` object. To check text, use the string check `IfNotIPAdd
 | Check | On | Fails when | Throws | Code | Null value | Placeholders |
 | --- | --- | --- | --- | --- | --- | --- |
 | `IfLoopback()` | `IPAddress` | the address is a loopback address: `127.0.0.0/8`, `::1`, or an IPv4-mapped loopback address. | Argument | `Loopback` | fails, `Null` | - |
-| `IfPrivate()` | `IPAddress` | the address is in a private or link-local range: IPv4 `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16` and `169.254.0.0/16`; IPv6 `fc00::/7` (unique local) and `fe80::/10` (link-local). Loopback addresses are not in these ranges; use `IfLoopback` for them. | Argument | `Private` | fails, `Null` | - |
+| `IfPrivate()` | `IPAddress` | the address is in a private or link-local range: IPv4 `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `100.64.0.0/10` (shared address space of carrier-grade NAT, RFC 6598) and `169.254.0.0/16`; IPv6 `fc00::/7` (unique local) and `fe80::/10` (link-local). Loopback addresses are not in these ranges; use `IfLoopback` for them. | Argument | `Private` | fails, `Null` | - |
 | `IfNotIPv4()` | `IPAddress` | the address is not an IPv4 address. An IPv4-mapped IPv6 address is IPv6, so it fails. | Argument | `NotIPv4` | fails, `Null` | - |
 | `IfNotIPv6()` | `IPAddress` | the address is not an IPv6 address. | Argument | `NotIPv6` | fails, `Null` | - |
+
+These checks look at one address. They are not protection against server-side request forgery (SSRF) on their own: check every address a host name resolves to, when you connect.
 
 ### Streams
 

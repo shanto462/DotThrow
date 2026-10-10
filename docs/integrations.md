@@ -55,6 +55,9 @@ public sealed record Contact(string? Email);
   `InterfaceType`, `ValidatorType` and `ModelType`. One difference: a class that
   implements several `IValidator<T>` interfaces is registered for all of them;
   FluentValidation registers the first.
+- Scanning registers a class after its base classes, so a single `IValidator<T>` resolves
+  to the most derived validator (`IEnumerable<IValidator<T>>` gets all of them). Types that
+  cannot be loaded, because an assembly they need is missing, are skipped.
 - Assembly scanning uses reflection and is marked `[RequiresUnreferencedCode]`. In trimmed
   and Native AOT apps, use `AddValidator`.
 
@@ -141,11 +144,17 @@ More forms:
 | `app.MapGroup("/orders").WithValidation<Order>()` | Validates every endpoint of the group that has an `Order` parameter. |
 | `.WithValidation<CreateUser>(o => { ... })` | Sets `Groups`, `ConfigureValidation` (per-request options, such as `Items`) and `ResultFactory` (your own response). |
 
-- The filter finds the handler parameter of type `T` once, when the endpoints are built.
-  A handler without such a parameter, or a missing `IValidator<T>` registration, fails
-  right there, so the mistake shows up at startup instead of on the first invalid request.
-- A parameter whose type derives from `T` is validated too; an optional argument that the
-  request did not send is skipped.
+- The filter finds the handler parameters of type `T` once, when the endpoints are built.
+  A parameter whose type derives from `T` is validated too. Parameters from services
+  (`[FromServices]`, `[FromKeyedServices]`, or a registered service type) are never
+  validated, and an optional argument that the request did not send is skipped. When
+  several arguments are validated, the answer has all their failures, named after the
+  parameter (`first.Value`, `second.Value`).
+- A setup mistake (a handler without a `T` parameter from the request, no `IValidator<T>`
+  registered, JSON options that cannot write a validation problem) never breaks other
+  endpoints: it is logged as an error at the first request, and only that endpoint answers
+  500. To stop the app at startup instead, with every mistake listed, call
+  `builder.Services.ValidateEndpointsOnStart()`.
 - Validated endpoints describe the 400 response for OpenAPI.
 
 ## MVC
@@ -200,7 +209,8 @@ builder.Services.Configure<ValidationProblemOptions>(o =>
 });
 ```
 
-Both filters then add two extensions, keyed and ordered like `errors`:
+Both filters then add two extensions, keyed and ordered like `errors` (keys follow the
+JSON options' `DictionaryKeyPolicy`, the same as `errors`):
 
 ```json
 "errorCodes": { "Email": ["NotEmailAddress"] },
@@ -240,6 +250,8 @@ app.Run();
 | `report.ToValidationProblemDetails()` | An MVC `ValidationProblemDetails`, for example for `BadRequest(details)`. |
 
 Each takes an optional `ValidationProblemOptions` to add error codes and severities.
+`ToValidationProblem` and `ToProblemDetails` also take a `keyPolicy`: pass your JSON
+`DictionaryKeyPolicy` so the keys of the extensions match `errors`.
 
 ## Native AOT
 
@@ -247,9 +259,8 @@ Each takes an optional `ValidationProblemOptions` to add error codes and severit
   delegate generator (`PublishAot`). Register validators with `AddValidator`, not with
   assembly scanning.
 - Call `builder.Services.AddProblemDetails()`. It gives the app's JSON options the metadata
-  that every validation problem result needs in Native AOT. Without it, building the
-  endpoints fails with a clear message (instead of answering 500 to every invalid
-  request), unless you set a `ResultFactory`.
+  that every validation problem result needs in Native AOT. Without it, the endpoint is a
+  setup mistake (see above), unless you set a `ResultFactory`.
 - The `errorCodes` and `severities` extensions are written as JSON elements, so they need
   no entries in your `JsonSerializerContext`.
 - MVC itself does not support Native AOT, so the MVC filter does not either.
@@ -265,8 +276,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDynamicValidator("Validation:SignUp", new PropertyMap<SignUp>().Add(x => x.Name).Add(x => x.Email));
 ```
 
-A reload with errors keeps the old rules and goes to `OnReloadError`, and a definition
-with errors stops the app at startup (`ValidateOnStart`, on by default). See
+A reload with errors keeps the old rules and is logged through `ILogger` (and passed to
+`OnReloadError`), and a definition with errors stops the app at startup
+(`ValidateOnStart`, on by default). See
 [Dependency injection with reload](dynamic-rules.md#dependency-injection-with-reload).
 
 ## More

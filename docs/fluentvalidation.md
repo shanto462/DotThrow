@@ -60,7 +60,7 @@ public sealed record Customer(string Name, int Age);
 | `InclusiveBetween(a, b)` | `IfOutOfRange(a, b)` | |
 | `ExclusiveBetween(a, b)` | `IfOutOfRangeExclusive(a, b)` | |
 | `Matches(pattern)` | `IfNotMatches(pattern)` | Also takes a `Regex`, such as one from `[GeneratedRegex]`. |
-| `EmailAddress()` | `IfNotEmailAddress()` | Stricter: one `@` with text on both sides, no white space or control characters, no dot at the start or end of either side, no two dots in a row. |
+| `EmailAddress()` | `IfNotEmailAddress()` | Stricter: a subset of RFC 5321 (dot-atom or quoted local part, a domain of letter, digit and hyphen labels or an address literal, length limits). |
 | `CreditCard()` | `IfNotCreditCardNumber()` | Only ASCII digits count, and text without digits fails. |
 | `IsInEnum()` | `IfNotDefined()` | A `[Flags]` combination of defined flags passes, as in FluentValidation. |
 | `IsEnumName(typeof(E))` | `IfNotEnumName<E>()` | |
@@ -117,7 +117,7 @@ DotThrow has about 90 other checks, such as `IfNotSlug`, `IfNotIPAddress`,
 | `OnFailureCreated` | `ValidatorDefaults.OnFailureCreated(failure)` | Equivalent |
 | `ErrorCodeResolver` | `ValidatorDefaults.ErrorCodeResolver(checkCode)` | Different ([9](#9-the-error-code-resolver-gets-the-check-code)) |
 | `PropertyChainSeparator` | `ValidatorDefaults.PropertyChainSeparator` | Same |
-| `WithMessage(...)` (3 forms) | `rule.WithMessage(...)`, or `message:` on one check | Same |
+| `WithMessage(...)` (3 forms) | `rule.WithMessage(...)`, or `message:` on one check | Same, including the check's own placeholders such as `{MaxLength}` |
 | `WithName`, `OverridePropertyName` | `rule.WithName(...)`, `rule.OverridePropertyName(...)` | Same |
 | `WithErrorCode` | `rule.WithErrorCode(...)` | Same |
 | `WithSeverity(...)` (4 forms) | `rule.WithSeverity(...)` (4 forms) | Same |

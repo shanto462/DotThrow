@@ -128,7 +128,7 @@ a part that can be null is nullable too: in `"Customer.Age"`, `Age` is null when
 `Customer` is null.
 
 **Regular expressions** from a definition get a match timeout of one second, because the
-pattern is data. A pattern that runs longer throws `RegexMatchTimeoutException`.
+pattern is data. A match that runs longer fails the check with its normal error code.
 
 ## Checks you can use
 
@@ -268,17 +268,17 @@ builder.Services.AddDynamicValidator(
     o =>
     {
         o.CodeRules = v => v.For(x => x.Email, email => email.IfNullOrWhiteSpace().IfNotEmailAddress());
-        o.OnReloadError = (error, services) =>
-            services.GetRequiredService<ILogger<Customer>>().LogError(error, "The Customer rules were not reloaded.");
+        o.OnReloadError = (error, services) => Console.Error.WriteLine($"{error.Errors.Count} errors; the old rules stay.");
     });
 ```
 
 - **Reload.** When the configuration changes (for example `reloadOnChange: true` on a JSON
   file), the rules are read again and swapped in one step. A change with errors is not
-  used: the old rules stay, and `OnReloadError` gets every error (without it, they go to
-  `Trace.TraceError`). One bad edit may be reported two or three times, because
-  configuration raises several change notifications for one save. A fixed definition does
-  not reload; call `Update` on the resolved `DynamicValidator<T>`.
+  used: the old rules stay, the failure is logged as an error through
+  `ILogger<DynamicValidator<T>>`, and `OnReloadError` (if set) gets every error. Without
+  logging and without `OnReloadError`, it goes to `Trace.TraceError`. A change to another
+  section, or saving the same values again, does nothing. A fixed definition does not
+  reload; call `Update` on the resolved `DynamicValidator<T>`.
 - **ValidateOnStart** (on by default). With a host (Microsoft.Extensions.Hosting 8 or
   later), a definition with errors stops the app at startup with an
   `OptionsValidationException` that lists every error. Without a host, the validator is
