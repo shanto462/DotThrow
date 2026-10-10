@@ -9,7 +9,7 @@ internal static class Formats
 {
     public static bool Contains(string value, string part, StringComparison comparison)
     {
-#if NET8_0_OR_GREATER
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP
         return value.Contains(part, comparison);
 #else
         return value.IndexOf(part, comparison) >= 0;

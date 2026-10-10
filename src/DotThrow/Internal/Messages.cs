@@ -148,6 +148,11 @@ internal static class Messages
     {
         null => "null",
         string text => $"'{text}'",
+
+        // "R" gives the shortest round-trip text on every runtime. Without it, .NET Framework
+        // prints 15 digits (1.79769313486232E+308) and .NET Core prints 17.
+        double number => number.ToString("R", CultureInfo.InvariantCulture),
+        float number => number.ToString("R", CultureInfo.InvariantCulture),
         DateTime dateTime => dateTime.ToString("O", CultureInfo.InvariantCulture),
         DateTimeOffset dateTimeOffset => dateTimeOffset.ToString("O", CultureInfo.InvariantCulture),
 #if NET8_0_OR_GREATER
