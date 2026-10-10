@@ -15,6 +15,7 @@ internal static class DiagnosticIds
     public const string UseCurrentTimeCheck = "DT0008";
     public const string NullCheckOnValueType = "DT0009";
     public const string UnusedValidationResult = "DT0010";
+    public const string UnwrappedNullable = "DT0011";
 }
 
 /// <summary>The diagnostic descriptors of every DotThrow rule.</summary>
@@ -103,6 +104,14 @@ internal static class Descriptors
         Usage,
         DiagnosticSeverity.Warning,
         "Validate and ValidateAsync return a report and do not throw. Read the report, or call ValidateAndThrow or ValidateAndThrowAsync. A task that is not awaited hides its failures too.");
+
+    public static readonly DiagnosticDescriptor UnwrappedNullable = Create(
+        DiagnosticIds.UnwrappedNullable,
+        "Unwrapped nullable value is converted back to a nullable",
+        "The chain unwraps the nullable value with {0}, so a missing value becomes default({1}), not null",
+        Usage,
+        DiagnosticSeverity.Warning,
+        "WhenPresent() (and AllowNull() followed by IfNull()) unwraps a Nullable<T> to T and skips the rest of the chain when there is no value. The guard then holds default(T), so converting the chain to T? turns a missing value into default(T), for example 0, instead of null. Check the value, then use the original value.");
 
     private static DiagnosticDescriptor Create(
         string id,

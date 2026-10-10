@@ -15,3 +15,4 @@ DT0007 | Usage | Error | CheckArgumentAnalyzer
 DT0008 | Style | Info | CheckArgumentAnalyzer
 DT0009 | Usage | Warning | GuardChainAnalyzer
 DT0010 | Usage | Warning | ValidatorUsageAnalyzer
+DT0011 | Usage | Warning | GuardChainAnalyzer

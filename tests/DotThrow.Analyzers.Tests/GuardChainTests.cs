@@ -332,4 +332,145 @@ public sealed class GuardChainTests
                 }
             }
             """);
+
+    private const string Request = """
+
+        class Request
+        {
+            public int? Age { get; set; }
+        }
+        """;
+
+    [Fact]
+    public Task DT0011_reports_unwrapped_values_converted_back_to_nullable() =>
+        Verify.AnalyzerAsync<GuardChainAnalyzer>(
+            """
+            using DotThrow;
+
+            class C
+            {
+                int? _field;
+
+                int? M(Request request, int? score, string? text, ValidationReport report)
+                {
+                    int? age = {|DT0011:request.Age.Throw().WhenPresent().IfOutOfRange(0, 150)|};
+                    _field = {|DT0011:score.Throw().WhenPresent()|};
+                    int? other = {|DT0011:score.Throw().AllowNull().IfNull().IfNegative()|};
+                    Use({|DT0011:report.Check(score).WhenPresent().IfZero()|});
+
+                    // Fine: a plain int, a required value, only checks, or a reference type.
+                    int plain = score.Throw().WhenPresent().IfNegative();
+                    int? required = score.Throw().IfNull().IfNegative();
+                    score.Throw().WhenPresent().IfNegative();
+                    string? name = text.Throw().WhenPresent().IfLongerThan(5);
+                    int? same = score;
+
+                    return {|DT0011:score.Throw().WhenPresent()|};
+                }
+
+                static void Use(int? value) { }
+            }
+            """ + Request);
+
+    [Fact]
+    public Task DT0011_reports_the_problem() =>
+        Verify.AnalyzerAsync<GuardChainAnalyzer>(
+            """
+            using DotThrow;
+
+            class C
+            {
+                int? M(int? score) => score.Throw().WhenPresent().IfNegative();
+            }
+            """,
+            Verify.Diagnostic<GuardChainAnalyzer>("DT0011")
+                .WithSpan(5, 27, 5, 67)
+                .WithSpan(5, 27, 5, 32)
+                .WithArguments("WhenPresent()", "int"));
+
+    [Fact]
+    public Task DT0011_fix_checks_then_uses_the_original_value() =>
+        Verify.CodeFixAsync<GuardChainAnalyzer, GuardChainCodeFix>(
+            """
+            using DotThrow;
+
+            class C
+            {
+                int? _field;
+
+                int? M(Request request, int? score)
+                {
+                    // Age is optional.
+                    int? age = {|DT0011:request.Age.Throw().WhenPresent().IfOutOfRange(0, 150)|};
+                    _field = {|DT0011:score.Throw().AllowNull().IfNull().IfNegative()|};
+                    Use({|DT0011:score.Throw().WhenPresent()|});
+                    int? computed = {|DT0011:Read().Throw().WhenPresent()|};
+                    return {|DT0011:score.Throw().WhenPresent().IfZero()|};
+                }
+
+                static int? Read() => null;
+
+                static void Use(int? value) { }
+            }
+            """ + Request,
+            """
+            using DotThrow;
+
+            class C
+            {
+                int? _field;
+
+                int? M(Request request, int? score)
+                {
+                    // Age is optional.
+                    request.Age.Throw().WhenPresent().IfOutOfRange(0, 150);
+                    int? age = request.Age;
+                    score.Throw().AllowNull().IfNull().IfNegative();
+                    _field = score;
+                    Use({|DT0011:score.Throw().WhenPresent()|});
+                    int? computed = {|DT0011:Read().Throw().WhenPresent()|};
+                    score.Throw().WhenPresent().IfZero();
+                    return score;
+                }
+
+                static int? Read() => null;
+
+                static void Use(int? value) { }
+            }
+            """ + Request);
+
+    [Fact]
+    public Task DT0011_fix_in_top_level_statements() =>
+        Verify.CodeFixAsync(() => new DotThrowCodeFixTest<GuardChainAnalyzer, GuardChainCodeFix>
+        {
+            TestState =
+            {
+                OutputKind = Microsoft.CodeAnalysis.OutputKind.ConsoleApplication,
+                Sources =
+                {
+                    """
+                    using DotThrow;
+
+                    int? score = args.Length;
+                    int? checkedScore = {|DT0011:score.Throw().WhenPresent().IfNegative()|};
+                    System.Console.WriteLine(checkedScore);
+                    """,
+                },
+            },
+            FixedState =
+            {
+                OutputKind = Microsoft.CodeAnalysis.OutputKind.ConsoleApplication,
+                Sources =
+                {
+                    """
+                    using DotThrow;
+
+                    int? score = args.Length;
+                    score.Throw().WhenPresent().IfNegative();
+                    int? checkedScore = score;
+                    System.Console.WriteLine(checkedScore);
+                    """,
+                },
+            },
+        });
 }

@@ -22,8 +22,11 @@ public sealed class GuardChainAnalyzer : DiagnosticAnalyzer
     /// <summary>Diagnostic property: present when the null check can be removed.</summary>
     internal const string RemoveCallProperty = "RemoveCall";
 
+    /// <summary>Diagnostic property (DT0011): present when the checked value can be read again.</summary>
+    internal const string SimpleValueProperty = "SimpleValue";
+
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-        ImmutableArray.Create(Descriptors.EmptyChain, Descriptors.NullCheckOnValueType);
+        ImmutableArray.Create(Descriptors.EmptyChain, Descriptors.NullCheckOnValueType, Descriptors.UnwrappedNullable);
 
     public override void Initialize(AnalysisContext context)
     {
@@ -34,6 +37,7 @@ public sealed class GuardChainAnalyzer : DiagnosticAnalyzer
             if (DotThrowSymbols.Create(start.Compilation) is { } symbols)
             {
                 start.RegisterOperationAction(operation => Analyze(operation, symbols), OperationKind.Invocation);
+                start.RegisterOperationAction(operation => AnalyzeConversion(operation, symbols), OperationKind.Conversion);
             }
         });
     }
@@ -118,6 +122,98 @@ public sealed class GuardChainAnalyzer : DiagnosticAnalyzer
         }
 
         return true;
+    }
+
+    // DT0011: int? age = x.Throw().WhenPresent().IfNegative(); turns a missing value into 0.
+    private static void AnalyzeConversion(OperationAnalysisContext context, DotThrowSymbols symbols)
+    {
+        var conversion = (IConversionOperation)context.Operation;
+        if (conversion.OperatorMethod is not { MethodKind: MethodKind.Conversion } method
+            || !symbols.IsGuard(method.ContainingType)
+            || conversion.Parent is IConversionOperation { OperatorMethod: { } outer } && symbols.IsGuard(outer.ContainingType))
+        {
+            return;
+        }
+
+        // The type the value finally gets: the conversion itself, or a lifting conversion around it.
+        IOperation target = conversion;
+        while (target.Parent is IConversionOperation { IsImplicit: true } lifted)
+        {
+            target = lifted;
+        }
+
+        if (target.Type is not INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T } nullable
+            || conversion.Operand.WithoutImplicitConversions() is not IInvocationOperation chain
+            || Unwrapping(chain, symbols) is not { } unwrap)
+        {
+            return;
+        }
+
+        var properties = ImmutableDictionary<string, string?>.Empty;
+        var start = ChainStart(chain, symbols);
+        var value = start?.Argument("value")?.Value.WithoutImplicitConversions();
+        Location[] additional = [];
+        if (value is not null && value.IsSimpleReference())
+        {
+            properties = properties.Add(SimpleValueProperty, "true");
+            additional = [value.Syntax.GetLocation()];
+        }
+
+        context.ReportDiagnostic(Diagnostic.Create(
+            Descriptors.UnwrappedNullable,
+            chain.Syntax.GetLocation(),
+            additional,
+            properties,
+            unwrap,
+            nullable.TypeArguments[0].ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
+    }
+
+    // "WhenPresent()" or "AllowNull() and IfNull()" when the chain unwraps a Nullable<T> that way.
+    private static string? Unwrapping(IInvocationOperation chain, DotThrowSymbols symbols)
+    {
+        var unwrappingIfNull = false;
+        for (var call = chain; call is not null; call = call.Receiver() as IInvocationOperation)
+        {
+            var method = call.TargetMethod;
+            if (!symbols.IsCheck(method) && !symbols.IsAllowNull(method))
+            {
+                return null;
+            }
+
+            var onNullable = symbols.GuardValueType(call.Receiver()?.Type)?.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T;
+            if (onNullable && method.Name == "WhenPresent")
+            {
+                return "WhenPresent()";
+            }
+
+            if (onNullable && method.Name == "IfNull")
+            {
+                unwrappingIfNull = true;
+            }
+            else if (onNullable && unwrappingIfNull && method.Name == "AllowNull")
+            {
+                return "AllowNull() and IfNull()";
+            }
+        }
+
+        return null;
+    }
+
+    // The Throw() or Check() call at the start of a chain, or null.
+    private static IInvocationOperation? ChainStart(IInvocationOperation chain, DotThrowSymbols symbols)
+    {
+        IOperation? current = chain;
+        while (current is IInvocationOperation call)
+        {
+            if (symbols.IsChainStart(call.TargetMethod))
+            {
+                return call;
+            }
+
+            current = call.Receiver();
+        }
+
+        return null;
     }
 
     // guard.Call() in the reduced form, followed by another call on its result.
