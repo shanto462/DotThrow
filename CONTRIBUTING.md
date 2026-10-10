@@ -7,7 +7,7 @@ By taking part in this project you agree to follow the [Code of Conduct](CODE_OF
 ## Development setup
 
 1. Install the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0). `global.json` asks for 10.0.100 or a later 10.0 SDK.
-2. Install the [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0) and [.NET 9](https://dotnet.microsoft.com/download/dotnet/9.0) runtimes too, because the tests also run on `net8.0` and `net9.0`. On Windows the tests also run on `net472` and `net481`, which use the .NET Framework 4.8.1 that comes with Windows.
+2. Install the [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0) and [.NET 9](https://dotnet.microsoft.com/download/dotnet/9.0) runtimes too, because the tests also run on `net8.0` and `net9.0`. On Windows the tests also run on `net472` and `net481`, which use the .NET Framework 4.8.1 that comes with Windows. If you do not want to install more runtimes, use the [Docker test matrix](#run-the-full-test-matrix-locally-with-docker) instead.
 3. For the Native AOT check, install the native toolchain for your system:
    - Linux: `clang` and `zlib1g-dev` (for example `sudo apt-get install clang zlib1g-dev`).
    - macOS: the Xcode command line tools (`xcode-select --install`).
@@ -29,6 +29,7 @@ By taking part in this project you agree to follow the [Code of Conduct](CODE_OF
 | `samples/DotThrow.Samples` | A console app that shows the API. CI also publishes it with Native AOT. |
 | `benchmarks/DotThrow.Benchmarks` | BenchmarkDotNet benchmarks. CI builds them but does not run them. Run them with `dotnet run -c Release --project benchmarks/DotThrow.Benchmarks -- --filter "*"`. |
 | `docs` | Documentation. |
+| `eng` | Engineering scripts, for example the Docker test matrix (`test-matrix.sh`, `test-matrix.ps1` and `docker/`). |
 
 Package versions live in `Directory.Packages.props` (central package management). Shared build settings live in `Directory.Build.props`. Warnings are errors in every project, so fix a warning instead of suppressing it.
 
@@ -65,6 +66,30 @@ To see test coverage, run the tests with the coverage collector. CI does the sam
 ```sh
 dotnet test tests/DotThrow.Tests/DotThrow.Tests.csproj -c Release --collect "XPlat Code Coverage" --results-directory coverage
 ```
+
+## Run the full test matrix locally with Docker
+
+You do not need the .NET 8 and .NET 9 runtimes on your machine to run every test leg. With [Docker](https://docs.docker.com/get-started/get-docker/) running (Linux containers), one command runs the tests on `net8.0`, `net9.0` and `net10.0`, plus the `net8.0` tests against the `netstandard2.0` and `netstandard2.1` builds of the library:
+
+```sh
+eng/test-matrix.sh                # macOS and Linux
+pwsh eng/test-matrix.ps1          # Windows (or any OS with PowerShell 7)
+```
+
+It builds a test image with the .NET 10 SDK and the .NET 8 and .NET 9 runtimes (`eng/docker/test.Dockerfile`), mounts the repository read-only, copies it inside the container without `bin` and `obj`, and runs each leg in Release. Your own `bin` and `obj` folders are never used or changed. NuGet packages are cached in the Docker volume `dotthrow-nuget`, so only the first run downloads them. At the end it prints a table with the passed, failed and skipped tests of each leg, and it exits with an error if a leg failed. A leg shows `N/A` when the projects do not support it yet.
+
+Options:
+
+| Bash | PowerShell | What it does |
+| ---- | ---------- | ------------ |
+| `--legs net8.0,netstandard2.0` | `-Legs net8.0,netstandard2.0` | Run only these legs. |
+| `--filter "FullyQualifiedName~Validator"` | `-Filter "FullyQualifiedName~Validator"` | Passed to `dotnet test --filter`. |
+| `--rebuild-image` | `-RebuildImage` | Rebuild the test image without the Docker cache. |
+| `--platform linux/amd64` | `-Platform linux/amd64` | Run x64 Linux through emulation, for example on an Apple silicon Mac. |
+
+The .NET Framework legs (`net472` and `net481`) run only on Windows, so the Docker matrix does not cover them. CI runs them on `windows-latest`. To remove the image and the cache later, run `docker image rm dotthrow-test:linux-arm64` (or `linux-amd64`) and `docker volume rm dotthrow-nuget`.
+
+On Arm CPUs with SME (Apple M4 and later), .NET 9 inside a Linux VM can crash at random with an illegal instruction (exit code 132). This is a .NET 9 runtime bug, not a DotThrow bug. The script then sets `DOTNET_INTERNAL_ThreadSuspendInjection=0` for the `net9.0` leg, which avoids it, and says so in the summary.
 
 ## Commit messages
 

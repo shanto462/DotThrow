@@ -30,3 +30,22 @@ updates:
         patterns: ['*']
         update-types: [minor, patch]
     open-pull-requests-limit: 10
+
+  # Base images of the local test image (eng/docker/test.Dockerfile). Each stage needs
+  # one .NET major version, so only digest updates within the same tag are wanted.
+  - package-ecosystem: docker
+    directory: /eng/docker
+    schedule:
+      interval: weekly
+      day: monday
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: ci
+    groups:
+      docker-images:
+        patterns: ['*']
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
+    open-pull-requests-limit: 10
