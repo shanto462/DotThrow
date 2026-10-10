@@ -1,0 +1,146 @@
+# Telugu (te). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' null కాకూడదు.
+NotNull	'{PropertyName}' null అయి ఉండాలి.
+Default	'{PropertyName}' డిఫాల్ట్ విలువ కాకూడదు.
+Empty	'{PropertyName}' ఖాళీగా ఉండకూడదు.
+Empty.Guid	'{PropertyName}' ఖాళీ GUID కాకూడదు.
+NotEmpty	'{PropertyName}' ఖాళీగా ఉండాలి.
+EqualTo	'{PropertyName}' తిరస్కరించిన విలువకు సమానం కాకూడదు.
+EqualTo.Value	'{PropertyName}' {ComparisonValue} కి సమానం కాకూడదు.
+NotEqualTo	'{PropertyName}' అవసరమైన విలువకు సమానం అయి ఉండాలి.
+NotEqualTo.Value	'{PropertyName}' {ComparisonValue} కి సమానం అయి ఉండాలి.
+OneOf	'{PropertyName}' తిరస్కరించిన విలువలలో ఒకటి కాకూడదు.
+NotOneOf	'{PropertyName}' అనుమతించిన విలువలలో ఒకటి అయి ఉండాలి.
+Condition	'{PropertyName}' చెల్లుబాటు కాదు.
+Condition.If	'{PropertyName}' ఈ షరతును నెరవేర్చకూడదు: {Condition}.
+Condition.IfNot	'{PropertyName}' ఈ షరతును నెరవేర్చాలి: {Condition}.
+Type	'{PropertyName}' {Type} రకం కాకూడదు.
+NotType	'{PropertyName}' {Type} రకం అయి ఉండాలి.
+True	'{PropertyName}' false అయి ఉండాలి.
+False	'{PropertyName}' true అయి ఉండాలి.
+Must	'{PropertyName}' చెల్లుబాటు కాదు.
+Invalid	'{PropertyName}' చెల్లుబాటు కాదు.
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' {ComparisonValue} కంటే తక్కువ లేదా సమానం అయి ఉండాలి.
+GreaterThanOrEqualTo	'{PropertyName}' {ComparisonValue} కంటే తక్కువ అయి ఉండాలి.
+LessThan	'{PropertyName}' {ComparisonValue} కంటే ఎక్కువ లేదా సమానం అయి ఉండాలి.
+LessThanOrEqualTo	'{PropertyName}' {ComparisonValue} కంటే ఎక్కువ అయి ఉండాలి.
+OutOfRange	'{PropertyName}' {From} మరియు {To} మధ్య ఉండాలి.
+OutOfRangeExclusive	'{PropertyName}' {From} మరియు {To} మధ్య ఉండాలి (సరిహద్దు విలువలు మినహా).
+InRange	'{PropertyName}' {From} మరియు {To} మధ్య ఉండకూడదు.
+Negative	'{PropertyName}' రుణాత్మకం కాకూడదు.
+NegativeOrZero	'{PropertyName}' 0 కంటే ఎక్కువ అయి ఉండాలి.
+Positive	'{PropertyName}' 0 కంటే ఎక్కువ కాకూడదు.
+PositiveOrZero	'{PropertyName}' 0 కంటే తక్కువ అయి ఉండాలి.
+Zero	'{PropertyName}' 0 కాకూడదు.
+NaN	'{PropertyName}' ఒక సంఖ్య అయి ఉండాలి, NaN కాకూడదు.
+Infinity	'{PropertyName}' పరిమిత సంఖ్య అయి ఉండాలి.
+NotFinite	'{PropertyName}' పరిమిత సంఖ్య అయి ఉండాలి.
+Odd	'{PropertyName}' సరి సంఖ్య అయి ఉండాలి.
+Even	'{PropertyName}' బేసి సంఖ్య అయి ఉండాలి.
+NotMultipleOf	'{PropertyName}' {Divisor} యొక్క గుణిజం అయి ఉండాలి.
+NotPowerOfTwo	'{PropertyName}' 2 యొక్క ఘాతం అయి ఉండాలి.
+NotInteger	'{PropertyName}' పూర్ణ సంఖ్య అయి ఉండాలి.
+PrecisionScaleExceeded	'{PropertyName}' లో మొత్తం అంకెల సంఖ్య గరిష్ఠంగా {ExpectedPrecision}, దశాంశ బిందువు తర్వాత అంకెల సంఖ్య గరిష్ఠంగా {ExpectedScale} ఉండాలి. కనుగొన్న అంకెలు: దశాంశ బిందువుకు ముందు {Digits}, తర్వాత {ActualScale}.
+
+# Strings
+WhiteSpace	'{PropertyName}' ఖాళీగా గానీ వైట్‌స్పేస్ మాత్రమే గానీ ఉండకూడదు.
+LongerThan	'{PropertyName}' లోని క్యారెక్టర్ల సంఖ్య గరిష్ఠంగా {MaxLength} ఉండాలి.
+ShorterThan	'{PropertyName}' లోని క్యారెక్టర్ల సంఖ్య కనీసం {MinLength} ఉండాలి.
+LengthNotEqualTo	'{PropertyName}' లోని క్యారెక్టర్ల సంఖ్య సరిగ్గా {Length} ఉండాలి.
+LengthOutOfRange	'{PropertyName}' లోని క్యారెక్టర్ల సంఖ్య {MinLength} మరియు {MaxLength} మధ్య ఉండాలి.
+Contains	'{PropertyName}' లో తిరస్కరించిన అంశం ఉండకూడదు.
+Contains.Value	'{PropertyName}' లో {Value} ఉండకూడదు.
+NotContains	'{PropertyName}' లో అవసరమైన అంశం ఉండాలి.
+NotContains.Value	'{PropertyName}' లో {Value} ఉండాలి.
+StartsWith	'{PropertyName}' {Value} తో ప్రారంభం కాకూడదు.
+NotStartsWith	'{PropertyName}' {Value} తో ప్రారంభం కావాలి.
+EndsWith	'{PropertyName}' {Value} తో ముగియకూడదు.
+NotEndsWith	'{PropertyName}' {Value} తో ముగియాలి.
+Matches	'{PropertyName}' {Pattern} ప్యాటర్న్‌తో సరిపోలకూడదు.
+NotMatches	'{PropertyName}' {Pattern} ప్యాటర్న్‌తో సరిపోలాలి.
+NotEmailAddress	'{PropertyName}' చెల్లుబాటు అయ్యే ఈమెయిల్ చిరునామా అయి ఉండాలి.
+NotJson	'{PropertyName}' చెల్లుబాటు అయ్యే JSON అయి ఉండాలి.
+NotXml	'{PropertyName}' సరిగ్గా రూపొందించిన XML అయి ఉండాలి.
+NotUri	'{PropertyName}' చెల్లుబాటు అయ్యే URI అయి ఉండాలి.
+NotUri.Absolute	'{PropertyName}' చెల్లుబాటు అయ్యే సంపూర్ణ URI అయి ఉండాలి.
+NotUri.Relative	'{PropertyName}' చెల్లుబాటు అయ్యే సాపేక్ష URI అయి ఉండాలి.
+NotHttpUrl	'{PropertyName}' సంపూర్ణ HTTP లేదా HTTPS URL అయి ఉండాలి.
+NotParsable	'{PropertyName}' {Type} రకం యొక్క చెల్లుబాటు అయ్యే విలువ అయి ఉండాలి.
+AllUpperCase	'{PropertyName}' పూర్తిగా పెద్ద అక్షరాలలో ఉండకూడదు.
+AllLowerCase	'{PropertyName}' పూర్తిగా చిన్న అక్షరాలలో ఉండకూడదు.
+NotTrimmed	'{PropertyName}' ప్రారంభంలో లేదా చివరలో వైట్‌స్పేస్ ఉండకూడదు.
+ContainsWhiteSpace	'{PropertyName}' లో వైట్‌స్పేస్ ఉండకూడదు.
+ContainsControlCharacters	'{PropertyName}' లో కంట్రోల్ క్యారెక్టర్లు ఉండకూడదు.
+ContainsAny	'{PropertyName}' లో తిరస్కరించిన క్యారెక్టర్లలో ఏదీ ఉండకూడదు.
+ContainsAnyExcept	'{PropertyName}' లో అనుమతించిన క్యారెక్టర్లు మాత్రమే ఉండాలి.
+NotAscii	'{PropertyName}' లో ASCII క్యారెక్టర్లు మాత్రమే ఉండాలి.
+NotDigits	'{PropertyName}' లో 0 నుండి 9 వరకు అంకెలు మాత్రమే ఉండాలి.
+NotLettersOrDigits	'{PropertyName}' లో అక్షరాలు లేదా అంకెలు మాత్రమే ఉండాలి.
+NotHex	'{PropertyName}' హెక్సాడెసిమల్ స్ట్రింగ్ అయి ఉండాలి.
+NotBase64	'{PropertyName}' చెల్లుబాటు అయ్యే Base64 స్ట్రింగ్ అయి ఉండాలి.
+NotGuid	'{PropertyName}' చెల్లుబాటు అయ్యే GUID అయి ఉండాలి.
+NotIPAddress	'{PropertyName}' చెల్లుబాటు అయ్యే IP చిరునామా అయి ఉండాలి.
+NotSlug	'{PropertyName}' చిన్న అక్షరాలు, అంకెలు, ఒంటరి హైఫన్‌లతో కూడిన స్లగ్ అయి ఉండాలి.
+NotVersion	'{PropertyName}' చెల్లుబాటు అయ్యే వెర్షన్ సంఖ్య అయి ఉండాలి.
+NotCreditCardNumber	'{PropertyName}' చెల్లుబాటు అయ్యే క్రెడిట్ కార్డ్ సంఖ్య అయి ఉండాలి.
+NotEnumName	'{PropertyName}' {Type} లో నిర్వచించిన పేరు అయి ఉండాలి.
+NotFileName	'{PropertyName}' చెల్లుబాటు అయ్యే ఫైల్ పేరు అయి ఉండాలి.
+
+# Collections and dictionaries
+CountEqualTo	'{PropertyName}' లో సరిగ్గా {Count} అంశాలు ఉండకూడదు.
+CountEqualTo.One	'{PropertyName}' లో సరిగ్గా 1 అంశం ఉండకూడదు.
+CountNotEqualTo	'{PropertyName}' లో సరిగ్గా {Count} అంశాలు ఉండాలి.
+CountNotEqualTo.One	'{PropertyName}' లో సరిగ్గా 1 అంశం ఉండాలి.
+CountGreaterThan	'{PropertyName}' లో గరిష్ఠంగా {MaxCount} అంశాలు ఉండాలి.
+CountGreaterThan.One	'{PropertyName}' లో గరిష్ఠంగా 1 అంశం ఉండాలి.
+CountLessThan	'{PropertyName}' లో కనీసం {MinCount} అంశాలు ఉండాలి.
+CountLessThan.One	'{PropertyName}' లో కనీసం 1 అంశం ఉండాలి.
+CountOutOfRange	'{PropertyName}' లోని అంశాల సంఖ్య {MinCount} మరియు {MaxCount} మధ్య ఉండాలి.
+ContainsNull	'{PropertyName}' లో null అంశాలు ఉండకూడదు.
+HasDuplicates	'{PropertyName}' లో డూప్లికేట్ అంశాలు ఉండకూడదు.
+Any	'{PropertyName}' లో షరతును నెరవేర్చే ఏ అంశమూ ఉండకూడదు.
+None	'{PropertyName}' లో షరతును నెరవేర్చే కనీసం ఒక అంశం ఉండాలి.
+ContainsKey	'{PropertyName}' లో తిరస్కరించిన కీ ఉండకూడదు.
+ContainsKey.Value	'{PropertyName}' లో {Key} కీ ఉండకూడదు.
+NotContainsKey	'{PropertyName}' లో అవసరమైన కీ ఉండాలి.
+NotContainsKey.Value	'{PropertyName}' లో {Key} కీ ఉండాలి.
+
+# Enums
+NotDefined	'{PropertyName}' {Type} లో నిర్వచించిన విలువ అయి ఉండాలి.
+HasFlag	'{PropertyName}' లో {Flag} ఫ్లాగ్ సెట్ అయి ఉండకూడదు.
+NotHasFlag	'{PropertyName}' లో {Flag} ఫ్లాగ్ సెట్ అయి ఉండాలి.
+
+# Dates and times
+Before	'{PropertyName}' {ComparisonValue} కంటే ముందు ఉండకూడదు.
+After	'{PropertyName}' {ComparisonValue} తర్వాత ఉండకూడదు.
+InPast	'{PropertyName}' గతంలో ఉండకూడదు.
+InFuture	'{PropertyName}' భవిష్యత్తులో ఉండకూడదు.
+NotUtc	'{PropertyName}' UTC లో ఉండాలి.
+Weekend	'{PropertyName}' పని దినం (సోమవారం నుండి శుక్రవారం) అయి ఉండాలి.
+Weekday	'{PropertyName}' వారాంతపు రోజు (శనివారం లేదా ఆదివారం) అయి ఉండాలి.
+HasTimeOfDay	'{PropertyName}' లో సమయ భాగం ఉండకూడదు.
+OlderThan	'{PropertyName}' {MaxAge} కంటే ఎక్కువ పాతది కాకూడదు.
+NewerThan	'{PropertyName}' కనీసం {MinAge} పాతది అయి ఉండాలి.
+
+# Uri and IPAddress
+Relative	'{PropertyName}' సంపూర్ణ URI అయి ఉండాలి.
+NotHttps	'{PropertyName}' సంపూర్ణ HTTPS URL అయి ఉండాలి.
+NotHttpOrHttps	'{PropertyName}' సంపూర్ణ HTTP లేదా HTTPS URL అయి ఉండాలి.
+NotScheme	'{PropertyName}' ఈ URI స్కీమ్‌లలో ఒకదాన్ని ఉపయోగించాలి: {Schemes}.
+Loopback	'{PropertyName}' లూప్‌బ్యాక్ చిరునామా కాకూడదు.
+Private	'{PropertyName}' ప్రైవేట్ లేదా లింక్-లోకల్ చిరునామా కాకూడదు.
+NotIPv4	'{PropertyName}' IPv4 చిరునామా అయి ఉండాలి.
+NotIPv6	'{PropertyName}' IPv6 చిరునామా అయి ఉండాలి.
+
+# Streams and types
+NotReadable	'{PropertyName}' చదవగలిగేలా ఉండాలి.
+NotWritable	'{PropertyName}' రాయగలిగేలా ఉండాలి.
+NotSeekable	'{PropertyName}' సీక్ చేయగలిగేలా ఉండాలి.
+NotAssignableTo	'{PropertyName}' {Type} రకానికి కేటాయించదగినది అయి ఉండాలి.
+Abstract	'{PropertyName}' అబ్‌స్ట్రాక్ట్ రకం కాకూడదు.
+Interface	'{PropertyName}' ఇంటర్‌ఫేస్ కాకూడదు.

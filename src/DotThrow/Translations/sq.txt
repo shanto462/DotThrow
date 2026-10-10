@@ -1,0 +1,146 @@
+# Albanian (sq). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' nuk duhet të jetë null.
+NotNull	'{PropertyName}' duhet të jetë null.
+Default	'{PropertyName}' nuk duhet të jetë vlera e paracaktuar.
+Empty	'{PropertyName}' nuk duhet të jetë bosh.
+Empty.Guid	'{PropertyName}' nuk duhet të jetë një GUID bosh.
+NotEmpty	'{PropertyName}' duhet të jetë bosh.
+EqualTo	'{PropertyName}' nuk duhet të jetë e barabartë me vlerën e refuzuar.
+EqualTo.Value	'{PropertyName}' nuk duhet të jetë e barabartë me {ComparisonValue}.
+NotEqualTo	'{PropertyName}' duhet të jetë e barabartë me vlerën e kërkuar.
+NotEqualTo.Value	'{PropertyName}' duhet të jetë e barabartë me {ComparisonValue}.
+OneOf	'{PropertyName}' nuk duhet të jetë një nga vlerat e refuzuara.
+NotOneOf	'{PropertyName}' duhet të jetë një nga vlerat e lejuara.
+Condition	'{PropertyName}' nuk është e vlefshme.
+Condition.If	'{PropertyName}' nuk duhet të plotësojë kushtin: {Condition}.
+Condition.IfNot	'{PropertyName}' duhet të plotësojë kushtin: {Condition}.
+Type	'{PropertyName}' nuk duhet të jetë e tipit {Type}.
+NotType	'{PropertyName}' duhet të jetë e tipit {Type}.
+True	'{PropertyName}' duhet të jetë false.
+False	'{PropertyName}' duhet të jetë true.
+Must	'{PropertyName}' nuk është e vlefshme.
+Invalid	'{PropertyName}' nuk është e vlefshme.
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' duhet të jetë më e vogël ose e barabartë me {ComparisonValue}.
+GreaterThanOrEqualTo	'{PropertyName}' duhet të jetë më e vogël se {ComparisonValue}.
+LessThan	'{PropertyName}' duhet të jetë më e madhe ose e barabartë me {ComparisonValue}.
+LessThanOrEqualTo	'{PropertyName}' duhet të jetë më e madhe se {ComparisonValue}.
+OutOfRange	'{PropertyName}' duhet të jetë midis {From} dhe {To}.
+OutOfRangeExclusive	'{PropertyName}' duhet të jetë midis {From} dhe {To} (pa përfshirë kufijtë).
+InRange	'{PropertyName}' nuk duhet të jetë midis {From} dhe {To}.
+Negative	'{PropertyName}' nuk duhet të jetë negative.
+NegativeOrZero	'{PropertyName}' duhet të jetë më e madhe se 0.
+Positive	'{PropertyName}' nuk duhet të jetë më e madhe se 0.
+PositiveOrZero	'{PropertyName}' duhet të jetë më e vogël se 0.
+Zero	'{PropertyName}' nuk duhet të jetë 0.
+NaN	'{PropertyName}' duhet të jetë një numër, jo NaN.
+Infinity	'{PropertyName}' duhet të jetë një numër i fundëm.
+NotFinite	'{PropertyName}' duhet të jetë një numër i fundëm.
+Odd	'{PropertyName}' duhet të jetë një numër çift.
+Even	'{PropertyName}' duhet të jetë një numër tek.
+NotMultipleOf	'{PropertyName}' duhet të jetë një shumëfish i {Divisor}.
+NotPowerOfTwo	'{PropertyName}' duhet të jetë një fuqi e numrit 2.
+NotInteger	'{PropertyName}' duhet të jetë një numër i plotë.
+PrecisionScaleExceeded	Numri total i shifrave të '{PropertyName}' duhet të jetë më së shumti {ExpectedPrecision}, nga të cilat më së shumti {ExpectedScale} pas presjes dhjetore. Shifra të gjetura: {Digits} para presjes dhjetore dhe {ActualScale} pas saj.
+
+# Strings
+WhiteSpace	'{PropertyName}' nuk duhet të jetë bosh ose të përmbajë vetëm hapësira.
+LongerThan	Numri i karaktereve në '{PropertyName}' duhet të jetë më së shumti {MaxLength}.
+ShorterThan	Numri i karaktereve në '{PropertyName}' duhet të jetë të paktën {MinLength}.
+LengthNotEqualTo	Numri i karaktereve në '{PropertyName}' duhet të jetë saktësisht {Length}.
+LengthOutOfRange	Numri i karaktereve në '{PropertyName}' duhet të jetë midis {MinLength} dhe {MaxLength}.
+Contains	'{PropertyName}' nuk duhet të përmbajë elementin e refuzuar.
+Contains.Value	'{PropertyName}' nuk duhet të përmbajë {Value}.
+NotContains	'{PropertyName}' duhet të përmbajë elementin e kërkuar.
+NotContains.Value	'{PropertyName}' duhet të përmbajë {Value}.
+StartsWith	'{PropertyName}' nuk duhet të fillojë me {Value}.
+NotStartsWith	'{PropertyName}' duhet të fillojë me {Value}.
+EndsWith	'{PropertyName}' nuk duhet të përfundojë me {Value}.
+NotEndsWith	'{PropertyName}' duhet të përfundojë me {Value}.
+Matches	'{PropertyName}' nuk duhet të përputhet me modelin {Pattern}.
+NotMatches	'{PropertyName}' duhet të përputhet me modelin {Pattern}.
+NotEmailAddress	'{PropertyName}' duhet të jetë një adresë emaili e vlefshme.
+NotJson	'{PropertyName}' duhet të jetë JSON i vlefshëm.
+NotXml	'{PropertyName}' duhet të jetë XML i mirëformuar.
+NotUri	'{PropertyName}' duhet të jetë një URI i vlefshëm.
+NotUri.Absolute	'{PropertyName}' duhet të jetë një URI absolut i vlefshëm.
+NotUri.Relative	'{PropertyName}' duhet të jetë një URI relativ i vlefshëm.
+NotHttpUrl	'{PropertyName}' duhet të jetë një adresë URL absolute HTTP ose HTTPS.
+NotParsable	'{PropertyName}' duhet të jetë një vlerë e vlefshme e tipit {Type}.
+AllUpperCase	'{PropertyName}' nuk duhet të përmbajë vetëm shkronja të mëdha.
+AllLowerCase	'{PropertyName}' nuk duhet të përmbajë vetëm shkronja të vogla.
+NotTrimmed	'{PropertyName}' nuk duhet të fillojë ose të përfundojë me hapësira.
+ContainsWhiteSpace	'{PropertyName}' nuk duhet të përmbajë hapësira.
+ContainsControlCharacters	'{PropertyName}' nuk duhet të përmbajë karaktere kontrolli.
+ContainsAny	'{PropertyName}' nuk duhet të përmbajë asnjë nga karakteret e refuzuara.
+ContainsAnyExcept	'{PropertyName}' duhet të përmbajë vetëm karakteret e lejuara.
+NotAscii	'{PropertyName}' duhet të përmbajë vetëm karaktere ASCII.
+NotDigits	'{PropertyName}' duhet të përmbajë vetëm shifrat nga 0 deri në 9.
+NotLettersOrDigits	'{PropertyName}' duhet të përmbajë vetëm shkronja ose shifra.
+NotHex	'{PropertyName}' duhet të jetë një varg heksadecimal.
+NotBase64	'{PropertyName}' duhet të jetë një varg Base64 i vlefshëm.
+NotGuid	'{PropertyName}' duhet të jetë një GUID i vlefshëm.
+NotIPAddress	'{PropertyName}' duhet të jetë një adresë IP e vlefshme.
+NotSlug	'{PropertyName}' duhet të jetë një slug me shkronja të vogla, shifra dhe viza të vetme.
+NotVersion	'{PropertyName}' duhet të jetë një numër versioni i vlefshëm.
+NotCreditCardNumber	'{PropertyName}' duhet të jetë një numër i vlefshëm karte krediti.
+NotEnumName	'{PropertyName}' duhet të jetë një emër i përcaktuar në {Type}.
+NotFileName	'{PropertyName}' duhet të jetë një emër skedari i vlefshëm.
+
+# Collections and dictionaries
+CountEqualTo	'{PropertyName}' nuk duhet të ketë saktësisht {Count} elemente.
+CountEqualTo.One	'{PropertyName}' nuk duhet të ketë saktësisht 1 element.
+CountNotEqualTo	'{PropertyName}' duhet të ketë saktësisht {Count} elemente.
+CountNotEqualTo.One	'{PropertyName}' duhet të ketë saktësisht 1 element.
+CountGreaterThan	'{PropertyName}' duhet të ketë më së shumti {MaxCount} elemente.
+CountGreaterThan.One	'{PropertyName}' duhet të ketë më së shumti 1 element.
+CountLessThan	'{PropertyName}' duhet të ketë të paktën {MinCount} elemente.
+CountLessThan.One	'{PropertyName}' duhet të ketë të paktën 1 element.
+CountOutOfRange	Numri i elementeve në '{PropertyName}' duhet të jetë midis {MinCount} dhe {MaxCount}.
+ContainsNull	'{PropertyName}' nuk duhet të përmbajë elemente null.
+HasDuplicates	'{PropertyName}' nuk duhet të përmbajë elemente të përsëritura.
+Any	'{PropertyName}' nuk duhet të përmbajë asnjë element që plotëson kushtin.
+None	'{PropertyName}' duhet të përmbajë të paktën një element që plotëson kushtin.
+ContainsKey	'{PropertyName}' nuk duhet të përmbajë çelësin e refuzuar.
+ContainsKey.Value	'{PropertyName}' nuk duhet të përmbajë çelësin {Key}.
+NotContainsKey	'{PropertyName}' duhet të përmbajë çelësin e kërkuar.
+NotContainsKey.Value	'{PropertyName}' duhet të përmbajë çelësin {Key}.
+
+# Enums
+NotDefined	'{PropertyName}' duhet të jetë një vlerë e përcaktuar në {Type}.
+HasFlag	'{PropertyName}' nuk duhet të ketë flamurin {Flag}.
+NotHasFlag	'{PropertyName}' duhet të ketë flamurin {Flag}.
+
+# Dates and times
+Before	'{PropertyName}' nuk duhet të jetë para {ComparisonValue}.
+After	'{PropertyName}' nuk duhet të jetë pas {ComparisonValue}.
+InPast	'{PropertyName}' nuk duhet të jetë në të kaluarën.
+InFuture	'{PropertyName}' nuk duhet të jetë në të ardhmen.
+NotUtc	'{PropertyName}' duhet të jetë në UTC.
+Weekend	'{PropertyName}' duhet të jetë një ditë pune (nga e hëna deri të premten).
+Weekday	'{PropertyName}' duhet të jetë një ditë e fundjavës (e shtunë ose e diel).
+HasTimeOfDay	'{PropertyName}' nuk duhet të përmbajë orën e ditës.
+OlderThan	'{PropertyName}' nuk duhet të jetë më shumë se {MaxAge} në të kaluarën.
+NewerThan	'{PropertyName}' duhet të jetë të paktën {MinAge} në të kaluarën.
+
+# Uri and IPAddress
+Relative	'{PropertyName}' duhet të jetë një URI absolut.
+NotHttps	'{PropertyName}' duhet të jetë një adresë URL absolute HTTPS.
+NotHttpOrHttps	'{PropertyName}' duhet të jetë një adresë URL absolute HTTP ose HTTPS.
+NotScheme	'{PropertyName}' duhet të përdorë një nga këto skema URI: {Schemes}.
+Loopback	'{PropertyName}' nuk duhet të jetë një adresë loopback.
+Private	'{PropertyName}' nuk duhet të jetë një adresë private ose link-local.
+NotIPv4	'{PropertyName}' duhet të jetë një adresë IPv4.
+NotIPv6	'{PropertyName}' duhet të jetë një adresë IPv6.
+
+# Streams and types
+NotReadable	'{PropertyName}' duhet të lejojë leximin.
+NotWritable	'{PropertyName}' duhet të lejojë shkrimin.
+NotSeekable	'{PropertyName}' duhet të lejojë ndryshimin e pozicionit.
+NotAssignableTo	'{PropertyName}' duhet të mund t'i caktohet tipit {Type}.
+Abstract	'{PropertyName}' nuk duhet të jetë një tip abstrakt.
+Interface	'{PropertyName}' nuk duhet të jetë një ndërfaqe.

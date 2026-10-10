@@ -1,0 +1,146 @@
+# Dutch (nl). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' mag niet null zijn.
+NotNull	'{PropertyName}' moet null zijn.
+Default	'{PropertyName}' mag niet de standaardwaarde zijn.
+Empty	'{PropertyName}' mag niet leeg zijn.
+Empty.Guid	'{PropertyName}' mag geen lege GUID zijn.
+NotEmpty	'{PropertyName}' moet leeg zijn.
+EqualTo	'{PropertyName}' mag niet gelijk zijn aan de afgewezen waarde.
+EqualTo.Value	'{PropertyName}' mag niet gelijk zijn aan {ComparisonValue}.
+NotEqualTo	'{PropertyName}' moet gelijk zijn aan de vereiste waarde.
+NotEqualTo.Value	'{PropertyName}' moet gelijk zijn aan {ComparisonValue}.
+OneOf	'{PropertyName}' mag niet een van de afgewezen waarden zijn.
+NotOneOf	'{PropertyName}' moet een van de toegestane waarden zijn.
+Condition	'{PropertyName}' is ongeldig.
+Condition.If	'{PropertyName}' mag niet aan de voorwaarde voldoen: {Condition}.
+Condition.IfNot	'{PropertyName}' moet aan de voorwaarde voldoen: {Condition}.
+Type	'{PropertyName}' mag niet van het type {Type} zijn.
+NotType	'{PropertyName}' moet van het type {Type} zijn.
+True	'{PropertyName}' moet false zijn.
+False	'{PropertyName}' moet true zijn.
+Must	'{PropertyName}' is ongeldig.
+Invalid	'{PropertyName}' is ongeldig.
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' moet kleiner dan of gelijk aan {ComparisonValue} zijn.
+GreaterThanOrEqualTo	'{PropertyName}' moet kleiner dan {ComparisonValue} zijn.
+LessThan	'{PropertyName}' moet groter dan of gelijk aan {ComparisonValue} zijn.
+LessThanOrEqualTo	'{PropertyName}' moet groter dan {ComparisonValue} zijn.
+OutOfRange	'{PropertyName}' moet tussen {From} en {To} liggen.
+OutOfRangeExclusive	'{PropertyName}' moet tussen {From} en {To} liggen (grenswaarden niet inbegrepen).
+InRange	'{PropertyName}' mag niet tussen {From} en {To} liggen.
+Negative	'{PropertyName}' mag niet negatief zijn.
+NegativeOrZero	'{PropertyName}' moet groter dan 0 zijn.
+Positive	'{PropertyName}' mag niet groter dan 0 zijn.
+PositiveOrZero	'{PropertyName}' moet kleiner dan 0 zijn.
+Zero	'{PropertyName}' mag niet 0 zijn.
+NaN	'{PropertyName}' moet een getal zijn, geen NaN.
+Infinity	'{PropertyName}' moet een eindig getal zijn.
+NotFinite	'{PropertyName}' moet een eindig getal zijn.
+Odd	'{PropertyName}' moet een even getal zijn.
+Even	'{PropertyName}' moet een oneven getal zijn.
+NotMultipleOf	'{PropertyName}' moet een veelvoud van {Divisor} zijn.
+NotPowerOfTwo	'{PropertyName}' moet een macht van twee zijn.
+NotInteger	'{PropertyName}' moet een geheel getal zijn.
+PrecisionScaleExceeded	'{PropertyName}' mag in totaal maximaal {ExpectedPrecision} cijfers hebben, waarvan maximaal {ExpectedScale} decimalen. Gevonden: {Digits} cijfers voor het decimaalteken en {ActualScale} decimalen.
+
+# Strings
+WhiteSpace	'{PropertyName}' mag niet leeg zijn of alleen uit witruimte bestaan.
+LongerThan	'{PropertyName}' mag maximaal {MaxLength} tekens lang zijn.
+ShorterThan	'{PropertyName}' moet minimaal {MinLength} tekens lang zijn.
+LengthNotEqualTo	'{PropertyName}' moet precies {Length} tekens lang zijn.
+LengthOutOfRange	'{PropertyName}' moet tussen {MinLength} en {MaxLength} tekens lang zijn.
+Contains	'{PropertyName}' mag het afgewezen element niet bevatten.
+Contains.Value	'{PropertyName}' mag {Value} niet bevatten.
+NotContains	'{PropertyName}' moet het vereiste element bevatten.
+NotContains.Value	'{PropertyName}' moet {Value} bevatten.
+StartsWith	'{PropertyName}' mag niet beginnen met {Value}.
+NotStartsWith	'{PropertyName}' moet beginnen met {Value}.
+EndsWith	'{PropertyName}' mag niet eindigen op {Value}.
+NotEndsWith	'{PropertyName}' moet eindigen op {Value}.
+Matches	'{PropertyName}' mag niet overeenkomen met het patroon {Pattern}.
+NotMatches	'{PropertyName}' moet overeenkomen met het patroon {Pattern}.
+NotEmailAddress	'{PropertyName}' moet een geldig e-mailadres zijn.
+NotJson	'{PropertyName}' moet geldige JSON zijn.
+NotXml	'{PropertyName}' moet welgevormde XML zijn.
+NotUri	'{PropertyName}' moet een geldige URI zijn.
+NotUri.Absolute	'{PropertyName}' moet een geldige absolute URI zijn.
+NotUri.Relative	'{PropertyName}' moet een geldige relatieve URI zijn.
+NotHttpUrl	'{PropertyName}' moet een absolute HTTP- of HTTPS-URL zijn.
+NotParsable	'{PropertyName}' moet een geldige waarde van het type {Type} zijn.
+AllUpperCase	'{PropertyName}' mag niet volledig uit hoofdletters bestaan.
+AllLowerCase	'{PropertyName}' mag niet volledig uit kleine letters bestaan.
+NotTrimmed	'{PropertyName}' mag niet beginnen of eindigen met witruimte.
+ContainsWhiteSpace	'{PropertyName}' mag geen witruimte bevatten.
+ContainsControlCharacters	'{PropertyName}' mag geen besturingstekens bevatten.
+ContainsAny	'{PropertyName}' mag geen van de afgewezen tekens bevatten.
+ContainsAnyExcept	'{PropertyName}' mag alleen de toegestane tekens bevatten.
+NotAscii	'{PropertyName}' mag alleen ASCII-tekens bevatten.
+NotDigits	'{PropertyName}' mag alleen de cijfers 0 tot en met 9 bevatten.
+NotLettersOrDigits	'{PropertyName}' mag alleen letters of cijfers bevatten.
+NotHex	'{PropertyName}' moet een hexadecimale tekenreeks zijn.
+NotBase64	'{PropertyName}' moet een geldige Base64-tekenreeks zijn.
+NotGuid	'{PropertyName}' moet een geldige GUID zijn.
+NotIPAddress	'{PropertyName}' moet een geldig IP-adres zijn.
+NotSlug	'{PropertyName}' moet een slug zijn van kleine letters, cijfers en enkelvoudige koppeltekens.
+NotVersion	'{PropertyName}' moet een geldig versienummer zijn.
+NotCreditCardNumber	'{PropertyName}' moet een geldig creditcardnummer zijn.
+NotEnumName	'{PropertyName}' moet een gedefinieerde naam van {Type} zijn.
+NotFileName	'{PropertyName}' moet een geldige bestandsnaam zijn.
+
+# Collections and dictionaries
+CountEqualTo	'{PropertyName}' mag niet precies {Count} elementen bevatten.
+CountEqualTo.One	'{PropertyName}' mag niet precies 1 element bevatten.
+CountNotEqualTo	'{PropertyName}' moet precies {Count} elementen bevatten.
+CountNotEqualTo.One	'{PropertyName}' moet precies 1 element bevatten.
+CountGreaterThan	'{PropertyName}' mag maximaal {MaxCount} elementen bevatten.
+CountGreaterThan.One	'{PropertyName}' mag maximaal 1 element bevatten.
+CountLessThan	'{PropertyName}' moet minimaal {MinCount} elementen bevatten.
+CountLessThan.One	'{PropertyName}' moet minimaal 1 element bevatten.
+CountOutOfRange	'{PropertyName}' moet tussen {MinCount} en {MaxCount} elementen bevatten.
+ContainsNull	'{PropertyName}' mag geen elementen bevatten die null zijn.
+HasDuplicates	'{PropertyName}' mag geen dubbele elementen bevatten.
+Any	'{PropertyName}' mag geen element bevatten dat aan de voorwaarde voldoet.
+None	'{PropertyName}' moet minimaal één element bevatten dat aan de voorwaarde voldoet.
+ContainsKey	'{PropertyName}' mag de afgewezen sleutel niet bevatten.
+ContainsKey.Value	'{PropertyName}' mag de sleutel {Key} niet bevatten.
+NotContainsKey	'{PropertyName}' moet de vereiste sleutel bevatten.
+NotContainsKey.Value	'{PropertyName}' moet de sleutel {Key} bevatten.
+
+# Enums
+NotDefined	'{PropertyName}' moet een gedefinieerde waarde van {Type} zijn.
+HasFlag	'{PropertyName}' mag de vlag {Flag} niet hebben.
+NotHasFlag	'{PropertyName}' moet de vlag {Flag} hebben.
+
+# Dates and times
+Before	'{PropertyName}' mag niet vóór {ComparisonValue} liggen.
+After	'{PropertyName}' mag niet na {ComparisonValue} liggen.
+InPast	'{PropertyName}' mag niet in het verleden liggen.
+InFuture	'{PropertyName}' mag niet in de toekomst liggen.
+NotUtc	'{PropertyName}' moet in UTC zijn.
+Weekend	'{PropertyName}' moet een werkdag (maandag tot en met vrijdag) zijn.
+Weekday	'{PropertyName}' moet een dag in het weekend zijn.
+HasTimeOfDay	'{PropertyName}' mag geen tijd van de dag bevatten.
+OlderThan	'{PropertyName}' mag niet meer dan {MaxAge} in het verleden liggen.
+NewerThan	'{PropertyName}' moet minimaal {MinAge} in het verleden liggen.
+
+# Uri and IPAddress
+Relative	'{PropertyName}' moet een absolute URI zijn.
+NotHttps	'{PropertyName}' moet een absolute HTTPS-URL zijn.
+NotHttpOrHttps	'{PropertyName}' moet een absolute HTTP- of HTTPS-URL zijn.
+NotScheme	'{PropertyName}' moet een van deze URI-schema's gebruiken: {Schemes}.
+Loopback	'{PropertyName}' mag geen loopbackadres zijn.
+Private	'{PropertyName}' mag geen privé- of link-local-adres zijn.
+NotIPv4	'{PropertyName}' moet een IPv4-adres zijn.
+NotIPv6	'{PropertyName}' moet een IPv6-adres zijn.
+
+# Streams and types
+NotReadable	'{PropertyName}' moet lezen ondersteunen.
+NotWritable	'{PropertyName}' moet schrijven ondersteunen.
+NotSeekable	'{PropertyName}' moet zoeken ondersteunen.
+NotAssignableTo	'{PropertyName}' moet toewijsbaar zijn aan het type {Type}.
+Abstract	'{PropertyName}' mag geen abstract type zijn.
+Interface	'{PropertyName}' mag geen interface zijn.

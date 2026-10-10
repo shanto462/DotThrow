@@ -1,0 +1,146 @@
+# Japanese (ja). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' は null であってはなりません。
+NotNull	'{PropertyName}' は null である必要があります。
+Default	'{PropertyName}' は既定値であってはなりません。
+Empty	'{PropertyName}' は空であってはなりません。
+Empty.Guid	'{PropertyName}' は空の GUID であってはなりません。
+NotEmpty	'{PropertyName}' は空である必要があります。
+EqualTo	'{PropertyName}' は拒否された値と等しくてはなりません。
+EqualTo.Value	'{PropertyName}' は {ComparisonValue} と等しくてはなりません。
+NotEqualTo	'{PropertyName}' は必須の値と等しい必要があります。
+NotEqualTo.Value	'{PropertyName}' は {ComparisonValue} と等しい必要があります。
+OneOf	'{PropertyName}' は拒否された値のいずれかであってはなりません。
+NotOneOf	'{PropertyName}' は許可された値のいずれかである必要があります。
+Condition	'{PropertyName}' は無効です。
+Condition.If	'{PropertyName}' は次の条件を満たしてはなりません：{Condition}。
+Condition.IfNot	'{PropertyName}' は次の条件を満たす必要があります：{Condition}。
+Type	'{PropertyName}' は {Type} 型であってはなりません。
+NotType	'{PropertyName}' は {Type} 型である必要があります。
+True	'{PropertyName}' は false である必要があります。
+False	'{PropertyName}' は true である必要があります。
+Must	'{PropertyName}' は無効です。
+Invalid	'{PropertyName}' は無効です。
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' は {ComparisonValue} 以下である必要があります。
+GreaterThanOrEqualTo	'{PropertyName}' は {ComparisonValue} 未満である必要があります。
+LessThan	'{PropertyName}' は {ComparisonValue} 以上である必要があります。
+LessThanOrEqualTo	'{PropertyName}' は {ComparisonValue} より大きい必要があります。
+OutOfRange	'{PropertyName}' は {From} から {To} までの範囲内である必要があります。
+OutOfRangeExclusive	'{PropertyName}' は {From} から {To} までの範囲内である必要があります（両端の値を除く）。
+InRange	'{PropertyName}' は {From} から {To} までの範囲内であってはなりません。
+Negative	'{PropertyName}' は負の数であってはなりません。
+NegativeOrZero	'{PropertyName}' は 0 より大きい必要があります。
+Positive	'{PropertyName}' は 0 より大きくてはなりません。
+PositiveOrZero	'{PropertyName}' は 0 未満である必要があります。
+Zero	'{PropertyName}' は 0 であってはなりません。
+NaN	'{PropertyName}' は NaN ではなく数値である必要があります。
+Infinity	'{PropertyName}' は有限の数値である必要があります。
+NotFinite	'{PropertyName}' は有限の数値である必要があります。
+Odd	'{PropertyName}' は偶数である必要があります。
+Even	'{PropertyName}' は奇数である必要があります。
+NotMultipleOf	'{PropertyName}' は {Divisor} の倍数である必要があります。
+NotPowerOfTwo	'{PropertyName}' は 2 のべき乗である必要があります。
+NotInteger	'{PropertyName}' は整数である必要があります。
+PrecisionScaleExceeded	'{PropertyName}' は全体で {ExpectedPrecision} 桁以内、小数部 {ExpectedScale} 桁以内である必要があります。実際は整数部 {Digits} 桁、小数部 {ActualScale} 桁です。
+
+# Strings
+WhiteSpace	'{PropertyName}' は空または空白文字のみであってはなりません。
+LongerThan	'{PropertyName}' は {MaxLength} 文字以下である必要があります。
+ShorterThan	'{PropertyName}' は {MinLength} 文字以上である必要があります。
+LengthNotEqualTo	'{PropertyName}' はちょうど {Length} 文字である必要があります。
+LengthOutOfRange	'{PropertyName}' は {MinLength} 文字以上 {MaxLength} 文字以下である必要があります。
+Contains	'{PropertyName}' は拒否された要素を含んではなりません。
+Contains.Value	'{PropertyName}' は {Value} を含んではなりません。
+NotContains	'{PropertyName}' は必須の要素を含む必要があります。
+NotContains.Value	'{PropertyName}' は {Value} を含む必要があります。
+StartsWith	'{PropertyName}' は {Value} で始まってはなりません。
+NotStartsWith	'{PropertyName}' は {Value} で始まる必要があります。
+EndsWith	'{PropertyName}' は {Value} で終わってはなりません。
+NotEndsWith	'{PropertyName}' は {Value} で終わる必要があります。
+Matches	'{PropertyName}' はパターン {Pattern} に一致してはなりません。
+NotMatches	'{PropertyName}' はパターン {Pattern} に一致する必要があります。
+NotEmailAddress	'{PropertyName}' は有効なメールアドレスである必要があります。
+NotJson	'{PropertyName}' は有効な JSON である必要があります。
+NotXml	'{PropertyName}' は整形式の XML である必要があります。
+NotUri	'{PropertyName}' は有効な URI である必要があります。
+NotUri.Absolute	'{PropertyName}' は有効な絶対 URI である必要があります。
+NotUri.Relative	'{PropertyName}' は有効な相対 URI である必要があります。
+NotHttpUrl	'{PropertyName}' は HTTP または HTTPS の絶対 URL である必要があります。
+NotParsable	'{PropertyName}' は {Type} 型の有効な値である必要があります。
+AllUpperCase	'{PropertyName}' はすべて大文字であってはなりません。
+AllLowerCase	'{PropertyName}' はすべて小文字であってはなりません。
+NotTrimmed	'{PropertyName}' は先頭または末尾に空白文字を含んではなりません。
+ContainsWhiteSpace	'{PropertyName}' は空白文字を含んではなりません。
+ContainsControlCharacters	'{PropertyName}' は制御文字を含んではなりません。
+ContainsAny	'{PropertyName}' は拒否された文字をいずれも含んではなりません。
+ContainsAnyExcept	'{PropertyName}' は許可された文字のみを含む必要があります。
+NotAscii	'{PropertyName}' は ASCII 文字のみを含む必要があります。
+NotDigits	'{PropertyName}' は 0 から 9 までの数字のみを含む必要があります。
+NotLettersOrDigits	'{PropertyName}' は文字または数字のみを含む必要があります。
+NotHex	'{PropertyName}' は 16 進数の文字列である必要があります。
+NotBase64	'{PropertyName}' は有効な Base64 文字列である必要があります。
+NotGuid	'{PropertyName}' は有効な GUID である必要があります。
+NotIPAddress	'{PropertyName}' は有効な IP アドレスである必要があります。
+NotSlug	'{PropertyName}' は小文字、数字、単一のハイフンで構成されたスラッグである必要があります。
+NotVersion	'{PropertyName}' は有効なバージョン番号である必要があります。
+NotCreditCardNumber	'{PropertyName}' は有効なクレジットカード番号である必要があります。
+NotEnumName	'{PropertyName}' は列挙型 {Type} で定義された名前である必要があります。
+NotFileName	'{PropertyName}' は有効なファイル名である必要があります。
+
+# Collections and dictionaries
+CountEqualTo	'{PropertyName}' の要素数はちょうど {Count} 個であってはなりません。
+CountEqualTo.One	'{PropertyName}' の要素数はちょうど 1 個であってはなりません。
+CountNotEqualTo	'{PropertyName}' の要素数はちょうど {Count} 個である必要があります。
+CountNotEqualTo.One	'{PropertyName}' の要素数はちょうど 1 個である必要があります。
+CountGreaterThan	'{PropertyName}' の要素数は {MaxCount} 個以下である必要があります。
+CountGreaterThan.One	'{PropertyName}' の要素数は 1 個以下である必要があります。
+CountLessThan	'{PropertyName}' の要素数は {MinCount} 個以上である必要があります。
+CountLessThan.One	'{PropertyName}' の要素数は 1 個以上である必要があります。
+CountOutOfRange	'{PropertyName}' の要素数は {MinCount} 個以上 {MaxCount} 個以下である必要があります。
+ContainsNull	'{PropertyName}' は null の要素を含んではなりません。
+HasDuplicates	'{PropertyName}' は重複する要素を含んではなりません。
+Any	'{PropertyName}' は条件を満たす要素を含んではなりません。
+None	'{PropertyName}' は条件を満たす要素を少なくとも 1 つ含む必要があります。
+ContainsKey	'{PropertyName}' は拒否されたキーを含んではなりません。
+ContainsKey.Value	'{PropertyName}' はキー {Key} を含んではなりません。
+NotContainsKey	'{PropertyName}' は必須のキーを含む必要があります。
+NotContainsKey.Value	'{PropertyName}' はキー {Key} を含む必要があります。
+
+# Enums
+NotDefined	'{PropertyName}' は列挙型 {Type} で定義された値である必要があります。
+HasFlag	'{PropertyName}' はフラグ {Flag} が設定されていてはなりません。
+NotHasFlag	'{PropertyName}' はフラグ {Flag} が設定されている必要があります。
+
+# Dates and times
+Before	'{PropertyName}' は {ComparisonValue} より前であってはなりません。
+After	'{PropertyName}' は {ComparisonValue} より後であってはなりません。
+InPast	'{PropertyName}' は過去の日時であってはなりません。
+InFuture	'{PropertyName}' は未来の日時であってはなりません。
+NotUtc	'{PropertyName}' は UTC の日時である必要があります。
+Weekend	'{PropertyName}' は平日（月曜日から金曜日）である必要があります。
+Weekday	'{PropertyName}' は週末（土曜日または日曜日）である必要があります。
+HasTimeOfDay	'{PropertyName}' は時刻を含んではなりません。
+OlderThan	'{PropertyName}' は現在から {MaxAge} を超えて過去の日時であってはなりません。
+NewerThan	'{PropertyName}' は現在から {MinAge} 以上過去の日時である必要があります。
+
+# Uri and IPAddress
+Relative	'{PropertyName}' は絶対 URI である必要があります。
+NotHttps	'{PropertyName}' は HTTPS の絶対 URL である必要があります。
+NotHttpOrHttps	'{PropertyName}' は HTTP または HTTPS の絶対 URL である必要があります。
+NotScheme	'{PropertyName}' は次のいずれかの URI スキームを使用する必要があります：{Schemes}。
+Loopback	'{PropertyName}' はループバックアドレスであってはなりません。
+Private	'{PropertyName}' はプライベートアドレスまたはリンクローカルアドレスであってはなりません。
+NotIPv4	'{PropertyName}' は IPv4 アドレスである必要があります。
+NotIPv6	'{PropertyName}' は IPv6 アドレスである必要があります。
+
+# Streams and types
+NotReadable	'{PropertyName}' は読み取りをサポートしている必要があります。
+NotWritable	'{PropertyName}' は書き込みをサポートしている必要があります。
+NotSeekable	'{PropertyName}' はシークをサポートしている必要があります。
+NotAssignableTo	'{PropertyName}' は {Type} 型に割り当て可能である必要があります。
+Abstract	'{PropertyName}' は抽象型であってはなりません。
+Interface	'{PropertyName}' はインターフェイスであってはなりません。

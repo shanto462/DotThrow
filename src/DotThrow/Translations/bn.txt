@@ -1,0 +1,146 @@
+# Bengali (bn). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' null হতে পারবে না।
+NotNull	'{PropertyName}' অবশ্যই null হতে হবে।
+Default	'{PropertyName}' ডিফল্ট মান হতে পারবে না।
+Empty	'{PropertyName}' খালি হতে পারবে না।
+Empty.Guid	'{PropertyName}' খালি GUID হতে পারবে না।
+NotEmpty	'{PropertyName}' অবশ্যই খালি হতে হবে।
+EqualTo	'{PropertyName}' নিষিদ্ধ মানের সমান হতে পারবে না।
+EqualTo.Value	'{PropertyName}' {ComparisonValue}-এর সমান হতে পারবে না।
+NotEqualTo	'{PropertyName}' অবশ্যই প্রয়োজনীয় মানের সমান হতে হবে।
+NotEqualTo.Value	'{PropertyName}' অবশ্যই {ComparisonValue}-এর সমান হতে হবে।
+OneOf	'{PropertyName}' নিষিদ্ধ মানগুলোর কোনোটি হতে পারবে না।
+NotOneOf	'{PropertyName}' অবশ্যই অনুমোদিত মানগুলোর একটি হতে হবে।
+Condition	'{PropertyName}' বৈধ নয়।
+Condition.If	'{PropertyName}' এই শর্ত পূরণ করতে পারবে না: {Condition}।
+Condition.IfNot	'{PropertyName}'-কে অবশ্যই এই শর্ত পূরণ করতে হবে: {Condition}।
+Type	'{PropertyName}' {Type} টাইপের হতে পারবে না।
+NotType	'{PropertyName}' অবশ্যই {Type} টাইপের হতে হবে।
+True	'{PropertyName}' অবশ্যই false হতে হবে।
+False	'{PropertyName}' অবশ্যই true হতে হবে।
+Must	'{PropertyName}' বৈধ নয়।
+Invalid	'{PropertyName}' বৈধ নয়।
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' অবশ্যই {ComparisonValue}-এর চেয়ে কম বা সমান হতে হবে।
+GreaterThanOrEqualTo	'{PropertyName}' অবশ্যই {ComparisonValue}-এর চেয়ে কম হতে হবে।
+LessThan	'{PropertyName}' অবশ্যই {ComparisonValue}-এর চেয়ে বেশি বা সমান হতে হবে।
+LessThanOrEqualTo	'{PropertyName}' অবশ্যই {ComparisonValue}-এর চেয়ে বেশি হতে হবে।
+OutOfRange	'{PropertyName}' অবশ্যই {From} থেকে {To}-এর মধ্যে হতে হবে।
+OutOfRangeExclusive	'{PropertyName}' অবশ্যই {From} থেকে {To}-এর মধ্যে হতে হবে (সীমার মান দুটি বাদে)।
+InRange	'{PropertyName}' {From} থেকে {To}-এর মধ্যে হতে পারবে না।
+Negative	'{PropertyName}' ঋণাত্মক হতে পারবে না।
+NegativeOrZero	'{PropertyName}' অবশ্যই 0-এর চেয়ে বেশি হতে হবে।
+Positive	'{PropertyName}' 0-এর চেয়ে বেশি হতে পারবে না।
+PositiveOrZero	'{PropertyName}' অবশ্যই 0-এর চেয়ে কম হতে হবে।
+Zero	'{PropertyName}' 0 হতে পারবে না।
+NaN	'{PropertyName}' অবশ্যই একটি সংখ্যা হতে হবে, NaN নয়।
+Infinity	'{PropertyName}' অবশ্যই একটি সসীম সংখ্যা হতে হবে।
+NotFinite	'{PropertyName}' অবশ্যই একটি সসীম সংখ্যা হতে হবে।
+Odd	'{PropertyName}' অবশ্যই একটি জোড় সংখ্যা হতে হবে।
+Even	'{PropertyName}' অবশ্যই একটি বিজোড় সংখ্যা হতে হবে।
+NotMultipleOf	'{PropertyName}' অবশ্যই {Divisor}-এর গুণিতক হতে হবে।
+NotPowerOfTwo	'{PropertyName}' অবশ্যই 2-এর ঘাত হতে হবে।
+NotInteger	'{PropertyName}' অবশ্যই একটি পূর্ণসংখ্যা হতে হবে।
+PrecisionScaleExceeded	'{PropertyName}'-এ অবশ্যই মোট সর্বোচ্চ {ExpectedPrecision}টি অঙ্ক থাকতে হবে, যার মধ্যে দশমিক বিন্দুর পরে সর্বোচ্চ {ExpectedScale}টি। দশমিক বিন্দুর আগে {Digits}টি এবং পরে {ActualScale}টি অঙ্ক পাওয়া গেছে।
+
+# Strings
+WhiteSpace	'{PropertyName}' খালি বা শুধু হোয়াইটস্পেস হতে পারবে না।
+LongerThan	'{PropertyName}'-এর দৈর্ঘ্য অবশ্যই সর্বোচ্চ {MaxLength} অক্ষর হতে হবে।
+ShorterThan	'{PropertyName}'-এর দৈর্ঘ্য অবশ্যই কমপক্ষে {MinLength} অক্ষর হতে হবে।
+LengthNotEqualTo	'{PropertyName}'-এর দৈর্ঘ্য অবশ্যই ঠিক {Length} অক্ষর হতে হবে।
+LengthOutOfRange	'{PropertyName}'-এর দৈর্ঘ্য অবশ্যই {MinLength} থেকে {MaxLength} অক্ষরের মধ্যে হতে হবে।
+Contains	'{PropertyName}'-এ নিষিদ্ধ আইটেমটি থাকতে পারবে না।
+Contains.Value	'{PropertyName}'-এ {Value} থাকতে পারবে না।
+NotContains	'{PropertyName}'-এ অবশ্যই প্রয়োজনীয় আইটেমটি থাকতে হবে।
+NotContains.Value	'{PropertyName}'-এ অবশ্যই {Value} থাকতে হবে।
+StartsWith	'{PropertyName}' {Value} দিয়ে শুরু হতে পারবে না।
+NotStartsWith	'{PropertyName}' অবশ্যই {Value} দিয়ে শুরু হতে হবে।
+EndsWith	'{PropertyName}' {Value} দিয়ে শেষ হতে পারবে না।
+NotEndsWith	'{PropertyName}' অবশ্যই {Value} দিয়ে শেষ হতে হবে।
+Matches	'{PropertyName}' {Pattern} প্যাটার্নের সাথে মিলতে পারবে না।
+NotMatches	'{PropertyName}' অবশ্যই {Pattern} প্যাটার্নের সাথে মিলতে হবে।
+NotEmailAddress	'{PropertyName}' অবশ্যই একটি বৈধ ইমেইল ঠিকানা হতে হবে।
+NotJson	'{PropertyName}' অবশ্যই বৈধ JSON হতে হবে।
+NotXml	'{PropertyName}' অবশ্যই সঠিকভাবে গঠিত XML হতে হবে।
+NotUri	'{PropertyName}' অবশ্যই একটি বৈধ URI হতে হবে।
+NotUri.Absolute	'{PropertyName}' অবশ্যই একটি বৈধ অ্যাবসোলিউট URI হতে হবে।
+NotUri.Relative	'{PropertyName}' অবশ্যই একটি বৈধ রিলেটিভ URI হতে হবে।
+NotHttpUrl	'{PropertyName}' অবশ্যই একটি অ্যাবসোলিউট HTTP বা HTTPS URL হতে হবে।
+NotParsable	'{PropertyName}' অবশ্যই {Type} টাইপের একটি বৈধ মান হতে হবে।
+AllUpperCase	'{PropertyName}' পুরোটা বড় হাতের অক্ষরে হতে পারবে না।
+AllLowerCase	'{PropertyName}' পুরোটা ছোট হাতের অক্ষরে হতে পারবে না।
+NotTrimmed	'{PropertyName}'-এর শুরুতে বা শেষে হোয়াইটস্পেস থাকতে পারবে না।
+ContainsWhiteSpace	'{PropertyName}'-এ হোয়াইটস্পেস থাকতে পারবে না।
+ContainsControlCharacters	'{PropertyName}'-এ কন্ট্রোল অক্ষর থাকতে পারবে না।
+ContainsAny	'{PropertyName}'-এ নিষিদ্ধ অক্ষরগুলোর কোনোটি থাকতে পারবে না।
+ContainsAnyExcept	'{PropertyName}'-এ অবশ্যই শুধু অনুমোদিত অক্ষর থাকতে হবে।
+NotAscii	'{PropertyName}'-এ অবশ্যই শুধু ASCII অক্ষর থাকতে হবে।
+NotDigits	'{PropertyName}'-এ অবশ্যই শুধু 0 থেকে 9 পর্যন্ত অঙ্ক থাকতে হবে।
+NotLettersOrDigits	'{PropertyName}'-এ অবশ্যই শুধু বর্ণ বা অঙ্ক থাকতে হবে।
+NotHex	'{PropertyName}' অবশ্যই একটি হেক্সাডেসিমাল স্ট্রিং হতে হবে।
+NotBase64	'{PropertyName}' অবশ্যই একটি বৈধ Base64 স্ট্রিং হতে হবে।
+NotGuid	'{PropertyName}' অবশ্যই একটি বৈধ GUID হতে হবে।
+NotIPAddress	'{PropertyName}' অবশ্যই একটি বৈধ IP ঠিকানা হতে হবে।
+NotSlug	'{PropertyName}' অবশ্যই ছোট হাতের বর্ণ, অঙ্ক ও একক হাইফেন দিয়ে তৈরি একটি স্লাগ হতে হবে।
+NotVersion	'{PropertyName}' অবশ্যই একটি বৈধ ভার্সন নম্বর হতে হবে।
+NotCreditCardNumber	'{PropertyName}' অবশ্যই একটি বৈধ ক্রেডিট কার্ড নম্বর হতে হবে।
+NotEnumName	'{PropertyName}' অবশ্যই {Type}-এর একটি নির্ধারিত নাম হতে হবে।
+NotFileName	'{PropertyName}' অবশ্যই একটি বৈধ ফাইলের নাম হতে হবে।
+
+# Collections and dictionaries
+CountEqualTo	'{PropertyName}'-এ ঠিক {Count}টি আইটেম থাকতে পারবে না।
+CountEqualTo.One	'{PropertyName}'-এ ঠিক 1টি আইটেম থাকতে পারবে না।
+CountNotEqualTo	'{PropertyName}'-এ অবশ্যই ঠিক {Count}টি আইটেম থাকতে হবে।
+CountNotEqualTo.One	'{PropertyName}'-এ অবশ্যই ঠিক 1টি আইটেম থাকতে হবে।
+CountGreaterThan	'{PropertyName}'-এ অবশ্যই সর্বোচ্চ {MaxCount}টি আইটেম থাকতে হবে।
+CountGreaterThan.One	'{PropertyName}'-এ অবশ্যই সর্বোচ্চ 1টি আইটেম থাকতে হবে।
+CountLessThan	'{PropertyName}'-এ অবশ্যই কমপক্ষে {MinCount}টি আইটেম থাকতে হবে।
+CountLessThan.One	'{PropertyName}'-এ অবশ্যই কমপক্ষে 1টি আইটেম থাকতে হবে।
+CountOutOfRange	'{PropertyName}'-এ অবশ্যই {MinCount} থেকে {MaxCount}টি আইটেম থাকতে হবে।
+ContainsNull	'{PropertyName}'-এ null আইটেম থাকতে পারবে না।
+HasDuplicates	'{PropertyName}'-এ ডুপ্লিকেট আইটেম থাকতে পারবে না।
+Any	'{PropertyName}'-এ শর্ত পূরণ করে এমন কোনো আইটেম থাকতে পারবে না।
+None	'{PropertyName}'-এ অবশ্যই শর্ত পূরণ করে এমন কমপক্ষে একটি আইটেম থাকতে হবে।
+ContainsKey	'{PropertyName}'-এ নিষিদ্ধ কী-টি থাকতে পারবে না।
+ContainsKey.Value	'{PropertyName}'-এ {Key} কী-টি থাকতে পারবে না।
+NotContainsKey	'{PropertyName}'-এ অবশ্যই প্রয়োজনীয় কী-টি থাকতে হবে।
+NotContainsKey.Value	'{PropertyName}'-এ অবশ্যই {Key} কী-টি থাকতে হবে।
+
+# Enums
+NotDefined	'{PropertyName}' অবশ্যই {Type}-এর একটি নির্ধারিত মান হতে হবে।
+HasFlag	'{PropertyName}'-এ {Flag} ফ্ল্যাগ সেট থাকতে পারবে না।
+NotHasFlag	'{PropertyName}'-এ অবশ্যই {Flag} ফ্ল্যাগ সেট থাকতে হবে।
+
+# Dates and times
+Before	'{PropertyName}' {ComparisonValue}-এর আগে হতে পারবে না।
+After	'{PropertyName}' {ComparisonValue}-এর পরে হতে পারবে না।
+InPast	'{PropertyName}' অতীতে হতে পারবে না।
+InFuture	'{PropertyName}' ভবিষ্যতে হতে পারবে না।
+NotUtc	'{PropertyName}' অবশ্যই UTC-তে হতে হবে।
+Weekend	'{PropertyName}' অবশ্যই সোমবার থেকে শুক্রবারের মধ্যে কোনো দিন হতে হবে।
+Weekday	'{PropertyName}' অবশ্যই শনিবার বা রবিবার হতে হবে।
+HasTimeOfDay	'{PropertyName}'-এ সময়ের অংশ থাকতে পারবে না।
+OlderThan	'{PropertyName}' {MaxAge}-এর বেশি পুরোনো হতে পারবে না।
+NewerThan	'{PropertyName}' অবশ্যই কমপক্ষে {MinAge} পুরোনো হতে হবে।
+
+# Uri and IPAddress
+Relative	'{PropertyName}' অবশ্যই একটি অ্যাবসোলিউট URI হতে হবে।
+NotHttps	'{PropertyName}' অবশ্যই একটি অ্যাবসোলিউট HTTPS URL হতে হবে।
+NotHttpOrHttps	'{PropertyName}' অবশ্যই একটি অ্যাবসোলিউট HTTP বা HTTPS URL হতে হবে।
+NotScheme	'{PropertyName}'-কে অবশ্যই এই URI স্কিমগুলোর একটি ব্যবহার করতে হবে: {Schemes}।
+Loopback	'{PropertyName}' লুপব্যাক ঠিকানা হতে পারবে না।
+Private	'{PropertyName}' প্রাইভেট বা লিংক-লোকাল ঠিকানা হতে পারবে না।
+NotIPv4	'{PropertyName}' অবশ্যই একটি IPv4 ঠিকানা হতে হবে।
+NotIPv6	'{PropertyName}' অবশ্যই একটি IPv6 ঠিকানা হতে হবে।
+
+# Streams and types
+NotReadable	'{PropertyName}' অবশ্যই পড়া যায় এমন হতে হবে।
+NotWritable	'{PropertyName}' অবশ্যই লেখা যায় এমন হতে হবে।
+NotSeekable	'{PropertyName}' অবশ্যই সিক (seek) করা যায় এমন হতে হবে।
+NotAssignableTo	'{PropertyName}' অবশ্যই {Type} টাইপে অ্যাসাইন করা যায় এমন হতে হবে।
+Abstract	'{PropertyName}' অ্যাবস্ট্রাক্ট টাইপ হতে পারবে না।
+Interface	'{PropertyName}' ইন্টারফেস হতে পারবে না।

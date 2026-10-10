@@ -1,0 +1,146 @@
+# Greek (el). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	Το πεδίο '{PropertyName}' δεν πρέπει να είναι null.
+NotNull	Το πεδίο '{PropertyName}' πρέπει να είναι null.
+Default	Το πεδίο '{PropertyName}' δεν πρέπει να έχει την προεπιλεγμένη τιμή.
+Empty	Το πεδίο '{PropertyName}' δεν πρέπει να είναι κενό.
+Empty.Guid	Το πεδίο '{PropertyName}' δεν πρέπει να είναι κενό GUID.
+NotEmpty	Το πεδίο '{PropertyName}' πρέπει να είναι κενό.
+EqualTo	Το πεδίο '{PropertyName}' δεν πρέπει να είναι ίσο με τη μη επιτρεπτή τιμή.
+EqualTo.Value	Το πεδίο '{PropertyName}' δεν πρέπει να είναι ίσο με {ComparisonValue}.
+NotEqualTo	Το πεδίο '{PropertyName}' πρέπει να είναι ίσο με την απαιτούμενη τιμή.
+NotEqualTo.Value	Το πεδίο '{PropertyName}' πρέπει να είναι ίσο με {ComparisonValue}.
+OneOf	Το πεδίο '{PropertyName}' δεν πρέπει να έχει καμία από τις μη επιτρεπτές τιμές.
+NotOneOf	Το πεδίο '{PropertyName}' πρέπει να έχει μία από τις επιτρεπτές τιμές.
+Condition	Το πεδίο '{PropertyName}' δεν είναι έγκυρο.
+Condition.If	Το πεδίο '{PropertyName}' δεν πρέπει να ικανοποιεί τη συνθήκη: {Condition}.
+Condition.IfNot	Το πεδίο '{PropertyName}' πρέπει να ικανοποιεί τη συνθήκη: {Condition}.
+Type	Το πεδίο '{PropertyName}' δεν πρέπει να είναι τύπου {Type}.
+NotType	Το πεδίο '{PropertyName}' πρέπει να είναι τύπου {Type}.
+True	Το πεδίο '{PropertyName}' πρέπει να είναι false.
+False	Το πεδίο '{PropertyName}' πρέπει να είναι true.
+Must	Το πεδίο '{PropertyName}' δεν είναι έγκυρο.
+Invalid	Το πεδίο '{PropertyName}' δεν είναι έγκυρο.
+
+# Comparisons and numbers
+GreaterThan	Το πεδίο '{PropertyName}' πρέπει να είναι μικρότερο ή ίσο με {ComparisonValue}.
+GreaterThanOrEqualTo	Το πεδίο '{PropertyName}' πρέπει να είναι μικρότερο από {ComparisonValue}.
+LessThan	Το πεδίο '{PropertyName}' πρέπει να είναι μεγαλύτερο ή ίσο με {ComparisonValue}.
+LessThanOrEqualTo	Το πεδίο '{PropertyName}' πρέπει να είναι μεγαλύτερο από {ComparisonValue}.
+OutOfRange	Το πεδίο '{PropertyName}' πρέπει να είναι μεταξύ {From} και {To}.
+OutOfRangeExclusive	Το πεδίο '{PropertyName}' πρέπει να είναι μεταξύ {From} και {To} (εξαιρουμένων των ορίων).
+InRange	Το πεδίο '{PropertyName}' δεν πρέπει να είναι μεταξύ {From} και {To}.
+Negative	Το πεδίο '{PropertyName}' δεν πρέπει να είναι αρνητικό.
+NegativeOrZero	Το πεδίο '{PropertyName}' πρέπει να είναι μεγαλύτερο από 0.
+Positive	Το πεδίο '{PropertyName}' δεν πρέπει να είναι μεγαλύτερο από 0.
+PositiveOrZero	Το πεδίο '{PropertyName}' πρέπει να είναι μικρότερο από 0.
+Zero	Το πεδίο '{PropertyName}' δεν πρέπει να είναι 0.
+NaN	Το πεδίο '{PropertyName}' πρέπει να είναι αριθμός, όχι NaN.
+Infinity	Το πεδίο '{PropertyName}' πρέπει να είναι πεπερασμένος αριθμός.
+NotFinite	Το πεδίο '{PropertyName}' πρέπει να είναι πεπερασμένος αριθμός.
+Odd	Το πεδίο '{PropertyName}' πρέπει να είναι άρτιος αριθμός.
+Even	Το πεδίο '{PropertyName}' πρέπει να είναι περιττός αριθμός.
+NotMultipleOf	Το πεδίο '{PropertyName}' πρέπει να είναι πολλαπλάσιο του {Divisor}.
+NotPowerOfTwo	Το πεδίο '{PropertyName}' πρέπει να είναι δύναμη του 2.
+NotInteger	Το πεδίο '{PropertyName}' πρέπει να είναι ακέραιος αριθμός.
+PrecisionScaleExceeded	Ο συνολικός αριθμός ψηφίων του πεδίου '{PropertyName}' πρέπει να είναι το πολύ {ExpectedPrecision} και ο αριθμός των δεκαδικών το πολύ {ExpectedScale}. Βρέθηκαν ψηφία: {Digits} πριν από την υποδιαστολή και {ActualScale} μετά από αυτήν.
+
+# Strings
+WhiteSpace	Το πεδίο '{PropertyName}' δεν πρέπει να είναι κενό ή να περιέχει μόνο κενά διαστήματα.
+LongerThan	Ο αριθμός χαρακτήρων του πεδίου '{PropertyName}' πρέπει να είναι το πολύ {MaxLength}.
+ShorterThan	Ο αριθμός χαρακτήρων του πεδίου '{PropertyName}' πρέπει να είναι τουλάχιστον {MinLength}.
+LengthNotEqualTo	Ο αριθμός χαρακτήρων του πεδίου '{PropertyName}' πρέπει να είναι ακριβώς {Length}.
+LengthOutOfRange	Ο αριθμός χαρακτήρων του πεδίου '{PropertyName}' πρέπει να είναι μεταξύ {MinLength} και {MaxLength}.
+Contains	Το πεδίο '{PropertyName}' δεν πρέπει να περιέχει το μη επιτρεπτό στοιχείο.
+Contains.Value	Το πεδίο '{PropertyName}' δεν πρέπει να περιέχει {Value}.
+NotContains	Το πεδίο '{PropertyName}' πρέπει να περιέχει το απαιτούμενο στοιχείο.
+NotContains.Value	Το πεδίο '{PropertyName}' πρέπει να περιέχει {Value}.
+StartsWith	Το πεδίο '{PropertyName}' δεν πρέπει να ξεκινά με {Value}.
+NotStartsWith	Το πεδίο '{PropertyName}' πρέπει να ξεκινά με {Value}.
+EndsWith	Το πεδίο '{PropertyName}' δεν πρέπει να τελειώνει με {Value}.
+NotEndsWith	Το πεδίο '{PropertyName}' πρέπει να τελειώνει με {Value}.
+Matches	Το πεδίο '{PropertyName}' δεν πρέπει να ταιριάζει με το μοτίβο {Pattern}.
+NotMatches	Το πεδίο '{PropertyName}' πρέπει να ταιριάζει με το μοτίβο {Pattern}.
+NotEmailAddress	Το πεδίο '{PropertyName}' πρέπει να είναι έγκυρη διεύθυνση email.
+NotJson	Το πεδίο '{PropertyName}' πρέπει να είναι έγκυρο JSON.
+NotXml	Το πεδίο '{PropertyName}' πρέπει να είναι σωστά διαμορφωμένο XML.
+NotUri	Το πεδίο '{PropertyName}' πρέπει να είναι έγκυρο URI.
+NotUri.Absolute	Το πεδίο '{PropertyName}' πρέπει να είναι έγκυρο απόλυτο URI.
+NotUri.Relative	Το πεδίο '{PropertyName}' πρέπει να είναι έγκυρο σχετικό URI.
+NotHttpUrl	Το πεδίο '{PropertyName}' πρέπει να είναι απόλυτο URL HTTP ή HTTPS.
+NotParsable	Το πεδίο '{PropertyName}' πρέπει να είναι έγκυρη τιμή τύπου {Type}.
+AllUpperCase	Το πεδίο '{PropertyName}' δεν πρέπει να περιέχει μόνο κεφαλαία γράμματα.
+AllLowerCase	Το πεδίο '{PropertyName}' δεν πρέπει να περιέχει μόνο πεζά γράμματα.
+NotTrimmed	Το πεδίο '{PropertyName}' δεν πρέπει να ξεκινά ή να τελειώνει με κενά διαστήματα.
+ContainsWhiteSpace	Το πεδίο '{PropertyName}' δεν πρέπει να περιέχει κενά διαστήματα.
+ContainsControlCharacters	Το πεδίο '{PropertyName}' δεν πρέπει να περιέχει χαρακτήρες ελέγχου.
+ContainsAny	Το πεδίο '{PropertyName}' δεν πρέπει να περιέχει κανέναν από τους μη επιτρεπτούς χαρακτήρες.
+ContainsAnyExcept	Το πεδίο '{PropertyName}' πρέπει να περιέχει μόνο τους επιτρεπτούς χαρακτήρες.
+NotAscii	Το πεδίο '{PropertyName}' πρέπει να περιέχει μόνο χαρακτήρες ASCII.
+NotDigits	Το πεδίο '{PropertyName}' πρέπει να περιέχει μόνο τα ψηφία 0 έως 9.
+NotLettersOrDigits	Το πεδίο '{PropertyName}' πρέπει να περιέχει μόνο γράμματα ή ψηφία.
+NotHex	Το πεδίο '{PropertyName}' πρέπει να είναι δεκαεξαδική συμβολοσειρά.
+NotBase64	Το πεδίο '{PropertyName}' πρέπει να είναι έγκυρη συμβολοσειρά Base64.
+NotGuid	Το πεδίο '{PropertyName}' πρέπει να είναι έγκυρο GUID.
+NotIPAddress	Το πεδίο '{PropertyName}' πρέπει να είναι έγκυρη διεύθυνση IP.
+NotSlug	Το πεδίο '{PropertyName}' πρέπει να είναι slug από πεζά γράμματα, ψηφία και μεμονωμένες παύλες.
+NotVersion	Το πεδίο '{PropertyName}' πρέπει να είναι έγκυρος αριθμός έκδοσης.
+NotCreditCardNumber	Το πεδίο '{PropertyName}' πρέπει να είναι έγκυρος αριθμός πιστωτικής κάρτας.
+NotEnumName	Το πεδίο '{PropertyName}' πρέπει να είναι όνομα που ορίζεται στον τύπο {Type}.
+NotFileName	Το πεδίο '{PropertyName}' πρέπει να είναι έγκυρο όνομα αρχείου.
+
+# Collections and dictionaries
+CountEqualTo	Το πεδίο '{PropertyName}' δεν πρέπει να έχει ακριβώς {Count} στοιχεία.
+CountEqualTo.One	Το πεδίο '{PropertyName}' δεν πρέπει να έχει ακριβώς 1 στοιχείο.
+CountNotEqualTo	Το πεδίο '{PropertyName}' πρέπει να έχει ακριβώς {Count} στοιχεία.
+CountNotEqualTo.One	Το πεδίο '{PropertyName}' πρέπει να έχει ακριβώς 1 στοιχείο.
+CountGreaterThan	Το πεδίο '{PropertyName}' πρέπει να έχει το πολύ {MaxCount} στοιχεία.
+CountGreaterThan.One	Το πεδίο '{PropertyName}' πρέπει να έχει το πολύ 1 στοιχείο.
+CountLessThan	Το πεδίο '{PropertyName}' πρέπει να έχει τουλάχιστον {MinCount} στοιχεία.
+CountLessThan.One	Το πεδίο '{PropertyName}' πρέπει να έχει τουλάχιστον 1 στοιχείο.
+CountOutOfRange	Ο αριθμός στοιχείων του πεδίου '{PropertyName}' πρέπει να είναι μεταξύ {MinCount} και {MaxCount}.
+ContainsNull	Το πεδίο '{PropertyName}' δεν πρέπει να περιέχει στοιχεία null.
+HasDuplicates	Το πεδίο '{PropertyName}' δεν πρέπει να περιέχει διπλότυπα στοιχεία.
+Any	Το πεδίο '{PropertyName}' δεν πρέπει να περιέχει κανένα στοιχείο που ικανοποιεί τη συνθήκη.
+None	Το πεδίο '{PropertyName}' πρέπει να περιέχει τουλάχιστον ένα στοιχείο που ικανοποιεί τη συνθήκη.
+ContainsKey	Το πεδίο '{PropertyName}' δεν πρέπει να περιέχει το μη επιτρεπτό κλειδί.
+ContainsKey.Value	Το πεδίο '{PropertyName}' δεν πρέπει να περιέχει το κλειδί {Key}.
+NotContainsKey	Το πεδίο '{PropertyName}' πρέπει να περιέχει το απαιτούμενο κλειδί.
+NotContainsKey.Value	Το πεδίο '{PropertyName}' πρέπει να περιέχει το κλειδί {Key}.
+
+# Enums
+NotDefined	Το πεδίο '{PropertyName}' πρέπει να είναι τιμή που ορίζεται στον τύπο {Type}.
+HasFlag	Το πεδίο '{PropertyName}' δεν πρέπει να έχει τη σημαία {Flag}.
+NotHasFlag	Το πεδίο '{PropertyName}' πρέπει να έχει τη σημαία {Flag}.
+
+# Dates and times
+Before	Το πεδίο '{PropertyName}' δεν πρέπει να είναι πριν από {ComparisonValue}.
+After	Το πεδίο '{PropertyName}' δεν πρέπει να είναι μετά από {ComparisonValue}.
+InPast	Το πεδίο '{PropertyName}' δεν πρέπει να είναι στο παρελθόν.
+InFuture	Το πεδίο '{PropertyName}' δεν πρέπει να είναι στο μέλλον.
+NotUtc	Το πεδίο '{PropertyName}' πρέπει να είναι σε UTC.
+Weekend	Το πεδίο '{PropertyName}' πρέπει να είναι εργάσιμη ημέρα (Δευτέρα έως Παρασκευή).
+Weekday	Το πεδίο '{PropertyName}' πρέπει να είναι ημέρα του Σαββατοκύριακου.
+HasTimeOfDay	Το πεδίο '{PropertyName}' δεν πρέπει να περιέχει ώρα της ημέρας.
+OlderThan	Το πεδίο '{PropertyName}' δεν πρέπει να είναι περισσότερο από {MaxAge} στο παρελθόν.
+NewerThan	Το πεδίο '{PropertyName}' πρέπει να είναι τουλάχιστον {MinAge} στο παρελθόν.
+
+# Uri and IPAddress
+Relative	Το πεδίο '{PropertyName}' πρέπει να είναι απόλυτο URI.
+NotHttps	Το πεδίο '{PropertyName}' πρέπει να είναι απόλυτο URL HTTPS.
+NotHttpOrHttps	Το πεδίο '{PropertyName}' πρέπει να είναι απόλυτο URL HTTP ή HTTPS.
+NotScheme	Το πεδίο '{PropertyName}' πρέπει να χρησιμοποιεί ένα από αυτά τα σχήματα URI: {Schemes}.
+Loopback	Το πεδίο '{PropertyName}' δεν πρέπει να είναι διεύθυνση loopback.
+Private	Το πεδίο '{PropertyName}' δεν πρέπει να είναι ιδιωτική διεύθυνση ή διεύθυνση link-local.
+NotIPv4	Το πεδίο '{PropertyName}' πρέπει να είναι διεύθυνση IPv4.
+NotIPv6	Το πεδίο '{PropertyName}' πρέπει να είναι διεύθυνση IPv6.
+
+# Streams and types
+NotReadable	Το πεδίο '{PropertyName}' πρέπει να υποστηρίζει ανάγνωση.
+NotWritable	Το πεδίο '{PropertyName}' πρέπει να υποστηρίζει εγγραφή.
+NotSeekable	Το πεδίο '{PropertyName}' πρέπει να υποστηρίζει αναζήτηση θέσης.
+NotAssignableTo	Το πεδίο '{PropertyName}' πρέπει να μπορεί να εκχωρηθεί στον τύπο {Type}.
+Abstract	Το πεδίο '{PropertyName}' δεν πρέπει να είναι αφηρημένος τύπος.
+Interface	Το πεδίο '{PropertyName}' δεν πρέπει να είναι διασύνδεση.

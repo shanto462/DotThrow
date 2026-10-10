@@ -1,0 +1,146 @@
+# Tajik (tg), Cyrillic script. Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' набояд null бошад.
+NotNull	'{PropertyName}' бояд null бошад.
+Default	'{PropertyName}' набояд қимати пешфарз бошад.
+Empty	'{PropertyName}' набояд холӣ бошад.
+Empty.Guid	'{PropertyName}' набояд GUID-и холӣ бошад.
+NotEmpty	'{PropertyName}' бояд холӣ бошад.
+EqualTo	'{PropertyName}' набояд ба қимати радшуда баробар бошад.
+EqualTo.Value	'{PropertyName}' набояд ба {ComparisonValue} баробар бошад.
+NotEqualTo	'{PropertyName}' бояд ба қимати талабшуда баробар бошад.
+NotEqualTo.Value	'{PropertyName}' бояд ба {ComparisonValue} баробар бошад.
+OneOf	'{PropertyName}' набояд яке аз қиматҳои радшуда бошад.
+NotOneOf	'{PropertyName}' бояд яке аз қиматҳои иҷозатдодашуда бошад.
+Condition	'{PropertyName}' дуруст нест.
+Condition.If	'{PropertyName}' набояд шарти зеринро қонеъ гардонад: {Condition}.
+Condition.IfNot	'{PropertyName}' бояд шарти зеринро қонеъ гардонад: {Condition}.
+Type	'{PropertyName}' набояд аз навъи {Type} бошад.
+NotType	'{PropertyName}' бояд аз навъи {Type} бошад.
+True	'{PropertyName}' бояд false бошад.
+False	'{PropertyName}' бояд true бошад.
+Must	'{PropertyName}' дуруст нест.
+Invalid	'{PropertyName}' дуруст нест.
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' бояд аз {ComparisonValue} камтар ё ба он баробар бошад.
+GreaterThanOrEqualTo	'{PropertyName}' бояд аз {ComparisonValue} камтар бошад.
+LessThan	'{PropertyName}' бояд аз {ComparisonValue} бузургтар ё ба он баробар бошад.
+LessThanOrEqualTo	'{PropertyName}' бояд аз {ComparisonValue} бузургтар бошад.
+OutOfRange	'{PropertyName}' бояд байни {From} ва {To} бошад.
+OutOfRangeExclusive	'{PropertyName}' бояд байни {From} ва {To} бошад (худи қиматҳои сарҳадӣ дохил намешаванд).
+InRange	'{PropertyName}' набояд байни {From} ва {To} бошад.
+Negative	'{PropertyName}' набояд манфӣ бошад.
+NegativeOrZero	'{PropertyName}' бояд аз 0 бузургтар бошад.
+Positive	'{PropertyName}' набояд аз 0 бузургтар бошад.
+PositiveOrZero	'{PropertyName}' бояд аз 0 камтар бошад.
+Zero	'{PropertyName}' набояд 0 бошад.
+NaN	'{PropertyName}' бояд адад бошад, на NaN.
+Infinity	'{PropertyName}' бояд адади охирнок бошад.
+NotFinite	'{PropertyName}' бояд адади охирнок бошад.
+Odd	'{PropertyName}' бояд адади ҷуфт бошад.
+Even	'{PropertyName}' бояд адади тоқ бошад.
+NotMultipleOf	'{PropertyName}' бояд ба {Divisor} бе бақия тақсим шавад.
+NotPowerOfTwo	'{PropertyName}' бояд дараҷаи адади 2 бошад.
+NotInteger	'{PropertyName}' бояд адади бутун бошад.
+PrecisionScaleExceeded	'{PropertyName}' бояд дар маҷмӯъ ҳадди аксар {ExpectedPrecision} рақам дошта бошад, аз ҷумла ҳадди аксар {ExpectedScale} рақам пас аз ҷудокунандаи даҳӣ. Пеш аз ҷудокунандаи даҳӣ {Digits} рақам ва пас аз он {ActualScale} рақам ёфт шуд.
+
+# Strings
+WhiteSpace	'{PropertyName}' набояд холӣ ё танҳо аз фосилаҳо иборат бошад.
+LongerThan	'{PropertyName}' бояд ҳадди аксар {MaxLength} аломат дошта бошад.
+ShorterThan	'{PropertyName}' бояд ҳадди ақал {MinLength} аломат дошта бошад.
+LengthNotEqualTo	'{PropertyName}' бояд дақиқан {Length} аломат дошта бошад.
+LengthOutOfRange	'{PropertyName}' бояд аз {MinLength} то {MaxLength} аломат дошта бошад.
+Contains	'{PropertyName}' набояд дорои унсури радшуда бошад.
+Contains.Value	'{PropertyName}' набояд дорои {Value} бошад.
+NotContains	'{PropertyName}' бояд дорои унсури талабшуда бошад.
+NotContains.Value	'{PropertyName}' бояд дорои {Value} бошад.
+StartsWith	'{PropertyName}' набояд бо {Value} оғоз шавад.
+NotStartsWith	'{PropertyName}' бояд бо {Value} оғоз шавад.
+EndsWith	'{PropertyName}' набояд бо {Value} анҷом ёбад.
+NotEndsWith	'{PropertyName}' бояд бо {Value} анҷом ёбад.
+Matches	'{PropertyName}' набояд ба қолаби {Pattern} мувофиқ бошад.
+NotMatches	'{PropertyName}' бояд ба қолаби {Pattern} мувофиқ бошад.
+NotEmailAddress	'{PropertyName}' бояд суроғаи дурусти почтаи электронӣ бошад.
+NotJson	'{PropertyName}' бояд JSON-и дуруст бошад.
+NotXml	'{PropertyName}' бояд XML-и дуруст сохташуда бошад.
+NotUri	'{PropertyName}' бояд URI-и дуруст бошад.
+NotUri.Absolute	'{PropertyName}' бояд URI-и мутлақи дуруст бошад.
+NotUri.Relative	'{PropertyName}' бояд URI-и нисбии дуруст бошад.
+NotHttpUrl	'{PropertyName}' бояд URL-и мутлақи HTTP ё HTTPS бошад.
+NotParsable	'{PropertyName}' бояд қимати дурусти навъи {Type} бошад.
+AllUpperCase	'{PropertyName}' набояд пурра аз ҳарфҳои калон иборат бошад.
+AllLowerCase	'{PropertyName}' набояд пурра аз ҳарфҳои хурд иборат бошад.
+NotTrimmed	'{PropertyName}' набояд бо фосила оғоз ё анҷом ёбад.
+ContainsWhiteSpace	'{PropertyName}' набояд дорои фосила бошад.
+ContainsControlCharacters	'{PropertyName}' набояд дорои аломатҳои идоракунӣ бошад.
+ContainsAny	'{PropertyName}' набояд дорои ягон аломати радшуда бошад.
+ContainsAnyExcept	'{PropertyName}' бояд танҳо аз аломатҳои иҷозатдодашуда иборат бошад.
+NotAscii	'{PropertyName}' бояд танҳо аз аломатҳои ASCII иборат бошад.
+NotDigits	'{PropertyName}' бояд танҳо аз рақамҳои 0 то 9 иборат бошад.
+NotLettersOrDigits	'{PropertyName}' бояд танҳо аз ҳарфҳо ё рақамҳо иборат бошад.
+NotHex	'{PropertyName}' бояд сатри шонздаҳӣ бошад.
+NotBase64	'{PropertyName}' бояд сатри дурусти Base64 бошад.
+NotGuid	'{PropertyName}' бояд GUID-и дуруст бошад.
+NotIPAddress	'{PropertyName}' бояд суроғаи дурусти IP бошад.
+NotSlug	'{PropertyName}' бояд slug бошад, ки танҳо аз ҳарфҳои хурд, рақамҳо ва дефисҳои ягона иборат аст.
+NotVersion	'{PropertyName}' бояд рақами дурусти версия бошад.
+NotCreditCardNumber	'{PropertyName}' бояд рақами дурусти корти кредитӣ бошад.
+NotEnumName	'{PropertyName}' бояд номи муайяншуда дар enum-и {Type} бошад.
+NotFileName	'{PropertyName}' бояд номи дурусти файл бошад.
+
+# Collections and dictionaries
+CountEqualTo	'{PropertyName}' набояд дақиқан {Count} унсур дошта бошад.
+CountEqualTo.One	'{PropertyName}' набояд дақиқан 1 унсур дошта бошад.
+CountNotEqualTo	'{PropertyName}' бояд дақиқан {Count} унсур дошта бошад.
+CountNotEqualTo.One	'{PropertyName}' бояд дақиқан 1 унсур дошта бошад.
+CountGreaterThan	'{PropertyName}' бояд ҳадди аксар {MaxCount} унсур дошта бошад.
+CountGreaterThan.One	'{PropertyName}' бояд ҳадди аксар 1 унсур дошта бошад.
+CountLessThan	'{PropertyName}' бояд ҳадди ақал {MinCount} унсур дошта бошад.
+CountLessThan.One	'{PropertyName}' бояд ҳадди ақал 1 унсур дошта бошад.
+CountOutOfRange	'{PropertyName}' бояд аз {MinCount} то {MaxCount} унсур дошта бошад.
+ContainsNull	'{PropertyName}' набояд дорои унсурҳои null бошад.
+HasDuplicates	'{PropertyName}' набояд дорои унсурҳои такрорӣ бошад.
+Any	'{PropertyName}' набояд дорои ягон унсуре бошад, ки шартро қонеъ мегардонад.
+None	'{PropertyName}' бояд дорои ҳадди ақал як унсуре бошад, ки шартро қонеъ мегардонад.
+ContainsKey	'{PropertyName}' набояд дорои калиди радшуда бошад.
+ContainsKey.Value	'{PropertyName}' набояд дорои калиди {Key} бошад.
+NotContainsKey	'{PropertyName}' бояд дорои калиди талабшуда бошад.
+NotContainsKey.Value	'{PropertyName}' бояд дорои калиди {Key} бошад.
+
+# Enums
+NotDefined	'{PropertyName}' бояд қимати муайяншудаи навъи {Type} бошад.
+HasFlag	'{PropertyName}' набояд байрақи {Flag} дошта бошад.
+NotHasFlag	'{PropertyName}' бояд байрақи {Flag} дошта бошад.
+
+# Dates and times
+Before	'{PropertyName}' набояд пеш аз {ComparisonValue} бошад.
+After	'{PropertyName}' набояд пас аз {ComparisonValue} бошад.
+InPast	'{PropertyName}' набояд дар гузашта бошад.
+InFuture	'{PropertyName}' набояд дар оянда бошад.
+NotUtc	'{PropertyName}' бояд дар вақти UTC бошад.
+Weekend	'{PropertyName}' бояд рӯзи корӣ (аз душанбе то ҷумъа) бошад.
+Weekday	'{PropertyName}' бояд рӯзи истироҳат (шанбе ё якшанбе) бошад.
+HasTimeOfDay	'{PropertyName}' набояд қисми вақт дошта бошад.
+OlderThan	'{PropertyName}' набояд беш аз {MaxAge} дар гузашта бошад.
+NewerThan	'{PropertyName}' бояд ҳадди ақал {MinAge} дар гузашта бошад.
+
+# Uri and IPAddress
+Relative	'{PropertyName}' бояд URI-и мутлақ бошад.
+NotHttps	'{PropertyName}' бояд URL-и мутлақи HTTPS бошад.
+NotHttpOrHttps	'{PropertyName}' бояд URL-и мутлақи HTTP ё HTTPS бошад.
+NotScheme	'{PropertyName}' бояд яке аз ин схемаҳои URI-ро истифода барад: {Schemes}.
+Loopback	'{PropertyName}' набояд суроғаи loopback бошад.
+Private	'{PropertyName}' набояд суроғаи хусусӣ ё link-local бошад.
+NotIPv4	'{PropertyName}' бояд суроғаи IPv4 бошад.
+NotIPv6	'{PropertyName}' бояд суроғаи IPv6 бошад.
+
+# Streams and types
+NotReadable	'{PropertyName}' бояд хониданро дастгирӣ кунад.
+NotWritable	'{PropertyName}' бояд навиштанро дастгирӣ кунад.
+NotSeekable	'{PropertyName}' бояд тағйир додани мавқеъро (seek) дастгирӣ кунад.
+NotAssignableTo	'{PropertyName}' бояд ба навъи {Type} таъиншаванда бошад.
+Abstract	'{PropertyName}' набояд навъи абстрактӣ бошад.
+Interface	'{PropertyName}' набояд интерфейс бошад.

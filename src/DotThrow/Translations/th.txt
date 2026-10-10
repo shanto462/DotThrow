@@ -1,0 +1,146 @@
+# Thai (th). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' ต้องไม่เป็น null
+NotNull	'{PropertyName}' ต้องเป็น null
+Default	'{PropertyName}' ต้องไม่เป็นค่าเริ่มต้น
+Empty	'{PropertyName}' ต้องไม่ว่างเปล่า
+Empty.Guid	'{PropertyName}' ต้องไม่เป็น GUID ว่าง
+NotEmpty	'{PropertyName}' ต้องว่างเปล่า
+EqualTo	'{PropertyName}' ต้องไม่เท่ากับค่าที่ไม่อนุญาต
+EqualTo.Value	'{PropertyName}' ต้องไม่เท่ากับ {ComparisonValue}
+NotEqualTo	'{PropertyName}' ต้องเท่ากับค่าที่ระบุ
+NotEqualTo.Value	'{PropertyName}' ต้องเท่ากับ {ComparisonValue}
+OneOf	'{PropertyName}' ต้องไม่เป็นหนึ่งในค่าที่ไม่อนุญาต
+NotOneOf	'{PropertyName}' ต้องเป็นหนึ่งในค่าที่อนุญาต
+Condition	'{PropertyName}' ไม่ถูกต้อง
+Condition.If	'{PropertyName}' ต้องไม่เป็นไปตามเงื่อนไข: {Condition}
+Condition.IfNot	'{PropertyName}' ต้องเป็นไปตามเงื่อนไข: {Condition}
+Type	'{PropertyName}' ต้องไม่เป็นชนิด {Type}
+NotType	'{PropertyName}' ต้องเป็นชนิด {Type}
+True	'{PropertyName}' ต้องเป็น false
+False	'{PropertyName}' ต้องเป็น true
+Must	'{PropertyName}' ไม่ถูกต้อง
+Invalid	'{PropertyName}' ไม่ถูกต้อง
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' ต้องมีค่าน้อยกว่าหรือเท่ากับ {ComparisonValue}
+GreaterThanOrEqualTo	'{PropertyName}' ต้องมีค่าน้อยกว่า {ComparisonValue}
+LessThan	'{PropertyName}' ต้องมีค่ามากกว่าหรือเท่ากับ {ComparisonValue}
+LessThanOrEqualTo	'{PropertyName}' ต้องมีค่ามากกว่า {ComparisonValue}
+OutOfRange	'{PropertyName}' ต้องมีค่าอยู่ระหว่าง {From} ถึง {To}
+OutOfRangeExclusive	'{PropertyName}' ต้องมีค่าอยู่ระหว่าง {From} ถึง {To} (ไม่รวมค่าทั้งสอง)
+InRange	'{PropertyName}' ต้องไม่มีค่าอยู่ระหว่าง {From} ถึง {To}
+Negative	'{PropertyName}' ต้องไม่เป็นค่าลบ
+NegativeOrZero	'{PropertyName}' ต้องมีค่ามากกว่า 0
+Positive	'{PropertyName}' ต้องไม่มีค่ามากกว่า 0
+PositiveOrZero	'{PropertyName}' ต้องมีค่าน้อยกว่า 0
+Zero	'{PropertyName}' ต้องไม่เป็น 0
+NaN	'{PropertyName}' ต้องเป็นตัวเลข ไม่ใช่ NaN
+Infinity	'{PropertyName}' ต้องเป็นตัวเลขที่มีค่าจำกัด
+NotFinite	'{PropertyName}' ต้องเป็นตัวเลขที่มีค่าจำกัด
+Odd	'{PropertyName}' ต้องเป็นเลขคู่
+Even	'{PropertyName}' ต้องเป็นเลขคี่
+NotMultipleOf	'{PropertyName}' ต้องเป็นพหุคูณของ {Divisor}
+NotPowerOfTwo	'{PropertyName}' ต้องเป็นเลขยกกำลังของ 2
+NotInteger	'{PropertyName}' ต้องเป็นจำนวนเต็ม
+PrecisionScaleExceeded	'{PropertyName}' ต้องมีตัวเลขรวมไม่เกิน {ExpectedPrecision} หลัก และมีทศนิยมไม่เกิน {ExpectedScale} ตำแหน่ง พบตัวเลข {Digits} หลักก่อนจุดทศนิยม และทศนิยม {ActualScale} ตำแหน่ง
+
+# Strings
+WhiteSpace	'{PropertyName}' ต้องไม่ว่างเปล่าหรือมีแต่ช่องว่าง
+LongerThan	'{PropertyName}' ต้องมีความยาวไม่เกิน {MaxLength} อักขระ
+ShorterThan	'{PropertyName}' ต้องมีความยาวอย่างน้อย {MinLength} อักขระ
+LengthNotEqualTo	'{PropertyName}' ต้องมีความยาว {Length} อักขระพอดี
+LengthOutOfRange	'{PropertyName}' ต้องมีความยาวระหว่าง {MinLength} ถึง {MaxLength} อักขระ
+Contains	'{PropertyName}' ต้องไม่มีรายการที่ไม่อนุญาต
+Contains.Value	'{PropertyName}' ต้องไม่มี {Value}
+NotContains	'{PropertyName}' ต้องมีรายการที่ระบุ
+NotContains.Value	'{PropertyName}' ต้องมี {Value}
+StartsWith	'{PropertyName}' ต้องไม่ขึ้นต้นด้วย {Value}
+NotStartsWith	'{PropertyName}' ต้องขึ้นต้นด้วย {Value}
+EndsWith	'{PropertyName}' ต้องไม่ลงท้ายด้วย {Value}
+NotEndsWith	'{PropertyName}' ต้องลงท้ายด้วย {Value}
+Matches	'{PropertyName}' ต้องไม่ตรงกับรูปแบบ {Pattern}
+NotMatches	'{PropertyName}' ต้องตรงกับรูปแบบ {Pattern}
+NotEmailAddress	'{PropertyName}' ต้องเป็นที่อยู่อีเมลที่ถูกต้อง
+NotJson	'{PropertyName}' ต้องเป็น JSON ที่ถูกต้อง
+NotXml	'{PropertyName}' ต้องเป็น XML ที่มีรูปแบบถูกต้อง
+NotUri	'{PropertyName}' ต้องเป็น URI ที่ถูกต้อง
+NotUri.Absolute	'{PropertyName}' ต้องเป็น URI แบบสัมบูรณ์ที่ถูกต้อง
+NotUri.Relative	'{PropertyName}' ต้องเป็น URI แบบสัมพัทธ์ที่ถูกต้อง
+NotHttpUrl	'{PropertyName}' ต้องเป็น URL แบบสัมบูรณ์ที่ใช้ HTTP หรือ HTTPS
+NotParsable	'{PropertyName}' ต้องเป็นค่าชนิด {Type} ที่ถูกต้อง
+AllUpperCase	'{PropertyName}' ต้องไม่เป็นตัวพิมพ์ใหญ่ทั้งหมด
+AllLowerCase	'{PropertyName}' ต้องไม่เป็นตัวพิมพ์เล็กทั้งหมด
+NotTrimmed	'{PropertyName}' ต้องไม่ขึ้นต้นหรือลงท้ายด้วยช่องว่าง
+ContainsWhiteSpace	'{PropertyName}' ต้องไม่มีช่องว่าง
+ContainsControlCharacters	'{PropertyName}' ต้องไม่มีอักขระควบคุม
+ContainsAny	'{PropertyName}' ต้องไม่มีอักขระที่ไม่อนุญาตใดๆ
+ContainsAnyExcept	'{PropertyName}' ต้องมีเฉพาะอักขระที่อนุญาต
+NotAscii	'{PropertyName}' ต้องมีเฉพาะอักขระ ASCII
+NotDigits	'{PropertyName}' ต้องมีเฉพาะตัวเลข 0 ถึง 9
+NotLettersOrDigits	'{PropertyName}' ต้องมีเฉพาะตัวอักษรหรือตัวเลข
+NotHex	'{PropertyName}' ต้องเป็นสตริงเลขฐานสิบหก
+NotBase64	'{PropertyName}' ต้องเป็นสตริง Base64 ที่ถูกต้อง
+NotGuid	'{PropertyName}' ต้องเป็น GUID ที่ถูกต้อง
+NotIPAddress	'{PropertyName}' ต้องเป็นที่อยู่ IP ที่ถูกต้อง
+NotSlug	'{PropertyName}' ต้องเป็น slug ที่ประกอบด้วยตัวอักษรพิมพ์เล็ก ตัวเลข และขีดกลางเดี่ยว
+NotVersion	'{PropertyName}' ต้องเป็นหมายเลขเวอร์ชันที่ถูกต้อง
+NotCreditCardNumber	'{PropertyName}' ต้องเป็นหมายเลขบัตรเครดิตที่ถูกต้อง
+NotEnumName	'{PropertyName}' ต้องเป็นชื่อที่กำหนดไว้ใน enum {Type}
+NotFileName	'{PropertyName}' ต้องเป็นชื่อไฟล์ที่ถูกต้อง
+
+# Collections and dictionaries
+CountEqualTo	'{PropertyName}' ต้องไม่มี {Count} รายการพอดี
+CountEqualTo.One	'{PropertyName}' ต้องไม่มี 1 รายการพอดี
+CountNotEqualTo	'{PropertyName}' ต้องมี {Count} รายการพอดี
+CountNotEqualTo.One	'{PropertyName}' ต้องมี 1 รายการพอดี
+CountGreaterThan	'{PropertyName}' ต้องมีไม่เกิน {MaxCount} รายการ
+CountGreaterThan.One	'{PropertyName}' ต้องมีไม่เกิน 1 รายการ
+CountLessThan	'{PropertyName}' ต้องมีอย่างน้อย {MinCount} รายการ
+CountLessThan.One	'{PropertyName}' ต้องมีอย่างน้อย 1 รายการ
+CountOutOfRange	'{PropertyName}' ต้องมีระหว่าง {MinCount} ถึง {MaxCount} รายการ
+ContainsNull	'{PropertyName}' ต้องไม่มีรายการที่เป็น null
+HasDuplicates	'{PropertyName}' ต้องไม่มีรายการที่ซ้ำกัน
+Any	'{PropertyName}' ต้องไม่มีรายการใดที่ตรงตามเงื่อนไข
+None	'{PropertyName}' ต้องมีอย่างน้อย 1 รายการที่ตรงตามเงื่อนไข
+ContainsKey	'{PropertyName}' ต้องไม่มีคีย์ที่ไม่อนุญาต
+ContainsKey.Value	'{PropertyName}' ต้องไม่มีคีย์ {Key}
+NotContainsKey	'{PropertyName}' ต้องมีคีย์ที่ระบุ
+NotContainsKey.Value	'{PropertyName}' ต้องมีคีย์ {Key}
+
+# Enums
+NotDefined	'{PropertyName}' ต้องเป็นค่าที่กำหนดไว้ใน {Type}
+HasFlag	'{PropertyName}' ต้องไม่มีแฟล็ก {Flag}
+NotHasFlag	'{PropertyName}' ต้องมีแฟล็ก {Flag}
+
+# Dates and times
+Before	'{PropertyName}' ต้องไม่อยู่ก่อน {ComparisonValue}
+After	'{PropertyName}' ต้องไม่อยู่หลัง {ComparisonValue}
+InPast	'{PropertyName}' ต้องไม่อยู่ในอดีต
+InFuture	'{PropertyName}' ต้องไม่อยู่ในอนาคต
+NotUtc	'{PropertyName}' ต้องเป็นเวลา UTC
+Weekend	'{PropertyName}' ต้องเป็นวันธรรมดา (วันจันทร์ถึงวันศุกร์)
+Weekday	'{PropertyName}' ต้องเป็นวันหยุดสุดสัปดาห์ (วันเสาร์หรือวันอาทิตย์)
+HasTimeOfDay	'{PropertyName}' ต้องไม่มีส่วนที่เป็นเวลา
+OlderThan	'{PropertyName}' ต้องไม่อยู่ในอดีตเกิน {MaxAge}
+NewerThan	'{PropertyName}' ต้องอยู่ในอดีตอย่างน้อย {MinAge}
+
+# Uri and IPAddress
+Relative	'{PropertyName}' ต้องเป็น URI แบบสัมบูรณ์
+NotHttps	'{PropertyName}' ต้องเป็น URL แบบสัมบูรณ์ที่ใช้ HTTPS
+NotHttpOrHttps	'{PropertyName}' ต้องเป็น URL แบบสัมบูรณ์ที่ใช้ HTTP หรือ HTTPS
+NotScheme	'{PropertyName}' ต้องใช้ URI scheme อย่างใดอย่างหนึ่งต่อไปนี้: {Schemes}
+Loopback	'{PropertyName}' ต้องไม่เป็นที่อยู่ loopback
+Private	'{PropertyName}' ต้องไม่เป็นที่อยู่แบบ private หรือ link-local
+NotIPv4	'{PropertyName}' ต้องเป็นที่อยู่ IPv4
+NotIPv6	'{PropertyName}' ต้องเป็นที่อยู่ IPv6
+
+# Streams and types
+NotReadable	'{PropertyName}' ต้องรองรับการอ่าน
+NotWritable	'{PropertyName}' ต้องรองรับการเขียน
+NotSeekable	'{PropertyName}' ต้องรองรับการเลื่อนตำแหน่ง (seek)
+NotAssignableTo	'{PropertyName}' ต้องสามารถกำหนดให้กับชนิด {Type} ได้
+Abstract	'{PropertyName}' ต้องไม่เป็นชนิดนามธรรม
+Interface	'{PropertyName}' ต้องไม่เป็นอินเทอร์เฟซ

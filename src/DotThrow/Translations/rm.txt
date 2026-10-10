@@ -1,0 +1,146 @@
+# Romansh (rm). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' na dastga betg esser null.
+NotNull	'{PropertyName}' sto esser null.
+Default	'{PropertyName}' na dastga betg esser la valur da standard.
+Empty	'{PropertyName}' na dastga betg esser vid.
+Empty.Guid	'{PropertyName}' na dastga betg esser in GUID vid.
+NotEmpty	'{PropertyName}' sto esser vid.
+EqualTo	'{PropertyName}' na dastga betg esser egual a la valur refusada.
+EqualTo.Value	'{PropertyName}' na dastga betg esser egual a {ComparisonValue}.
+NotEqualTo	'{PropertyName}' sto esser egual a la valur necessaria.
+NotEqualTo.Value	'{PropertyName}' sto esser egual a {ComparisonValue}.
+OneOf	'{PropertyName}' na dastga betg esser ina da las valurs refusadas.
+NotOneOf	'{PropertyName}' sto esser ina da las valurs permessas.
+Condition	'{PropertyName}' n'è betg valaivel.
+Condition.If	'{PropertyName}' na dastga betg ademplir la cundiziun: {Condition}.
+Condition.IfNot	'{PropertyName}' sto ademplir la cundiziun: {Condition}.
+Type	'{PropertyName}' na dastga betg esser dal tip {Type}.
+NotType	'{PropertyName}' sto esser dal tip {Type}.
+True	'{PropertyName}' sto esser false.
+False	'{PropertyName}' sto esser true.
+Must	'{PropertyName}' n'è betg valaivel.
+Invalid	'{PropertyName}' n'è betg valaivel.
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' sto esser pli pitschen u egual a {ComparisonValue}.
+GreaterThanOrEqualTo	'{PropertyName}' sto esser pli pitschen che {ComparisonValue}.
+LessThan	'{PropertyName}' sto esser pli grond u egual a {ComparisonValue}.
+LessThanOrEqualTo	'{PropertyName}' sto esser pli grond che {ComparisonValue}.
+OutOfRange	'{PropertyName}' sto esser tranter {From} e {To}.
+OutOfRangeExclusive	'{PropertyName}' sto esser tranter {From} e {To} (exclusiv).
+InRange	'{PropertyName}' na dastga betg esser tranter {From} e {To}.
+Negative	'{PropertyName}' na dastga betg esser negativ.
+NegativeOrZero	'{PropertyName}' sto esser pli grond che 0.
+Positive	'{PropertyName}' na dastga betg esser pli grond che 0.
+PositiveOrZero	'{PropertyName}' sto esser pli pitschen che 0.
+Zero	'{PropertyName}' na dastga betg esser 0.
+NaN	'{PropertyName}' sto esser in dumber, betg NaN.
+Infinity	'{PropertyName}' sto esser in dumber finit.
+NotFinite	'{PropertyName}' sto esser in dumber finit.
+Odd	'{PropertyName}' sto esser in dumber pèr.
+Even	'{PropertyName}' sto esser in dumber impèr.
+NotMultipleOf	'{PropertyName}' sto esser in multipel da {Divisor}.
+NotPowerOfTwo	'{PropertyName}' sto esser ina potenza da 2.
+NotInteger	'{PropertyName}' sto esser in dumber entir.
+PrecisionScaleExceeded	Il dumber total da cifras en '{PropertyName}' sto esser maximalmain {ExpectedPrecision} ed il dumber da decimalas maximalmain {ExpectedScale}. Chattà: {Digits} avant la comma e {ActualScale} suenter la comma.
+
+# Strings
+WhiteSpace	'{PropertyName}' na dastga betg esser vid u consister mo da spazis.
+LongerThan	Il dumber da caracters en '{PropertyName}' sto esser maximalmain {MaxLength}.
+ShorterThan	Il dumber da caracters en '{PropertyName}' sto esser almain {MinLength}.
+LengthNotEqualTo	Il dumber da caracters en '{PropertyName}' sto esser exactamain {Length}.
+LengthOutOfRange	Il dumber da caracters en '{PropertyName}' sto esser tranter {MinLength} e {MaxLength}.
+Contains	'{PropertyName}' na dastga betg cuntegnair l'element refusà.
+Contains.Value	'{PropertyName}' na dastga betg cuntegnair {Value}.
+NotContains	'{PropertyName}' sto cuntegnair l'element necessari.
+NotContains.Value	'{PropertyName}' sto cuntegnair {Value}.
+StartsWith	'{PropertyName}' na dastga betg cumenzar cun {Value}.
+NotStartsWith	'{PropertyName}' sto cumenzar cun {Value}.
+EndsWith	'{PropertyName}' na dastga betg finir cun {Value}.
+NotEndsWith	'{PropertyName}' sto finir cun {Value}.
+Matches	'{PropertyName}' na dastga betg correspunder al muster {Pattern}.
+NotMatches	'{PropertyName}' sto correspunder al muster {Pattern}.
+NotEmailAddress	'{PropertyName}' sto esser ina adressa dad e-mail valaivla.
+NotJson	'{PropertyName}' sto esser JSON valaivel.
+NotXml	'{PropertyName}' sto esser XML bain furmà.
+NotUri	'{PropertyName}' sto esser in URI valaivel.
+NotUri.Absolute	'{PropertyName}' sto esser in URI absolut valaivel.
+NotUri.Relative	'{PropertyName}' sto esser in URI relativ valaivel.
+NotHttpUrl	'{PropertyName}' sto esser in URL HTTP u HTTPS absolut.
+NotParsable	'{PropertyName}' sto esser ina valur valaivla dal tip {Type}.
+AllUpperCase	'{PropertyName}' na dastga betg consister mo da bustabs gronds.
+AllLowerCase	'{PropertyName}' na dastga betg consister mo da bustabs pitschens.
+NotTrimmed	'{PropertyName}' na dastga betg cumenzar u finir cun spazis.
+ContainsWhiteSpace	'{PropertyName}' na dastga betg cuntegnair spazis.
+ContainsControlCharacters	'{PropertyName}' na dastga betg cuntegnair caracters da controlla.
+ContainsAny	'{PropertyName}' na dastga cuntegnair nagin dals caracters refusads.
+ContainsAnyExcept	'{PropertyName}' sto cuntegnair mo ils caracters permess.
+NotAscii	'{PropertyName}' sto cuntegnair mo caracters ASCII.
+NotDigits	'{PropertyName}' sto cuntegnair mo las cifras da 0 fin 9.
+NotLettersOrDigits	'{PropertyName}' sto cuntegnair mo bustabs u cifras.
+NotHex	'{PropertyName}' sto esser ina chadaina da caracters hexadecimala.
+NotBase64	'{PropertyName}' sto esser ina chadaina da caracters Base64 valaivla.
+NotGuid	'{PropertyName}' sto esser in GUID valaivel.
+NotIPAddress	'{PropertyName}' sto esser ina adressa IP valaivla.
+NotSlug	'{PropertyName}' sto esser in slug da bustabs pitschens, cifras e stritgs d'uniun singuls.
+NotVersion	'{PropertyName}' sto esser in numer da versiun valaivel.
+NotCreditCardNumber	'{PropertyName}' sto esser in numer da carta da credit valaivel.
+NotEnumName	'{PropertyName}' sto esser in num definì en {Type}.
+NotFileName	'{PropertyName}' sto esser in num da datoteca valaivel.
+
+# Collections and dictionaries
+CountEqualTo	'{PropertyName}' na dastga betg avair exactamain {Count} elements.
+CountEqualTo.One	'{PropertyName}' na dastga betg avair exactamain 1 element.
+CountNotEqualTo	'{PropertyName}' sto avair exactamain {Count} elements.
+CountNotEqualTo.One	'{PropertyName}' sto avair exactamain 1 element.
+CountGreaterThan	'{PropertyName}' sto avair maximalmain {MaxCount} elements.
+CountGreaterThan.One	'{PropertyName}' sto avair maximalmain 1 element.
+CountLessThan	'{PropertyName}' sto avair almain {MinCount} elements.
+CountLessThan.One	'{PropertyName}' sto avair almain 1 element.
+CountOutOfRange	Il dumber dad elements en '{PropertyName}' sto esser tranter {MinCount} e {MaxCount}.
+ContainsNull	'{PropertyName}' na dastga betg cuntegnair elements null.
+HasDuplicates	'{PropertyName}' na dastga betg cuntegnair elements dubels.
+Any	'{PropertyName}' na dastga cuntegnair nagin element che ademplescha la cundiziun.
+None	'{PropertyName}' sto cuntegnair almain in element che ademplescha la cundiziun.
+ContainsKey	'{PropertyName}' na dastga betg cuntegnair la clav refusada.
+ContainsKey.Value	'{PropertyName}' na dastga betg cuntegnair la clav {Key}.
+NotContainsKey	'{PropertyName}' sto cuntegnair la clav necessaria.
+NotContainsKey.Value	'{PropertyName}' sto cuntegnair la clav {Key}.
+
+# Enums
+NotDefined	'{PropertyName}' sto esser ina valur definida en {Type}.
+HasFlag	'{PropertyName}' na dastga betg avair il flag {Flag}.
+NotHasFlag	'{PropertyName}' sto avair il flag {Flag}.
+
+# Dates and times
+Before	'{PropertyName}' na dastga betg esser avant {ComparisonValue}.
+After	'{PropertyName}' na dastga betg esser suenter {ComparisonValue}.
+InPast	'{PropertyName}' na dastga betg esser en il passà.
+InFuture	'{PropertyName}' na dastga betg esser en il futur.
+NotUtc	'{PropertyName}' sto esser en UTC.
+Weekend	'{PropertyName}' sto esser in di da lavur (glindesdi fin venderdi).
+Weekday	'{PropertyName}' sto esser in di da la fin d'emna (sonda u dumengia).
+HasTimeOfDay	'{PropertyName}' na dastga betg cuntegnair in'ura dal di.
+OlderThan	'{PropertyName}' na dastga betg esser dapli che {MaxAge} en il passà.
+NewerThan	'{PropertyName}' sto esser almain {MinAge} en il passà.
+
+# Uri and IPAddress
+Relative	'{PropertyName}' sto esser in URI absolut.
+NotHttps	'{PropertyName}' sto esser in URL HTTPS absolut.
+NotHttpOrHttps	'{PropertyName}' sto esser in URL HTTP u HTTPS absolut.
+NotScheme	'{PropertyName}' sto duvrar in da quests schemas URI: {Schemes}.
+Loopback	'{PropertyName}' na dastga betg esser ina adressa loopback.
+Private	'{PropertyName}' na dastga betg esser ina adressa privata u link-local.
+NotIPv4	'{PropertyName}' sto esser ina adressa IPv4.
+NotIPv6	'{PropertyName}' sto esser ina adressa IPv6.
+
+# Streams and types
+NotReadable	'{PropertyName}' sto permetter da leger.
+NotWritable	'{PropertyName}' sto permetter da scriver.
+NotSeekable	'{PropertyName}' sto permetter da midar la posiziun.
+NotAssignableTo	'{PropertyName}' sto pudair vegnir attribuì al tip {Type}.
+Abstract	'{PropertyName}' na dastga betg esser in tip abstract.
+Interface	'{PropertyName}' na dastga betg esser ina interfatscha.

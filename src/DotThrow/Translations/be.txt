@@ -1,0 +1,146 @@
+# Belarusian (be). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' не павінна быць null.
+NotNull	'{PropertyName}' павінна быць null.
+Default	'{PropertyName}' не павінна быць значэннем па змаўчанні.
+Empty	'{PropertyName}' не павінна быць пустым.
+Empty.Guid	'{PropertyName}' не павінна быць пустым GUID.
+NotEmpty	'{PropertyName}' павінна быць пустым.
+EqualTo	'{PropertyName}' не павінна быць роўным забароненаму значэнню.
+EqualTo.Value	'{PropertyName}' не павінна быць роўным {ComparisonValue}.
+NotEqualTo	'{PropertyName}' павінна быць роўным патрэбнаму значэнню.
+NotEqualTo.Value	'{PropertyName}' павінна быць роўным {ComparisonValue}.
+OneOf	'{PropertyName}' не павінна быць адным з забароненых значэнняў.
+NotOneOf	'{PropertyName}' павінна быць адным з дазволеных значэнняў.
+Condition	'{PropertyName}' мае некарэктнае значэнне.
+Condition.If	'{PropertyName}' не павінна задавальняць умову: {Condition}.
+Condition.IfNot	'{PropertyName}' павінна задавальняць умову: {Condition}.
+Type	'{PropertyName}' не павінна мець тып {Type}.
+NotType	'{PropertyName}' павінна мець тып {Type}.
+True	'{PropertyName}' павінна быць false.
+False	'{PropertyName}' павінна быць true.
+Must	'{PropertyName}' мае некарэктнае значэнне.
+Invalid	'{PropertyName}' мае некарэктнае значэнне.
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' павінна быць не больш за {ComparisonValue}.
+GreaterThanOrEqualTo	'{PropertyName}' павінна быць менш за {ComparisonValue}.
+LessThan	'{PropertyName}' павінна быць не менш за {ComparisonValue}.
+LessThanOrEqualTo	'{PropertyName}' павінна быць больш за {ComparisonValue}.
+OutOfRange	'{PropertyName}' павінна быць у дыяпазоне ад {From} да {To}.
+OutOfRangeExclusive	'{PropertyName}' павінна быць у дыяпазоне ад {From} да {To} (не ўключаючы межы).
+InRange	'{PropertyName}' не павінна быць у дыяпазоне ад {From} да {To}.
+Negative	'{PropertyName}' не павінна быць адмоўным.
+NegativeOrZero	'{PropertyName}' павінна быць больш за 0.
+Positive	'{PropertyName}' не павінна быць больш за 0.
+PositiveOrZero	'{PropertyName}' павінна быць менш за 0.
+Zero	'{PropertyName}' не павінна быць роўным 0.
+NaN	'{PropertyName}' павінна быць лікам, а не NaN.
+Infinity	'{PropertyName}' павінна быць канечным лікам.
+NotFinite	'{PropertyName}' павінна быць канечным лікам.
+Odd	'{PropertyName}' павінна быць цотным лікам.
+Even	'{PropertyName}' павінна быць няцотным лікам.
+NotMultipleOf	'{PropertyName}' павінна быць кратным {Divisor}.
+NotPowerOfTwo	'{PropertyName}' павінна быць ступенню двойкі.
+NotInteger	'{PropertyName}' павінна быць цэлым лікам.
+PrecisionScaleExceeded	Агульная колькасць лічбаў у '{PropertyName}' павінна быць не больш за {ExpectedPrecision}, з іх знакаў пасля коскі не больш за {ExpectedScale}. Знойдзена лічбаў да коскі: {Digits}, знакаў пасля коскі: {ActualScale}.
+
+# Strings
+WhiteSpace	'{PropertyName}' не павінна быць пустым або складацца толькі з прабельных сімвалаў.
+LongerThan	Колькасць сімвалаў у '{PropertyName}' павінна быць не больш за {MaxLength}.
+ShorterThan	Колькасць сімвалаў у '{PropertyName}' павінна быць не менш за {MinLength}.
+LengthNotEqualTo	Колькасць сімвалаў у '{PropertyName}' павінна быць роўнай {Length}.
+LengthOutOfRange	Колькасць сімвалаў у '{PropertyName}' павінна быць ад {MinLength} да {MaxLength}.
+Contains	'{PropertyName}' не павінна ўтрымліваць забаронены элемент.
+Contains.Value	'{PropertyName}' не павінна ўтрымліваць {Value}.
+NotContains	'{PropertyName}' павінна ўтрымліваць патрэбны элемент.
+NotContains.Value	'{PropertyName}' павінна ўтрымліваць {Value}.
+StartsWith	'{PropertyName}' не павінна пачынацца з {Value}.
+NotStartsWith	'{PropertyName}' павінна пачынацца з {Value}.
+EndsWith	'{PropertyName}' не павінна заканчвацца на {Value}.
+NotEndsWith	'{PropertyName}' павінна заканчвацца на {Value}.
+Matches	'{PropertyName}' не павінна адпавядаць шаблону {Pattern}.
+NotMatches	'{PropertyName}' павінна адпавядаць шаблону {Pattern}.
+NotEmailAddress	'{PropertyName}' павінна быць карэктным адрасам электроннай пошты.
+NotJson	'{PropertyName}' павінна быць карэктным JSON.
+NotXml	'{PropertyName}' павінна быць правільна сфармаваным XML.
+NotUri	'{PropertyName}' павінна быць карэктным URI.
+NotUri.Absolute	'{PropertyName}' павінна быць карэктным абсалютным URI.
+NotUri.Relative	'{PropertyName}' павінна быць карэктным адносным URI.
+NotHttpUrl	'{PropertyName}' павінна быць абсалютным URL са схемай HTTP або HTTPS.
+NotParsable	'{PropertyName}' павінна быць карэктным значэннем тыпу {Type}.
+AllUpperCase	'{PropertyName}' не павінна складацца толькі з вялікіх літар.
+AllLowerCase	'{PropertyName}' не павінна складацца толькі з малых літар.
+NotTrimmed	'{PropertyName}' не павінна пачынацца або заканчвацца прабельнымі сімваламі.
+ContainsWhiteSpace	'{PropertyName}' не павінна ўтрымліваць прабельных сімвалаў.
+ContainsControlCharacters	'{PropertyName}' не павінна ўтрымліваць кіравальных сімвалаў.
+ContainsAny	'{PropertyName}' не павінна ўтрымліваць ніводнага з забароненых сімвалаў.
+ContainsAnyExcept	'{PropertyName}' павінна ўтрымліваць толькі дазволеныя сімвалы.
+NotAscii	'{PropertyName}' павінна ўтрымліваць толькі сімвалы ASCII.
+NotDigits	'{PropertyName}' павінна ўтрымліваць толькі лічбы ад 0 да 9.
+NotLettersOrDigits	'{PropertyName}' павінна ўтрымліваць толькі літары або лічбы.
+NotHex	'{PropertyName}' павінна быць шаснаццатковым радком.
+NotBase64	'{PropertyName}' павінна быць карэктным радком Base64.
+NotGuid	'{PropertyName}' павінна быць карэктным GUID.
+NotIPAddress	'{PropertyName}' павінна быць карэктным IP-адрасам.
+NotSlug	'{PropertyName}' павінна быць slug-радком з малых літар, лічбаў і адзіночных дэфісаў.
+NotVersion	'{PropertyName}' павінна быць карэктным нумарам версіі.
+NotCreditCardNumber	'{PropertyName}' павінна быць карэктным нумарам крэдытнай карткі.
+NotEnumName	'{PropertyName}' павінна быць вызначаным імем пераліку {Type}.
+NotFileName	'{PropertyName}' павінна быць карэктным імем файла.
+
+# Collections and dictionaries
+CountEqualTo	Колькасць элементаў у '{PropertyName}' не павінна быць роўнай {Count}.
+CountEqualTo.One	'{PropertyName}' не павінна ўтрымліваць дакладна 1 элемент.
+CountNotEqualTo	Колькасць элементаў у '{PropertyName}' павінна быць роўнай {Count}.
+CountNotEqualTo.One	'{PropertyName}' павінна ўтрымліваць дакладна 1 элемент.
+CountGreaterThan	Колькасць элементаў у '{PropertyName}' павінна быць не больш за {MaxCount}.
+CountGreaterThan.One	'{PropertyName}' павінна ўтрымліваць не больш за 1 элемент.
+CountLessThan	Колькасць элементаў у '{PropertyName}' павінна быць не менш за {MinCount}.
+CountLessThan.One	'{PropertyName}' павінна ўтрымліваць не менш за 1 элемент.
+CountOutOfRange	Колькасць элементаў у '{PropertyName}' павінна быць ад {MinCount} да {MaxCount}.
+ContainsNull	'{PropertyName}' не павінна ўтрымліваць элементаў са значэннем null.
+HasDuplicates	'{PropertyName}' не павінна ўтрымліваць паўторных элементаў.
+Any	'{PropertyName}' не павінна ўтрымліваць ніводнага элемента, які задавальняе ўмову.
+None	'{PropertyName}' павінна ўтрымліваць хаця б адзін элемент, які задавальняе ўмову.
+ContainsKey	'{PropertyName}' не павінна ўтрымліваць забаронены ключ.
+ContainsKey.Value	'{PropertyName}' не павінна ўтрымліваць ключ {Key}.
+NotContainsKey	'{PropertyName}' павінна ўтрымліваць патрэбны ключ.
+NotContainsKey.Value	'{PropertyName}' павінна ўтрымліваць ключ {Key}.
+
+# Enums
+NotDefined	'{PropertyName}' павінна быць вызначаным значэннем пераліку {Type}.
+HasFlag	'{PropertyName}' не павінна мець флаг {Flag}.
+NotHasFlag	'{PropertyName}' павінна мець флаг {Flag}.
+
+# Dates and times
+Before	'{PropertyName}' не павінна быць раней за {ComparisonValue}.
+After	'{PropertyName}' не павінна быць пазней за {ComparisonValue}.
+InPast	'{PropertyName}' не павінна быць у мінулым.
+InFuture	'{PropertyName}' не павінна быць у будучыні.
+NotUtc	'{PropertyName}' павінна быць у UTC.
+Weekend	'{PropertyName}' павінна быць працоўным днём (з панядзелка па пятніцу).
+Weekday	'{PropertyName}' павінна быць выхадным днём (субота або нядзеля).
+HasTimeOfDay	'{PropertyName}' не павінна ўтрымліваць часу сутак.
+OlderThan	'{PropertyName}' не павінна быць у мінулым больш чым на {MaxAge}.
+NewerThan	'{PropertyName}' павінна быць у мінулым не менш чым на {MinAge}.
+
+# Uri and IPAddress
+Relative	'{PropertyName}' павінна быць абсалютным URI.
+NotHttps	'{PropertyName}' павінна быць абсалютным URL са схемай HTTPS.
+NotHttpOrHttps	'{PropertyName}' павінна быць абсалютным URL са схемай HTTP або HTTPS.
+NotScheme	'{PropertyName}' павінна выкарыстоўваць адну з наступных схем URI: {Schemes}.
+Loopback	'{PropertyName}' не павінна быць loopback-адрасам.
+Private	'{PropertyName}' не павінна быць прыватным або link-local-адрасам.
+NotIPv4	'{PropertyName}' павінна быць IPv4-адрасам.
+NotIPv6	'{PropertyName}' павінна быць IPv6-адрасам.
+
+# Streams and types
+NotReadable	'{PropertyName}' павінна падтрымліваць чытанне.
+NotWritable	'{PropertyName}' павінна падтрымліваць запіс.
+NotSeekable	'{PropertyName}' павінна падтрымліваць пазіцыянаванне.
+NotAssignableTo	'{PropertyName}' павінна быць сумяшчальным з тыпам {Type} пры прысваенні.
+Abstract	'{PropertyName}' не павінна быць абстрактным тыпам.
+Interface	'{PropertyName}' не павінна быць інтэрфейсам.

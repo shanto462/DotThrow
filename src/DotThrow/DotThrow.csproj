@@ -38,6 +38,8 @@
   -->
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="all" />
+    <!-- DeflateStream for the built-in translations. A framework assembly, not a package. -->
+    <Reference Include="System.IO.Compression" />
   </ItemGroup>
 
   <ItemGroup>
@@ -48,5 +50,8 @@
   <ItemGroup>
     <InternalsVisibleTo Include="DotThrow.Tests" />
   </ItemGroup>
+
+  <!-- Built-in translations: Translations/*.txt, compressed and embedded at build time. -->
+  <Import Project="Translations/Translations.targets" />
 
 </Project>

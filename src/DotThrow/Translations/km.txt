@@ -1,0 +1,146 @@
+# Khmer (km). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' មិនត្រូវជា null ទេ។
+NotNull	'{PropertyName}' ត្រូវតែជា null។
+Default	'{PropertyName}' មិនត្រូវជាតម្លៃលំនាំដើមទេ។
+Empty	'{PropertyName}' មិនត្រូវទទេទេ។
+Empty.Guid	'{PropertyName}' មិនត្រូវជា GUID ទទេទេ។
+NotEmpty	'{PropertyName}' ត្រូវតែទទេ។
+EqualTo	'{PropertyName}' មិនត្រូវស្មើនឹងតម្លៃដែលត្រូវបានបដិសេធទេ។
+EqualTo.Value	'{PropertyName}' មិនត្រូវស្មើនឹង {ComparisonValue} ទេ។
+NotEqualTo	'{PropertyName}' ត្រូវតែស្មើនឹងតម្លៃដែលតម្រូវ។
+NotEqualTo.Value	'{PropertyName}' ត្រូវតែស្មើនឹង {ComparisonValue}។
+OneOf	'{PropertyName}' មិនត្រូវជាតម្លៃណាមួយក្នុងចំណោមតម្លៃដែលត្រូវបានបដិសេធទេ។
+NotOneOf	'{PropertyName}' ត្រូវតែជាតម្លៃមួយក្នុងចំណោមតម្លៃដែលត្រូវបានអនុញ្ញាត។
+Condition	'{PropertyName}' មិនត្រឹមត្រូវទេ។
+Condition.If	'{PropertyName}' មិនត្រូវបំពេញលក្ខខណ្ឌនេះទេ: {Condition}។
+Condition.IfNot	'{PropertyName}' ត្រូវតែបំពេញលក្ខខណ្ឌនេះ: {Condition}។
+Type	'{PropertyName}' មិនត្រូវជាប្រភេទ {Type} ទេ។
+NotType	'{PropertyName}' ត្រូវតែជាប្រភេទ {Type}។
+True	'{PropertyName}' ត្រូវតែជា false។
+False	'{PropertyName}' ត្រូវតែជា true។
+Must	'{PropertyName}' មិនត្រឹមត្រូវទេ។
+Invalid	'{PropertyName}' មិនត្រឹមត្រូវទេ។
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' ត្រូវតែតិចជាង ឬស្មើនឹង {ComparisonValue}។
+GreaterThanOrEqualTo	'{PropertyName}' ត្រូវតែតិចជាង {ComparisonValue}។
+LessThan	'{PropertyName}' ត្រូវតែធំជាង ឬស្មើនឹង {ComparisonValue}។
+LessThanOrEqualTo	'{PropertyName}' ត្រូវតែធំជាង {ComparisonValue}។
+OutOfRange	'{PropertyName}' ត្រូវតែស្ថិតនៅចន្លោះពី {From} ដល់ {To}។
+OutOfRangeExclusive	'{PropertyName}' ត្រូវតែស្ថិតនៅចន្លោះពី {From} ដល់ {To} (មិនរាប់បញ្ចូលតម្លៃទាំងពីរ)។
+InRange	'{PropertyName}' មិនត្រូវស្ថិតនៅចន្លោះពី {From} ដល់ {To} ទេ។
+Negative	'{PropertyName}' មិនត្រូវជាចំនួនអវិជ្ជមានទេ។
+NegativeOrZero	'{PropertyName}' ត្រូវតែធំជាង 0។
+Positive	'{PropertyName}' មិនត្រូវធំជាង 0 ទេ។
+PositiveOrZero	'{PropertyName}' ត្រូវតែតិចជាង 0។
+Zero	'{PropertyName}' មិនត្រូវជា 0 ទេ។
+NaN	'{PropertyName}' ត្រូវតែជាចំនួន មិនមែន NaN ទេ។
+Infinity	'{PropertyName}' ត្រូវតែជាចំនួនមានកំណត់។
+NotFinite	'{PropertyName}' ត្រូវតែជាចំនួនមានកំណត់។
+Odd	'{PropertyName}' ត្រូវតែជាចំនួនគូ។
+Even	'{PropertyName}' ត្រូវតែជាចំនួនសេស។
+NotMultipleOf	'{PropertyName}' ត្រូវតែជាពហុគុណនៃ {Divisor}។
+NotPowerOfTwo	'{PropertyName}' ត្រូវតែជាស្វ័យគុណនៃ 2។
+NotInteger	'{PropertyName}' ត្រូវតែជាចំនួនគត់។
+PrecisionScaleExceeded	'{PropertyName}' ត្រូវតែមានលេខសរុបមិនលើសពី {ExpectedPrecision} ខ្ទង់ ដោយមានខ្ទង់ទសភាគមិនលើសពី {ExpectedScale}។ បានរកឃើញ {Digits} ខ្ទង់មុនចំណុចទសភាគ និង {ActualScale} ខ្ទង់ទសភាគ។
+
+# Strings
+WhiteSpace	'{PropertyName}' មិនត្រូវទទេ ឬមានតែដកឃ្លាទេ។
+LongerThan	'{PropertyName}' ត្រូវតែមានប្រវែងមិនលើសពី {MaxLength} តួអក្សរ។
+ShorterThan	'{PropertyName}' ត្រូវតែមានប្រវែងយ៉ាងហោចណាស់ {MinLength} តួអក្សរ។
+LengthNotEqualTo	'{PropertyName}' ត្រូវតែមានប្រវែងស្មើនឹង {Length} តួអក្សរ។
+LengthOutOfRange	'{PropertyName}' ត្រូវតែមានប្រវែងពី {MinLength} ដល់ {MaxLength} តួអក្សរ។
+Contains	'{PropertyName}' មិនត្រូវមានធាតុដែលត្រូវបានបដិសេធទេ។
+Contains.Value	'{PropertyName}' មិនត្រូវមាន {Value} ទេ។
+NotContains	'{PropertyName}' ត្រូវតែមានធាតុដែលតម្រូវ។
+NotContains.Value	'{PropertyName}' ត្រូវតែមាន {Value}។
+StartsWith	'{PropertyName}' មិនត្រូវចាប់ផ្តើមដោយ {Value} ទេ។
+NotStartsWith	'{PropertyName}' ត្រូវតែចាប់ផ្តើមដោយ {Value}។
+EndsWith	'{PropertyName}' មិនត្រូវបញ្ចប់ដោយ {Value} ទេ។
+NotEndsWith	'{PropertyName}' ត្រូវតែបញ្ចប់ដោយ {Value}។
+Matches	'{PropertyName}' មិនត្រូវផ្គូផ្គងនឹងលំនាំ {Pattern} ទេ។
+NotMatches	'{PropertyName}' ត្រូវតែផ្គូផ្គងនឹងលំនាំ {Pattern}។
+NotEmailAddress	'{PropertyName}' ត្រូវតែជាអាសយដ្ឋានអ៊ីមែលត្រឹមត្រូវ។
+NotJson	'{PropertyName}' ត្រូវតែជា JSON ត្រឹមត្រូវ។
+NotXml	'{PropertyName}' ត្រូវតែជា XML ដែលមានទម្រង់ត្រឹមត្រូវ។
+NotUri	'{PropertyName}' ត្រូវតែជា URI ត្រឹមត្រូវ។
+NotUri.Absolute	'{PropertyName}' ត្រូវតែជា URI ដាច់ខាតត្រឹមត្រូវ។
+NotUri.Relative	'{PropertyName}' ត្រូវតែជា URI ធៀបត្រឹមត្រូវ។
+NotHttpUrl	'{PropertyName}' ត្រូវតែជា URL ដាច់ខាតដែលប្រើ HTTP ឬ HTTPS។
+NotParsable	'{PropertyName}' ត្រូវតែជាតម្លៃប្រភេទ {Type} ត្រឹមត្រូវ។
+AllUpperCase	'{PropertyName}' មិនត្រូវជាអក្សរធំទាំងអស់ទេ។
+AllLowerCase	'{PropertyName}' មិនត្រូវជាអក្សរតូចទាំងអស់ទេ។
+NotTrimmed	'{PropertyName}' មិនត្រូវចាប់ផ្តើម ឬបញ្ចប់ដោយដកឃ្លាទេ។
+ContainsWhiteSpace	'{PropertyName}' មិនត្រូវមានដកឃ្លាទេ។
+ContainsControlCharacters	'{PropertyName}' មិនត្រូវមានតួអក្សរបញ្ជាទេ។
+ContainsAny	'{PropertyName}' មិនត្រូវមានតួអក្សរណាមួយដែលត្រូវបានបដិសេធទេ។
+ContainsAnyExcept	'{PropertyName}' ត្រូវតែមានតែតួអក្សរដែលត្រូវបានអនុញ្ញាតប៉ុណ្ណោះ។
+NotAscii	'{PropertyName}' ត្រូវតែមានតែតួអក្សរ ASCII ប៉ុណ្ណោះ។
+NotDigits	'{PropertyName}' ត្រូវតែមានតែលេខ 0 ដល់ 9 ប៉ុណ្ណោះ។
+NotLettersOrDigits	'{PropertyName}' ត្រូវតែមានតែអក្សរ ឬលេខប៉ុណ្ណោះ។
+NotHex	'{PropertyName}' ត្រូវតែជាខ្សែអក្សរគោលដប់ប្រាំមួយ។
+NotBase64	'{PropertyName}' ត្រូវតែជាខ្សែអក្សរ Base64 ត្រឹមត្រូវ។
+NotGuid	'{PropertyName}' ត្រូវតែជា GUID ត្រឹមត្រូវ។
+NotIPAddress	'{PropertyName}' ត្រូវតែជាអាសយដ្ឋាន IP ត្រឹមត្រូវ។
+NotSlug	'{PropertyName}' ត្រូវតែជា slug ដែលមានតែអក្សរតូច លេខ និងសញ្ញាភ្ជាប់ (-) តែមួយ។
+NotVersion	'{PropertyName}' ត្រូវតែជាលេខកំណែត្រឹមត្រូវ។
+NotCreditCardNumber	'{PropertyName}' ត្រូវតែជាលេខកាតឥណទានត្រឹមត្រូវ។
+NotEnumName	'{PropertyName}' ត្រូវតែជាឈ្មោះដែលបានកំណត់ក្នុង enum {Type}។
+NotFileName	'{PropertyName}' ត្រូវតែជាឈ្មោះឯកសារត្រឹមត្រូវ។
+
+# Collections and dictionaries
+CountEqualTo	'{PropertyName}' មិនត្រូវមានចំនួនធាតុស្មើនឹង {Count} ទេ។
+CountEqualTo.One	'{PropertyName}' មិនត្រូវមានចំនួនធាតុស្មើនឹង 1 ទេ។
+CountNotEqualTo	'{PropertyName}' ត្រូវតែមានចំនួនធាតុស្មើនឹង {Count}។
+CountNotEqualTo.One	'{PropertyName}' ត្រូវតែមានចំនួនធាតុស្មើនឹង 1។
+CountGreaterThan	'{PropertyName}' ត្រូវតែមានចំនួនធាតុមិនលើសពី {MaxCount}។
+CountGreaterThan.One	'{PropertyName}' ត្រូវតែមានចំនួនធាតុមិនលើសពី 1។
+CountLessThan	'{PropertyName}' ត្រូវតែមានចំនួនធាតុយ៉ាងហោចណាស់ {MinCount}។
+CountLessThan.One	'{PropertyName}' ត្រូវតែមានចំនួនធាតុយ៉ាងហោចណាស់ 1។
+CountOutOfRange	'{PropertyName}' ត្រូវតែមានចំនួនធាតុពី {MinCount} ដល់ {MaxCount}។
+ContainsNull	'{PropertyName}' មិនត្រូវមានធាតុដែលជា null ទេ។
+HasDuplicates	'{PropertyName}' មិនត្រូវមានធាតុស្ទួនទេ។
+Any	'{PropertyName}' មិនត្រូវមានធាតុណាមួយដែលបំពេញលក្ខខណ្ឌទេ។
+None	'{PropertyName}' ត្រូវតែមានធាតុយ៉ាងហោចណាស់មួយដែលបំពេញលក្ខខណ្ឌ។
+ContainsKey	'{PropertyName}' មិនត្រូវមានគន្លឹះដែលត្រូវបានបដិសេធទេ។
+ContainsKey.Value	'{PropertyName}' មិនត្រូវមានគន្លឹះ {Key} ទេ។
+NotContainsKey	'{PropertyName}' ត្រូវតែមានគន្លឹះដែលតម្រូវ។
+NotContainsKey.Value	'{PropertyName}' ត្រូវតែមានគន្លឹះ {Key}។
+
+# Enums
+NotDefined	'{PropertyName}' ត្រូវតែជាតម្លៃដែលបានកំណត់ក្នុង {Type}។
+HasFlag	'{PropertyName}' មិនត្រូវមាន flag {Flag} ទេ។
+NotHasFlag	'{PropertyName}' ត្រូវតែមាន flag {Flag}។
+
+# Dates and times
+Before	'{PropertyName}' មិនត្រូវនៅមុន {ComparisonValue} ទេ។
+After	'{PropertyName}' មិនត្រូវនៅក្រោយ {ComparisonValue} ទេ។
+InPast	'{PropertyName}' មិនត្រូវនៅក្នុងអតីតកាលទេ។
+InFuture	'{PropertyName}' មិនត្រូវនៅក្នុងអនាគតទេ។
+NotUtc	'{PropertyName}' ត្រូវតែជាពេលវេលា UTC។
+Weekend	'{PropertyName}' ត្រូវតែជាថ្ងៃធ្វើការ (ពីថ្ងៃច័ន្ទ ដល់ថ្ងៃសុក្រ)។
+Weekday	'{PropertyName}' ត្រូវតែជាថ្ងៃចុងសប្តាហ៍ (ថ្ងៃសៅរ៍ ឬថ្ងៃអាទិត្យ)។
+HasTimeOfDay	'{PropertyName}' មិនត្រូវមានផ្នែកម៉ោងទេ។
+OlderThan	'{PropertyName}' មិនត្រូវនៅក្នុងអតីតកាលលើសពី {MaxAge} ទេ។
+NewerThan	'{PropertyName}' ត្រូវតែនៅក្នុងអតីតកាលយ៉ាងហោចណាស់ {MinAge}។
+
+# Uri and IPAddress
+Relative	'{PropertyName}' ត្រូវតែជា URI ដាច់ខាត។
+NotHttps	'{PropertyName}' ត្រូវតែជា URL ដាច់ខាតដែលប្រើ HTTPS។
+NotHttpOrHttps	'{PropertyName}' ត្រូវតែជា URL ដាច់ខាតដែលប្រើ HTTP ឬ HTTPS។
+NotScheme	'{PropertyName}' ត្រូវតែប្រើ URI scheme មួយក្នុងចំណោមទាំងនេះ: {Schemes}។
+Loopback	'{PropertyName}' មិនត្រូវជាអាសយដ្ឋាន loopback ទេ។
+Private	'{PropertyName}' មិនត្រូវជាអាសយដ្ឋានឯកជន ឬ link-local ទេ។
+NotIPv4	'{PropertyName}' ត្រូវតែជាអាសយដ្ឋាន IPv4។
+NotIPv6	'{PropertyName}' ត្រូវតែជាអាសយដ្ឋាន IPv6។
+
+# Streams and types
+NotReadable	'{PropertyName}' ត្រូវតែអាចអានបាន។
+NotWritable	'{PropertyName}' ត្រូវតែអាចសរសេរបាន។
+NotSeekable	'{PropertyName}' ត្រូវតែគាំទ្រការផ្លាស់ទីទីតាំង (seek)។
+NotAssignableTo	'{PropertyName}' ត្រូវតែអាច assign ទៅប្រភេទ {Type} បាន។
+Abstract	'{PropertyName}' មិនត្រូវជាប្រភេទអរូបីទេ។
+Interface	'{PropertyName}' មិនត្រូវជា interface ទេ។

@@ -1,0 +1,146 @@
+# Korean (ko). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}'은(는) null이 아니어야 합니다.
+NotNull	'{PropertyName}'은(는) null이어야 합니다.
+Default	'{PropertyName}'은(는) 기본값이 아니어야 합니다.
+Empty	'{PropertyName}'은(는) 비어 있지 않아야 합니다.
+Empty.Guid	'{PropertyName}'은(는) 빈 GUID가 아니어야 합니다.
+NotEmpty	'{PropertyName}'은(는) 비어 있어야 합니다.
+EqualTo	'{PropertyName}'은(는) 거부된 값과 같지 않아야 합니다.
+EqualTo.Value	'{PropertyName}'은(는) {ComparisonValue}와(과) 같지 않아야 합니다.
+NotEqualTo	'{PropertyName}'은(는) 필수 값과 같아야 합니다.
+NotEqualTo.Value	'{PropertyName}'은(는) {ComparisonValue}와(과) 같아야 합니다.
+OneOf	'{PropertyName}'은(는) 거부된 값 중 하나가 아니어야 합니다.
+NotOneOf	'{PropertyName}'은(는) 허용된 값 중 하나여야 합니다.
+Condition	'{PropertyName}'이(가) 유효하지 않습니다.
+Condition.If	'{PropertyName}'은(는) 다음 조건을 충족하지 않아야 합니다: {Condition}.
+Condition.IfNot	'{PropertyName}'은(는) 다음 조건을 충족해야 합니다: {Condition}.
+Type	'{PropertyName}'은(는) {Type} 형식이 아니어야 합니다.
+NotType	'{PropertyName}'은(는) {Type} 형식이어야 합니다.
+True	'{PropertyName}'은(는) false여야 합니다.
+False	'{PropertyName}'은(는) true여야 합니다.
+Must	'{PropertyName}'이(가) 유효하지 않습니다.
+Invalid	'{PropertyName}'이(가) 유효하지 않습니다.
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}'은(는) {ComparisonValue} 이하여야 합니다.
+GreaterThanOrEqualTo	'{PropertyName}'은(는) {ComparisonValue}보다 작아야 합니다.
+LessThan	'{PropertyName}'은(는) {ComparisonValue} 이상이어야 합니다.
+LessThanOrEqualTo	'{PropertyName}'은(는) {ComparisonValue}보다 커야 합니다.
+OutOfRange	'{PropertyName}'은(는) {From}에서 {To} 사이에 있어야 합니다.
+OutOfRangeExclusive	'{PropertyName}'은(는) {From}에서 {To} 사이에 있어야 합니다(경계값 제외).
+InRange	'{PropertyName}'은(는) {From}에서 {To} 사이에 있지 않아야 합니다.
+Negative	'{PropertyName}'은(는) 음수가 아니어야 합니다.
+NegativeOrZero	'{PropertyName}'은(는) 0보다 커야 합니다.
+Positive	'{PropertyName}'은(는) 0보다 크지 않아야 합니다.
+PositiveOrZero	'{PropertyName}'은(는) 0보다 작아야 합니다.
+Zero	'{PropertyName}'은(는) 0이 아니어야 합니다.
+NaN	'{PropertyName}'은(는) NaN이 아닌 숫자여야 합니다.
+Infinity	'{PropertyName}'은(는) 유한한 숫자여야 합니다.
+NotFinite	'{PropertyName}'은(는) 유한한 숫자여야 합니다.
+Odd	'{PropertyName}'은(는) 짝수여야 합니다.
+Even	'{PropertyName}'은(는) 홀수여야 합니다.
+NotMultipleOf	'{PropertyName}'은(는) {Divisor}의 배수여야 합니다.
+NotPowerOfTwo	'{PropertyName}'은(는) 2의 거듭제곱이어야 합니다.
+NotInteger	'{PropertyName}'은(는) 정수여야 합니다.
+PrecisionScaleExceeded	'{PropertyName}'은(는) 전체 {ExpectedPrecision}자리 이하, 소수 {ExpectedScale}자리 이하여야 합니다. 실제로는 소수점 앞 {Digits}자리, 소수 {ActualScale}자리입니다.
+
+# Strings
+WhiteSpace	'{PropertyName}'은(는) 빈 값이나 공백 문자로만 이루어진 값이 아니어야 합니다.
+LongerThan	'{PropertyName}'은(는) 길이가 {MaxLength}자 이하여야 합니다.
+ShorterThan	'{PropertyName}'은(는) 길이가 {MinLength}자 이상이어야 합니다.
+LengthNotEqualTo	'{PropertyName}'은(는) 길이가 정확히 {Length}자여야 합니다.
+LengthOutOfRange	'{PropertyName}'은(는) 길이가 {MinLength}자 이상 {MaxLength}자 이하여야 합니다.
+Contains	'{PropertyName}'은(는) 거부된 항목을 포함하지 않아야 합니다.
+Contains.Value	'{PropertyName}'은(는) {Value}을(를) 포함하지 않아야 합니다.
+NotContains	'{PropertyName}'은(는) 필수 항목을 포함해야 합니다.
+NotContains.Value	'{PropertyName}'은(는) {Value}을(를) 포함해야 합니다.
+StartsWith	'{PropertyName}'은(는) {Value}(으)로 시작하지 않아야 합니다.
+NotStartsWith	'{PropertyName}'은(는) {Value}(으)로 시작해야 합니다.
+EndsWith	'{PropertyName}'은(는) {Value}(으)로 끝나지 않아야 합니다.
+NotEndsWith	'{PropertyName}'은(는) {Value}(으)로 끝나야 합니다.
+Matches	'{PropertyName}'은(는) 패턴 {Pattern}와(과) 일치하지 않아야 합니다.
+NotMatches	'{PropertyName}'은(는) 패턴 {Pattern}와(과) 일치해야 합니다.
+NotEmailAddress	'{PropertyName}'은(는) 유효한 이메일 주소여야 합니다.
+NotJson	'{PropertyName}'은(는) 유효한 JSON이어야 합니다.
+NotXml	'{PropertyName}'은(는) 형식이 올바른 XML이어야 합니다.
+NotUri	'{PropertyName}'은(는) 유효한 URI여야 합니다.
+NotUri.Absolute	'{PropertyName}'은(는) 유효한 절대 URI여야 합니다.
+NotUri.Relative	'{PropertyName}'은(는) 유효한 상대 URI여야 합니다.
+NotHttpUrl	'{PropertyName}'은(는) HTTP 또는 HTTPS 절대 URL이어야 합니다.
+NotParsable	'{PropertyName}'은(는) {Type} 형식의 유효한 값이어야 합니다.
+AllUpperCase	'{PropertyName}'은(는) 대문자로만 구성되지 않아야 합니다.
+AllLowerCase	'{PropertyName}'은(는) 소문자로만 구성되지 않아야 합니다.
+NotTrimmed	'{PropertyName}'은(는) 앞이나 뒤에 공백 문자를 포함하지 않아야 합니다.
+ContainsWhiteSpace	'{PropertyName}'은(는) 공백 문자를 포함하지 않아야 합니다.
+ContainsControlCharacters	'{PropertyName}'은(는) 제어 문자를 포함하지 않아야 합니다.
+ContainsAny	'{PropertyName}'은(는) 거부된 문자를 하나도 포함하지 않아야 합니다.
+ContainsAnyExcept	'{PropertyName}'은(는) 허용된 문자만 포함해야 합니다.
+NotAscii	'{PropertyName}'은(는) ASCII 문자만 포함해야 합니다.
+NotDigits	'{PropertyName}'은(는) 0부터 9까지의 숫자만 포함해야 합니다.
+NotLettersOrDigits	'{PropertyName}'은(는) 문자 또는 숫자만 포함해야 합니다.
+NotHex	'{PropertyName}'은(는) 16진수 문자열이어야 합니다.
+NotBase64	'{PropertyName}'은(는) 유효한 Base64 문자열이어야 합니다.
+NotGuid	'{PropertyName}'은(는) 유효한 GUID여야 합니다.
+NotIPAddress	'{PropertyName}'은(는) 유효한 IP 주소여야 합니다.
+NotSlug	'{PropertyName}'은(는) 소문자, 숫자, 단일 하이픈으로 구성된 슬러그여야 합니다.
+NotVersion	'{PropertyName}'은(는) 유효한 버전 번호여야 합니다.
+NotCreditCardNumber	'{PropertyName}'은(는) 유효한 신용카드 번호여야 합니다.
+NotEnumName	'{PropertyName}'은(는) 열거형 {Type}에 정의된 이름이어야 합니다.
+NotFileName	'{PropertyName}'은(는) 유효한 파일 이름이어야 합니다.
+
+# Collections and dictionaries
+CountEqualTo	'{PropertyName}'은(는) 항목이 정확히 {Count}개가 아니어야 합니다.
+CountEqualTo.One	'{PropertyName}'은(는) 항목이 정확히 1개가 아니어야 합니다.
+CountNotEqualTo	'{PropertyName}'은(는) 항목이 정확히 {Count}개여야 합니다.
+CountNotEqualTo.One	'{PropertyName}'은(는) 항목이 정확히 1개여야 합니다.
+CountGreaterThan	'{PropertyName}'은(는) 항목이 {MaxCount}개 이하여야 합니다.
+CountGreaterThan.One	'{PropertyName}'은(는) 항목이 1개 이하여야 합니다.
+CountLessThan	'{PropertyName}'은(는) 항목이 {MinCount}개 이상이어야 합니다.
+CountLessThan.One	'{PropertyName}'은(는) 항목이 1개 이상이어야 합니다.
+CountOutOfRange	'{PropertyName}'은(는) 항목이 {MinCount}개 이상 {MaxCount}개 이하여야 합니다.
+ContainsNull	'{PropertyName}'은(는) null 항목을 포함하지 않아야 합니다.
+HasDuplicates	'{PropertyName}'은(는) 중복된 항목을 포함하지 않아야 합니다.
+Any	'{PropertyName}'은(는) 조건을 충족하는 항목을 하나도 포함하지 않아야 합니다.
+None	'{PropertyName}'은(는) 조건을 충족하는 항목을 하나 이상 포함해야 합니다.
+ContainsKey	'{PropertyName}'은(는) 거부된 키를 포함하지 않아야 합니다.
+ContainsKey.Value	'{PropertyName}'은(는) 키 {Key}을(를) 포함하지 않아야 합니다.
+NotContainsKey	'{PropertyName}'은(는) 필수 키를 포함해야 합니다.
+NotContainsKey.Value	'{PropertyName}'은(는) 키 {Key}을(를) 포함해야 합니다.
+
+# Enums
+NotDefined	'{PropertyName}'은(는) 열거형 {Type}에 정의된 값이어야 합니다.
+HasFlag	'{PropertyName}'은(는) 플래그 {Flag}이(가) 설정되어 있지 않아야 합니다.
+NotHasFlag	'{PropertyName}'은(는) 플래그 {Flag}이(가) 설정되어 있어야 합니다.
+
+# Dates and times
+Before	'{PropertyName}'은(는) {ComparisonValue}보다 이전이 아니어야 합니다.
+After	'{PropertyName}'은(는) {ComparisonValue}보다 이후가 아니어야 합니다.
+InPast	'{PropertyName}'은(는) 과거 시점이 아니어야 합니다.
+InFuture	'{PropertyName}'은(는) 미래 시점이 아니어야 합니다.
+NotUtc	'{PropertyName}'은(는) UTC 시간이어야 합니다.
+Weekend	'{PropertyName}'은(는) 평일(월요일부터 금요일까지)이어야 합니다.
+Weekday	'{PropertyName}'은(는) 주말(토요일 또는 일요일)이어야 합니다.
+HasTimeOfDay	'{PropertyName}'은(는) 시간 부분을 포함하지 않아야 합니다.
+OlderThan	'{PropertyName}'은(는) 현재로부터 {MaxAge}보다 더 이전이 아니어야 합니다.
+NewerThan	'{PropertyName}'은(는) 현재로부터 최소 {MinAge} 이전이어야 합니다.
+
+# Uri and IPAddress
+Relative	'{PropertyName}'은(는) 절대 URI여야 합니다.
+NotHttps	'{PropertyName}'은(는) HTTPS 절대 URL이어야 합니다.
+NotHttpOrHttps	'{PropertyName}'은(는) HTTP 또는 HTTPS 절대 URL이어야 합니다.
+NotScheme	'{PropertyName}'은(는) 다음 URI 스킴 중 하나를 사용해야 합니다: {Schemes}.
+Loopback	'{PropertyName}'은(는) 루프백 주소가 아니어야 합니다.
+Private	'{PropertyName}'은(는) 사설 주소 또는 링크 로컬 주소가 아니어야 합니다.
+NotIPv4	'{PropertyName}'은(는) IPv4 주소여야 합니다.
+NotIPv6	'{PropertyName}'은(는) IPv6 주소여야 합니다.
+
+# Streams and types
+NotReadable	'{PropertyName}'은(는) 읽기를 지원해야 합니다.
+NotWritable	'{PropertyName}'은(는) 쓰기를 지원해야 합니다.
+NotSeekable	'{PropertyName}'은(는) 탐색(seek)을 지원해야 합니다.
+NotAssignableTo	'{PropertyName}'은(는) {Type} 형식에 할당할 수 있어야 합니다.
+Abstract	'{PropertyName}'은(는) 추상 형식이 아니어야 합니다.
+Interface	'{PropertyName}'은(는) 인터페이스가 아니어야 합니다.

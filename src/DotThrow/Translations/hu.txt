@@ -1,0 +1,146 @@
+# Hungarian (hu). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	A(z) '{PropertyName}' értéke nem lehet null.
+NotNull	A(z) '{PropertyName}' értékének null-nak kell lennie.
+Default	A(z) '{PropertyName}' értéke nem lehet az alapértelmezett érték.
+Empty	A(z) '{PropertyName}' értéke nem lehet üres.
+Empty.Guid	A(z) '{PropertyName}' értéke nem lehet üres GUID.
+NotEmpty	A(z) '{PropertyName}' értékének üresnek kell lennie.
+EqualTo	A(z) '{PropertyName}' értéke nem lehet egyenlő az elutasított értékkel.
+EqualTo.Value	A(z) '{PropertyName}' értéke nem lehet egyenlő ezzel: {ComparisonValue}.
+NotEqualTo	A(z) '{PropertyName}' értékének egyenlőnek kell lennie az elvárt értékkel.
+NotEqualTo.Value	A(z) '{PropertyName}' értékének egyenlőnek kell lennie ezzel: {ComparisonValue}.
+OneOf	A(z) '{PropertyName}' értéke nem lehet az elutasított értékek egyike.
+NotOneOf	A(z) '{PropertyName}' értékének az engedélyezett értékek egyikének kell lennie.
+Condition	A(z) '{PropertyName}' értéke érvénytelen.
+Condition.If	A(z) '{PropertyName}' értéke nem teljesítheti a feltételt: {Condition}.
+Condition.IfNot	A(z) '{PropertyName}' értékének teljesítenie kell a feltételt: {Condition}.
+Type	A(z) '{PropertyName}' értéke nem lehet {Type} típusú.
+NotType	A(z) '{PropertyName}' értékének {Type} típusúnak kell lennie.
+True	A(z) '{PropertyName}' értékének false-nak kell lennie.
+False	A(z) '{PropertyName}' értékének true-nak kell lennie.
+Must	A(z) '{PropertyName}' értéke érvénytelen.
+Invalid	A(z) '{PropertyName}' értéke érvénytelen.
+
+# Comparisons and numbers
+GreaterThan	A(z) '{PropertyName}' értékének kisebbnek vagy egyenlőnek kell lennie, mint {ComparisonValue}.
+GreaterThanOrEqualTo	A(z) '{PropertyName}' értékének kisebbnek kell lennie, mint {ComparisonValue}.
+LessThan	A(z) '{PropertyName}' értékének nagyobbnak vagy egyenlőnek kell lennie, mint {ComparisonValue}.
+LessThanOrEqualTo	A(z) '{PropertyName}' értékének nagyobbnak kell lennie, mint {ComparisonValue}.
+OutOfRange	A(z) '{PropertyName}' értékének {From} és {To} között kell lennie.
+OutOfRangeExclusive	A(z) '{PropertyName}' értékének {From} és {To} között kell lennie (a határokat nem beleértve).
+InRange	A(z) '{PropertyName}' értéke nem lehet {From} és {To} között.
+Negative	A(z) '{PropertyName}' értéke nem lehet negatív.
+NegativeOrZero	A(z) '{PropertyName}' értékének nagyobbnak kell lennie, mint 0.
+Positive	A(z) '{PropertyName}' értéke nem lehet nagyobb, mint 0.
+PositiveOrZero	A(z) '{PropertyName}' értékének kisebbnek kell lennie, mint 0.
+Zero	A(z) '{PropertyName}' értéke nem lehet 0.
+NaN	A(z) '{PropertyName}' értékének számnak kell lennie, nem NaN-nak.
+Infinity	A(z) '{PropertyName}' értékének véges számnak kell lennie.
+NotFinite	A(z) '{PropertyName}' értékének véges számnak kell lennie.
+Odd	A(z) '{PropertyName}' értékének páros számnak kell lennie.
+Even	A(z) '{PropertyName}' értékének páratlan számnak kell lennie.
+NotMultipleOf	A(z) '{PropertyName}' értékének a(z) {Divisor} többszörösének kell lennie.
+NotPowerOfTwo	A(z) '{PropertyName}' értékének kettő hatványának kell lennie.
+NotInteger	A(z) '{PropertyName}' értékének egész számnak kell lennie.
+PrecisionScaleExceeded	A(z) '{PropertyName}' értékének összesen legfeljebb {ExpectedPrecision} számjegyből kell állnia, legfeljebb {ExpectedScale} tizedesjeggyel. A tizedesvessző előtt {Digits} számjegy, utána {ActualScale} tizedesjegy található.
+
+# Strings
+WhiteSpace	A(z) '{PropertyName}' értéke nem lehet üres vagy csak térközökből álló.
+LongerThan	A(z) '{PropertyName}' értékének legfeljebb {MaxLength} karakter hosszúnak kell lennie.
+ShorterThan	A(z) '{PropertyName}' értékének legalább {MinLength} karakter hosszúnak kell lennie.
+LengthNotEqualTo	A(z) '{PropertyName}' értékének pontosan {Length} karakter hosszúnak kell lennie.
+LengthOutOfRange	A(z) '{PropertyName}' értékének {MinLength} és {MaxLength} karakter közötti hosszúságúnak kell lennie.
+Contains	A(z) '{PropertyName}' értéke nem tartalmazhatja az elutasított elemet.
+Contains.Value	A(z) '{PropertyName}' értéke nem tartalmazhatja a következőt: {Value}.
+NotContains	A(z) '{PropertyName}' értékének tartalmaznia kell az elvárt elemet.
+NotContains.Value	A(z) '{PropertyName}' értékének tartalmaznia kell a következőt: {Value}.
+StartsWith	A(z) '{PropertyName}' értéke nem kezdődhet a következővel: {Value}.
+NotStartsWith	A(z) '{PropertyName}' értékének a következővel kell kezdődnie: {Value}.
+EndsWith	A(z) '{PropertyName}' értéke nem végződhet a következőre: {Value}.
+NotEndsWith	A(z) '{PropertyName}' értékének a következőre kell végződnie: {Value}.
+Matches	A(z) '{PropertyName}' értéke nem illeszkedhet a következő mintára: {Pattern}.
+NotMatches	A(z) '{PropertyName}' értékének illeszkednie kell a következő mintára: {Pattern}.
+NotEmailAddress	A(z) '{PropertyName}' értékének érvényes e-mail-címnek kell lennie.
+NotJson	A(z) '{PropertyName}' értékének érvényes JSON-nak kell lennie.
+NotXml	A(z) '{PropertyName}' értékének jól formázott XML-nek kell lennie.
+NotUri	A(z) '{PropertyName}' értékének érvényes URI-azonosítónak kell lennie.
+NotUri.Absolute	A(z) '{PropertyName}' értékének érvényes abszolút URI-azonosítónak kell lennie.
+NotUri.Relative	A(z) '{PropertyName}' értékének érvényes relatív URI-azonosítónak kell lennie.
+NotHttpUrl	A(z) '{PropertyName}' értékének abszolút, HTTP vagy HTTPS sémájú URL-címnek kell lennie.
+NotParsable	A(z) '{PropertyName}' értékének érvényes {Type} típusú értéknek kell lennie.
+AllUpperCase	A(z) '{PropertyName}' értéke nem állhat csak nagybetűkből.
+AllLowerCase	A(z) '{PropertyName}' értéke nem állhat csak kisbetűkből.
+NotTrimmed	A(z) '{PropertyName}' értéke nem kezdődhet térközzel, és nem végződhet térközre.
+ContainsWhiteSpace	A(z) '{PropertyName}' értéke nem tartalmazhat térközt.
+ContainsControlCharacters	A(z) '{PropertyName}' értéke nem tartalmazhat vezérlőkaraktereket.
+ContainsAny	A(z) '{PropertyName}' értéke nem tartalmazhatja az elutasított karakterek egyikét sem.
+ContainsAnyExcept	A(z) '{PropertyName}' értékének csak az engedélyezett karakterekből kell állnia.
+NotAscii	A(z) '{PropertyName}' értékének csak ASCII-karakterekből kell állnia.
+NotDigits	A(z) '{PropertyName}' értékének csak 0-tól 9-ig terjedő számjegyekből kell állnia.
+NotLettersOrDigits	A(z) '{PropertyName}' értékének csak betűkből vagy számjegyekből kell állnia.
+NotHex	A(z) '{PropertyName}' értékének hexadecimális karakterláncnak kell lennie.
+NotBase64	A(z) '{PropertyName}' értékének érvényes Base64-karakterláncnak kell lennie.
+NotGuid	A(z) '{PropertyName}' értékének érvényes GUID-nak kell lennie.
+NotIPAddress	A(z) '{PropertyName}' értékének érvényes IP-címnek kell lennie.
+NotSlug	A(z) '{PropertyName}' értékének kisbetűkből, számjegyekből és különálló kötőjelekből álló slugnak kell lennie.
+NotVersion	A(z) '{PropertyName}' értékének érvényes verziószámnak kell lennie.
+NotCreditCardNumber	A(z) '{PropertyName}' értékének érvényes hitelkártyaszámnak kell lennie.
+NotEnumName	A(z) '{PropertyName}' értékének a(z) {Type} típusban definiált névnek kell lennie.
+NotFileName	A(z) '{PropertyName}' értékének érvényes fájlnévnek kell lennie.
+
+# Collections and dictionaries
+CountEqualTo	A(z) '{PropertyName}' értéke nem tartalmazhat pontosan {Count} elemet.
+CountEqualTo.One	A(z) '{PropertyName}' értéke nem tartalmazhat pontosan 1 elemet.
+CountNotEqualTo	A(z) '{PropertyName}' értékének pontosan {Count} elemet kell tartalmaznia.
+CountNotEqualTo.One	A(z) '{PropertyName}' értékének pontosan 1 elemet kell tartalmaznia.
+CountGreaterThan	A(z) '{PropertyName}' értékének legfeljebb {MaxCount} elemet kell tartalmaznia.
+CountGreaterThan.One	A(z) '{PropertyName}' értékének legfeljebb 1 elemet kell tartalmaznia.
+CountLessThan	A(z) '{PropertyName}' értékének legalább {MinCount} elemet kell tartalmaznia.
+CountLessThan.One	A(z) '{PropertyName}' értékének legalább 1 elemet kell tartalmaznia.
+CountOutOfRange	A(z) '{PropertyName}' értékének {MinCount} és {MaxCount} közötti számú elemet kell tartalmaznia.
+ContainsNull	A(z) '{PropertyName}' értéke nem tartalmazhat null értékű elemeket.
+HasDuplicates	A(z) '{PropertyName}' értéke nem tartalmazhat ismétlődő elemeket.
+Any	A(z) '{PropertyName}' értéke nem tartalmazhat olyan elemet, amely teljesíti a feltételt.
+None	A(z) '{PropertyName}' értékének tartalmaznia kell legalább egy olyan elemet, amely teljesíti a feltételt.
+ContainsKey	A(z) '{PropertyName}' értéke nem tartalmazhatja az elutasított kulcsot.
+ContainsKey.Value	A(z) '{PropertyName}' értéke nem tartalmazhatja a következő kulcsot: {Key}.
+NotContainsKey	A(z) '{PropertyName}' értékének tartalmaznia kell az elvárt kulcsot.
+NotContainsKey.Value	A(z) '{PropertyName}' értékének tartalmaznia kell a következő kulcsot: {Key}.
+
+# Enums
+NotDefined	A(z) '{PropertyName}' értékének a(z) {Type} típusban definiált értéknek kell lennie.
+HasFlag	A(z) '{PropertyName}' értéke nem tartalmazhatja a következő jelzőt: {Flag}.
+NotHasFlag	A(z) '{PropertyName}' értékének tartalmaznia kell a következő jelzőt: {Flag}.
+
+# Dates and times
+Before	A(z) '{PropertyName}' értéke nem lehet korábbi, mint {ComparisonValue}.
+After	A(z) '{PropertyName}' értéke nem lehet későbbi, mint {ComparisonValue}.
+InPast	A(z) '{PropertyName}' értéke nem lehet a múltban.
+InFuture	A(z) '{PropertyName}' értéke nem lehet a jövőben.
+NotUtc	A(z) '{PropertyName}' értékének UTC szerintinek kell lennie.
+Weekend	A(z) '{PropertyName}' értékének hétköznapnak (hétfőtől péntekig) kell lennie.
+Weekday	A(z) '{PropertyName}' értékének hétvégi napnak kell lennie.
+HasTimeOfDay	A(z) '{PropertyName}' értéke nem tartalmazhat napon belüli időpontot.
+OlderThan	A(z) '{PropertyName}' értéke nem lehet több mint {MaxAge} időtartammal a múltban.
+NewerThan	A(z) '{PropertyName}' értékének legalább {MinAge} időtartammal a múltban kell lennie.
+
+# Uri and IPAddress
+Relative	A(z) '{PropertyName}' értékének abszolút URI-azonosítónak kell lennie.
+NotHttps	A(z) '{PropertyName}' értékének abszolút, HTTPS sémájú URL-címnek kell lennie.
+NotHttpOrHttps	A(z) '{PropertyName}' értékének abszolút, HTTP vagy HTTPS sémájú URL-címnek kell lennie.
+NotScheme	A(z) '{PropertyName}' értékének a következő URI-sémák egyikét kell használnia: {Schemes}.
+Loopback	A(z) '{PropertyName}' értéke nem lehet loopback cím.
+Private	A(z) '{PropertyName}' értéke nem lehet privát vagy link-local cím.
+NotIPv4	A(z) '{PropertyName}' értékének IPv4-címnek kell lennie.
+NotIPv6	A(z) '{PropertyName}' értékének IPv6-címnek kell lennie.
+
+# Streams and types
+NotReadable	A(z) '{PropertyName}' értékének támogatnia kell az olvasást.
+NotWritable	A(z) '{PropertyName}' értékének támogatnia kell az írást.
+NotSeekable	A(z) '{PropertyName}' értékének támogatnia kell a pozicionálást.
+NotAssignableTo	A(z) '{PropertyName}' értékének hozzárendelhetőnek kell lennie a(z) {Type} típushoz.
+Abstract	A(z) '{PropertyName}' értéke nem lehet absztrakt típus.
+Interface	A(z) '{PropertyName}' értéke nem lehet interfész.

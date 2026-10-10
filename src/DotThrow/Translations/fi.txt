@@ -1,0 +1,146 @@
+# Finnish (fi). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' ei saa olla null.
+NotNull	'{PropertyName}' pitää olla null.
+Default	'{PropertyName}' ei saa olla oletusarvo.
+Empty	'{PropertyName}' ei saa olla tyhjä.
+Empty.Guid	'{PropertyName}' ei saa olla tyhjä GUID.
+NotEmpty	'{PropertyName}' pitää olla tyhjä.
+EqualTo	'{PropertyName}' ei saa olla sama kuin kielletty arvo.
+EqualTo.Value	'{PropertyName}' ei saa olla sama kuin {ComparisonValue}.
+NotEqualTo	'{PropertyName}' pitää olla sama kuin vaadittu arvo.
+NotEqualTo.Value	'{PropertyName}' pitää olla sama kuin {ComparisonValue}.
+OneOf	'{PropertyName}' ei saa olla mikään kielletyistä arvoista.
+NotOneOf	'{PropertyName}' pitää olla jokin sallituista arvoista.
+Condition	'{PropertyName}' ei ole kelvollinen.
+Condition.If	'{PropertyName}' ei saa täyttää ehtoa: {Condition}.
+Condition.IfNot	'{PropertyName}' pitää täyttää ehto: {Condition}.
+Type	'{PropertyName}' ei saa olla tyyppiä {Type}.
+NotType	'{PropertyName}' pitää olla tyyppiä {Type}.
+True	'{PropertyName}' pitää olla false.
+False	'{PropertyName}' pitää olla true.
+Must	'{PropertyName}' ei ole kelvollinen.
+Invalid	'{PropertyName}' ei ole kelvollinen.
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' pitää olla pienempi tai yhtä suuri kuin {ComparisonValue}.
+GreaterThanOrEqualTo	'{PropertyName}' pitää olla pienempi kuin {ComparisonValue}.
+LessThan	'{PropertyName}' pitää olla suurempi tai yhtä suuri kuin {ComparisonValue}.
+LessThanOrEqualTo	'{PropertyName}' pitää olla suurempi kuin {ComparisonValue}.
+OutOfRange	'{PropertyName}' pitää olla {From} ja {To} välillä.
+OutOfRangeExclusive	'{PropertyName}' pitää olla {From} ja {To} välillä (raja-arvot pois lukien).
+InRange	'{PropertyName}' ei saa olla {From} ja {To} välillä.
+Negative	'{PropertyName}' ei saa olla negatiivinen.
+NegativeOrZero	'{PropertyName}' pitää olla suurempi kuin 0.
+Positive	'{PropertyName}' ei saa olla suurempi kuin 0.
+PositiveOrZero	'{PropertyName}' pitää olla pienempi kuin 0.
+Zero	'{PropertyName}' ei saa olla 0.
+NaN	'{PropertyName}' pitää olla luku, ei NaN.
+Infinity	'{PropertyName}' pitää olla äärellinen luku.
+NotFinite	'{PropertyName}' pitää olla äärellinen luku.
+Odd	'{PropertyName}' pitää olla parillinen luku.
+Even	'{PropertyName}' pitää olla pariton luku.
+NotMultipleOf	'{PropertyName}' pitää olla luvun {Divisor} monikerta.
+NotPowerOfTwo	'{PropertyName}' pitää olla kahden potenssi.
+NotInteger	'{PropertyName}' pitää olla kokonaisluku.
+PrecisionScaleExceeded	'{PropertyName}' numeroiden kokonaismäärän pitää olla enintään {ExpectedPrecision}, josta desimaaleja enintään {ExpectedScale}. Löytyi numeroita ennen desimaalipilkkua: {Digits}, desimaaleja: {ActualScale}.
+
+# Strings
+WhiteSpace	'{PropertyName}' ei saa olla tyhjä eikä koostua pelkistä tyhjämerkeistä.
+LongerThan	'{PropertyName}' merkkien määrän pitää olla enintään {MaxLength}.
+ShorterThan	'{PropertyName}' merkkien määrän pitää olla vähintään {MinLength}.
+LengthNotEqualTo	'{PropertyName}' merkkien määrän pitää olla tasan {Length}.
+LengthOutOfRange	'{PropertyName}' merkkien määrän pitää olla {MinLength} ja {MaxLength} välillä.
+Contains	'{PropertyName}' ei saa sisältää kiellettyä alkiota.
+Contains.Value	'{PropertyName}' ei saa sisältää {Value}.
+NotContains	'{PropertyName}' pitää sisältää vaadittu alkio.
+NotContains.Value	'{PropertyName}' pitää sisältää {Value}.
+StartsWith	'{PropertyName}' alussa ei saa olla {Value}.
+NotStartsWith	'{PropertyName}' alussa pitää olla {Value}.
+EndsWith	'{PropertyName}' lopussa ei saa olla {Value}.
+NotEndsWith	'{PropertyName}' lopussa pitää olla {Value}.
+Matches	'{PropertyName}' ei saa vastata kaavaa {Pattern}.
+NotMatches	'{PropertyName}' pitää vastata kaavaa {Pattern}.
+NotEmailAddress	'{PropertyName}' pitää olla kelvollinen sähköpostiosoite.
+NotJson	'{PropertyName}' pitää olla kelvollinen JSON.
+NotXml	'{PropertyName}' pitää olla hyvin muodostettu XML.
+NotUri	'{PropertyName}' pitää olla kelvollinen URI.
+NotUri.Absolute	'{PropertyName}' pitää olla kelvollinen absoluuttinen URI.
+NotUri.Relative	'{PropertyName}' pitää olla kelvollinen suhteellinen URI.
+NotHttpUrl	'{PropertyName}' pitää olla absoluuttinen HTTP- tai HTTPS-URL.
+NotParsable	'{PropertyName}' pitää olla kelvollinen tyypin {Type} arvo.
+AllUpperCase	'{PropertyName}' ei saa koostua pelkistä isoista kirjaimista.
+AllLowerCase	'{PropertyName}' ei saa koostua pelkistä pienistä kirjaimista.
+NotTrimmed	'{PropertyName}' alussa tai lopussa ei saa olla tyhjämerkkejä.
+ContainsWhiteSpace	'{PropertyName}' ei saa sisältää tyhjämerkkejä.
+ContainsControlCharacters	'{PropertyName}' ei saa sisältää ohjausmerkkejä.
+ContainsAny	'{PropertyName}' ei saa sisältää yhtään kielletyistä merkeistä.
+ContainsAnyExcept	'{PropertyName}' pitää sisältää vain sallittuja merkkejä.
+NotAscii	'{PropertyName}' pitää sisältää vain ASCII-merkkejä.
+NotDigits	'{PropertyName}' pitää sisältää vain numeroita 0:sta 9:ään.
+NotLettersOrDigits	'{PropertyName}' pitää sisältää vain kirjaimia tai numeroita.
+NotHex	'{PropertyName}' pitää olla heksadesimaalinen merkkijono.
+NotBase64	'{PropertyName}' pitää olla kelvollinen Base64-merkkijono.
+NotGuid	'{PropertyName}' pitää olla kelvollinen GUID.
+NotIPAddress	'{PropertyName}' pitää olla kelvollinen IP-osoite.
+NotSlug	'{PropertyName}' pitää olla slug, joka koostuu pienistä kirjaimista, numeroista ja yksittäisistä yhdysmerkeistä.
+NotVersion	'{PropertyName}' pitää olla kelvollinen versionumero.
+NotCreditCardNumber	'{PropertyName}' pitää olla kelvollinen luottokortin numero.
+NotEnumName	'{PropertyName}' pitää olla tyypissä {Type} määritetty nimi.
+NotFileName	'{PropertyName}' pitää olla kelvollinen tiedostonimi.
+
+# Collections and dictionaries
+CountEqualTo	'{PropertyName}' ei saa sisältää tasan {Count} alkiota.
+CountEqualTo.One	'{PropertyName}' ei saa sisältää tasan 1 alkiota.
+CountNotEqualTo	'{PropertyName}' pitää sisältää tasan {Count} alkiota.
+CountNotEqualTo.One	'{PropertyName}' pitää sisältää tasan 1 alkio.
+CountGreaterThan	'{PropertyName}' pitää sisältää enintään {MaxCount} alkiota.
+CountGreaterThan.One	'{PropertyName}' pitää sisältää enintään 1 alkio.
+CountLessThan	'{PropertyName}' pitää sisältää vähintään {MinCount} alkiota.
+CountLessThan.One	'{PropertyName}' pitää sisältää vähintään 1 alkio.
+CountOutOfRange	'{PropertyName}' alkioiden määrän pitää olla {MinCount} ja {MaxCount} välillä.
+ContainsNull	'{PropertyName}' ei saa sisältää null-alkioita.
+HasDuplicates	'{PropertyName}' ei saa sisältää toistuvia alkioita.
+Any	'{PropertyName}' ei saa sisältää yhtään alkiota, joka täyttää ehdon.
+None	'{PropertyName}' pitää sisältää vähintään yksi alkio, joka täyttää ehdon.
+ContainsKey	'{PropertyName}' ei saa sisältää kiellettyä avainta.
+ContainsKey.Value	'{PropertyName}' ei saa sisältää avainta {Key}.
+NotContainsKey	'{PropertyName}' pitää sisältää vaadittu avain.
+NotContainsKey.Value	'{PropertyName}' pitää sisältää avain {Key}.
+
+# Enums
+NotDefined	'{PropertyName}' pitää olla tyypissä {Type} määritetty arvo.
+HasFlag	'{PropertyName}' ei saa sisältää lippua {Flag}.
+NotHasFlag	'{PropertyName}' pitää sisältää lippu {Flag}.
+
+# Dates and times
+Before	'{PropertyName}' ei saa olla aiempi kuin {ComparisonValue}.
+After	'{PropertyName}' ei saa olla myöhempi kuin {ComparisonValue}.
+InPast	'{PropertyName}' ei saa olla menneisyydessä.
+InFuture	'{PropertyName}' ei saa olla tulevaisuudessa.
+NotUtc	'{PropertyName}' pitää olla UTC-ajassa.
+Weekend	'{PropertyName}' pitää olla arkipäivä (maanantaista perjantaihin).
+Weekday	'{PropertyName}' pitää olla viikonloppupäivä.
+HasTimeOfDay	'{PropertyName}' ei saa sisältää kellonaikaa.
+OlderThan	'{PropertyName}' ei saa olla yli {MaxAge} menneisyydessä.
+NewerThan	'{PropertyName}' pitää olla vähintään {MinAge} menneisyydessä.
+
+# Uri and IPAddress
+Relative	'{PropertyName}' pitää olla absoluuttinen URI.
+NotHttps	'{PropertyName}' pitää olla absoluuttinen HTTPS-URL.
+NotHttpOrHttps	'{PropertyName}' pitää olla absoluuttinen HTTP- tai HTTPS-URL.
+NotScheme	'{PropertyName}' pitää käyttää jotakin näistä URI-skeemoista: {Schemes}.
+Loopback	'{PropertyName}' ei saa olla loopback-osoite.
+Private	'{PropertyName}' ei saa olla yksityinen tai link-local-osoite.
+NotIPv4	'{PropertyName}' pitää olla IPv4-osoite.
+NotIPv6	'{PropertyName}' pitää olla IPv6-osoite.
+
+# Streams and types
+NotReadable	'{PropertyName}' pitää tukea lukemista.
+NotWritable	'{PropertyName}' pitää tukea kirjoittamista.
+NotSeekable	'{PropertyName}' pitää tukea sijainnin muuttamista.
+NotAssignableTo	'{PropertyName}' pitää olla sijoitettavissa tyyppiin {Type}.
+Abstract	'{PropertyName}' ei saa olla abstrakti tyyppi.
+Interface	'{PropertyName}' ei saa olla rajapinta.

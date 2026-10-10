@@ -1,0 +1,146 @@
+# Vietnamese (vi). Machine-assisted translation; native review is welcome.
+# Format: Key<TAB>Template. Keep every {Placeholder} exactly as in English.
+
+# General
+Null	'{PropertyName}' không được là null.
+NotNull	'{PropertyName}' phải là null.
+Default	'{PropertyName}' không được là giá trị mặc định.
+Empty	'{PropertyName}' không được rỗng.
+Empty.Guid	'{PropertyName}' không được là GUID rỗng.
+NotEmpty	'{PropertyName}' phải rỗng.
+EqualTo	'{PropertyName}' không được bằng giá trị bị từ chối.
+EqualTo.Value	'{PropertyName}' không được bằng {ComparisonValue}.
+NotEqualTo	'{PropertyName}' phải bằng giá trị được yêu cầu.
+NotEqualTo.Value	'{PropertyName}' phải bằng {ComparisonValue}.
+OneOf	'{PropertyName}' không được là một trong các giá trị bị từ chối.
+NotOneOf	'{PropertyName}' phải là một trong các giá trị được phép.
+Condition	'{PropertyName}' không hợp lệ.
+Condition.If	'{PropertyName}' không được thỏa mãn điều kiện: {Condition}.
+Condition.IfNot	'{PropertyName}' phải thỏa mãn điều kiện: {Condition}.
+Type	'{PropertyName}' không được thuộc kiểu {Type}.
+NotType	'{PropertyName}' phải thuộc kiểu {Type}.
+True	'{PropertyName}' phải là false.
+False	'{PropertyName}' phải là true.
+Must	'{PropertyName}' không hợp lệ.
+Invalid	'{PropertyName}' không hợp lệ.
+
+# Comparisons and numbers
+GreaterThan	'{PropertyName}' phải nhỏ hơn hoặc bằng {ComparisonValue}.
+GreaterThanOrEqualTo	'{PropertyName}' phải nhỏ hơn {ComparisonValue}.
+LessThan	'{PropertyName}' phải lớn hơn hoặc bằng {ComparisonValue}.
+LessThanOrEqualTo	'{PropertyName}' phải lớn hơn {ComparisonValue}.
+OutOfRange	'{PropertyName}' phải nằm trong khoảng từ {From} đến {To}.
+OutOfRangeExclusive	'{PropertyName}' phải nằm trong khoảng từ {From} đến {To} (không bao gồm hai giá trị biên).
+InRange	'{PropertyName}' không được nằm trong khoảng từ {From} đến {To}.
+Negative	'{PropertyName}' không được là số âm.
+NegativeOrZero	'{PropertyName}' phải lớn hơn 0.
+Positive	'{PropertyName}' không được lớn hơn 0.
+PositiveOrZero	'{PropertyName}' phải nhỏ hơn 0.
+Zero	'{PropertyName}' không được bằng 0.
+NaN	'{PropertyName}' phải là một số, không phải NaN.
+Infinity	'{PropertyName}' phải là một số hữu hạn.
+NotFinite	'{PropertyName}' phải là một số hữu hạn.
+Odd	'{PropertyName}' phải là số chẵn.
+Even	'{PropertyName}' phải là số lẻ.
+NotMultipleOf	'{PropertyName}' phải là bội số của {Divisor}.
+NotPowerOfTwo	'{PropertyName}' phải là lũy thừa của 2.
+NotInteger	'{PropertyName}' phải là số nguyên.
+PrecisionScaleExceeded	'{PropertyName}' phải có tổng cộng tối đa {ExpectedPrecision} chữ số, trong đó tối đa {ExpectedScale} chữ số thập phân. Tìm thấy {Digits} chữ số trước dấu thập phân và {ActualScale} chữ số thập phân.
+
+# Strings
+WhiteSpace	'{PropertyName}' không được rỗng hoặc chỉ chứa khoảng trắng.
+LongerThan	'{PropertyName}' phải có độ dài tối đa {MaxLength} ký tự.
+ShorterThan	'{PropertyName}' phải có độ dài ít nhất {MinLength} ký tự.
+LengthNotEqualTo	'{PropertyName}' phải có độ dài đúng {Length} ký tự.
+LengthOutOfRange	'{PropertyName}' phải có độ dài từ {MinLength} đến {MaxLength} ký tự.
+Contains	'{PropertyName}' không được chứa phần tử bị từ chối.
+Contains.Value	'{PropertyName}' không được chứa {Value}.
+NotContains	'{PropertyName}' phải chứa phần tử được yêu cầu.
+NotContains.Value	'{PropertyName}' phải chứa {Value}.
+StartsWith	'{PropertyName}' không được bắt đầu bằng {Value}.
+NotStartsWith	'{PropertyName}' phải bắt đầu bằng {Value}.
+EndsWith	'{PropertyName}' không được kết thúc bằng {Value}.
+NotEndsWith	'{PropertyName}' phải kết thúc bằng {Value}.
+Matches	'{PropertyName}' không được khớp với mẫu {Pattern}.
+NotMatches	'{PropertyName}' phải khớp với mẫu {Pattern}.
+NotEmailAddress	'{PropertyName}' phải là một địa chỉ email hợp lệ.
+NotJson	'{PropertyName}' phải là JSON hợp lệ.
+NotXml	'{PropertyName}' phải là XML đúng định dạng.
+NotUri	'{PropertyName}' phải là một URI hợp lệ.
+NotUri.Absolute	'{PropertyName}' phải là một URI tuyệt đối hợp lệ.
+NotUri.Relative	'{PropertyName}' phải là một URI tương đối hợp lệ.
+NotHttpUrl	'{PropertyName}' phải là một URL HTTP hoặc HTTPS tuyệt đối.
+NotParsable	'{PropertyName}' phải là một giá trị hợp lệ thuộc kiểu {Type}.
+AllUpperCase	'{PropertyName}' không được chỉ gồm chữ hoa.
+AllLowerCase	'{PropertyName}' không được chỉ gồm chữ thường.
+NotTrimmed	'{PropertyName}' không được bắt đầu hoặc kết thúc bằng khoảng trắng.
+ContainsWhiteSpace	'{PropertyName}' không được chứa khoảng trắng.
+ContainsControlCharacters	'{PropertyName}' không được chứa ký tự điều khiển.
+ContainsAny	'{PropertyName}' không được chứa bất kỳ ký tự bị từ chối nào.
+ContainsAnyExcept	'{PropertyName}' chỉ được chứa các ký tự được phép.
+NotAscii	'{PropertyName}' chỉ được chứa ký tự ASCII.
+NotDigits	'{PropertyName}' chỉ được chứa các chữ số từ 0 đến 9.
+NotLettersOrDigits	'{PropertyName}' chỉ được chứa chữ cái hoặc chữ số.
+NotHex	'{PropertyName}' phải là một chuỗi thập lục phân.
+NotBase64	'{PropertyName}' phải là một chuỗi Base64 hợp lệ.
+NotGuid	'{PropertyName}' phải là một GUID hợp lệ.
+NotIPAddress	'{PropertyName}' phải là một địa chỉ IP hợp lệ.
+NotSlug	'{PropertyName}' phải là một slug gồm chữ cái thường, chữ số và dấu gạch nối đơn.
+NotVersion	'{PropertyName}' phải là một số phiên bản hợp lệ.
+NotCreditCardNumber	'{PropertyName}' phải là một số thẻ tín dụng hợp lệ.
+NotEnumName	'{PropertyName}' phải là một tên đã được định nghĩa trong enum {Type}.
+NotFileName	'{PropertyName}' phải là một tên tệp hợp lệ.
+
+# Collections and dictionaries
+CountEqualTo	'{PropertyName}' không được có đúng {Count} phần tử.
+CountEqualTo.One	'{PropertyName}' không được có đúng 1 phần tử.
+CountNotEqualTo	'{PropertyName}' phải có đúng {Count} phần tử.
+CountNotEqualTo.One	'{PropertyName}' phải có đúng 1 phần tử.
+CountGreaterThan	'{PropertyName}' phải có tối đa {MaxCount} phần tử.
+CountGreaterThan.One	'{PropertyName}' phải có tối đa 1 phần tử.
+CountLessThan	'{PropertyName}' phải có ít nhất {MinCount} phần tử.
+CountLessThan.One	'{PropertyName}' phải có ít nhất 1 phần tử.
+CountOutOfRange	'{PropertyName}' phải có từ {MinCount} đến {MaxCount} phần tử.
+ContainsNull	'{PropertyName}' không được chứa phần tử null.
+HasDuplicates	'{PropertyName}' không được chứa phần tử trùng lặp.
+Any	'{PropertyName}' không được chứa phần tử nào thỏa mãn điều kiện.
+None	'{PropertyName}' phải chứa ít nhất một phần tử thỏa mãn điều kiện.
+ContainsKey	'{PropertyName}' không được chứa khóa bị từ chối.
+ContainsKey.Value	'{PropertyName}' không được chứa khóa {Key}.
+NotContainsKey	'{PropertyName}' phải chứa khóa được yêu cầu.
+NotContainsKey.Value	'{PropertyName}' phải chứa khóa {Key}.
+
+# Enums
+NotDefined	'{PropertyName}' phải là một giá trị đã được định nghĩa trong {Type}.
+HasFlag	'{PropertyName}' không được có cờ {Flag}.
+NotHasFlag	'{PropertyName}' phải có cờ {Flag}.
+
+# Dates and times
+Before	'{PropertyName}' không được sớm hơn {ComparisonValue}.
+After	'{PropertyName}' không được muộn hơn {ComparisonValue}.
+InPast	'{PropertyName}' không được nằm trong quá khứ.
+InFuture	'{PropertyName}' không được nằm trong tương lai.
+NotUtc	'{PropertyName}' phải theo giờ UTC.
+Weekend	'{PropertyName}' phải là ngày làm việc (từ thứ Hai đến thứ Sáu).
+Weekday	'{PropertyName}' phải là ngày cuối tuần (thứ Bảy hoặc Chủ nhật).
+HasTimeOfDay	'{PropertyName}' không được có phần thời gian.
+OlderThan	'{PropertyName}' không được cách đây quá {MaxAge}.
+NewerThan	'{PropertyName}' phải cách đây ít nhất {MinAge}.
+
+# Uri and IPAddress
+Relative	'{PropertyName}' phải là một URI tuyệt đối.
+NotHttps	'{PropertyName}' phải là một URL HTTPS tuyệt đối.
+NotHttpOrHttps	'{PropertyName}' phải là một URL HTTP hoặc HTTPS tuyệt đối.
+NotScheme	'{PropertyName}' phải sử dụng một trong các lược đồ URI sau: {Schemes}.
+Loopback	'{PropertyName}' không được là địa chỉ loopback.
+Private	'{PropertyName}' không được là địa chỉ riêng hoặc link-local.
+NotIPv4	'{PropertyName}' phải là một địa chỉ IPv4.
+NotIPv6	'{PropertyName}' phải là một địa chỉ IPv6.
+
+# Streams and types
+NotReadable	'{PropertyName}' phải hỗ trợ đọc.
+NotWritable	'{PropertyName}' phải hỗ trợ ghi.
+NotSeekable	'{PropertyName}' phải hỗ trợ di chuyển vị trí (seek).
+NotAssignableTo	'{PropertyName}' phải gán được cho kiểu {Type}.
+Abstract	'{PropertyName}' không được là kiểu trừu tượng.
+Interface	'{PropertyName}' không được là interface.
