@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!--
+      The same frameworks as the core package minus netstandard2.1 (netstandard2.1 apps use the
+      netstandard2.0 build; the code has no span paths). net8.0 and newer get the trimming and
+      AOT analyzers.
+    -->
+    <TargetFrameworks>netstandard2.0;net462;net8.0;net9.0;net10.0</TargetFrameworks>
+    <RootNamespace>DotThrow.DependencyInjection</RootNamespace>
+
+    <IsPackable>true</IsPackable>
+    <PackageId>DotThrow.DependencyInjection</PackageId>
+    <Title>DotThrow.DependencyInjection</Title>
+    <Description>Microsoft.Extensions.DependencyInjection support for DotThrow validators: register validators by assembly scanning or one by one (AOT safe), and validate options classes with a DotThrow validator, including ValidateOnStart and named options.</Description>
+    <PackageTags>validation;validator;dependency-injection;options;ioptions;fluentvalidation;guard;dotthrow</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReleaseNotes>https://github.com/shanto462/DotThrow/blob/main/CHANGELOG.md</PackageReleaseNotes>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EnablePackageValidation>true</EnablePackageValidation>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+
+  <!-- .NET Framework reference assemblies, so net462 builds on macOS and Linux too (build-time only). -->
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Options" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- PrivateAssets none: the DotThrow analyzers (packed in the DotThrow package) reach apps that install only this package. -->
+    <ProjectReference Include="..\DotThrow\DotThrow.csproj" PrivateAssets="none" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\assets\icon.png" Pack="true" PackagePath="\" Visible="false" />
+  </ItemGroup>
+
+</Project>

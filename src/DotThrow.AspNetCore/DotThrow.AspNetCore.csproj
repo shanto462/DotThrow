@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- ASP.NET Core 8, 9 and 10. The shared framework comes with the app, so there are no package dependencies. -->
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+    <RootNamespace>DotThrow.AspNetCore</RootNamespace>
+    <IsAotCompatible>true</IsAotCompatible>
+
+    <IsPackable>true</IsPackable>
+    <PackageId>DotThrow.AspNetCore</PackageId>
+    <Title>DotThrow.AspNetCore</Title>
+    <Description>ASP.NET Core support for DotThrow validators: a minimal API endpoint filter (WithValidation, Native AOT friendly), an MVC action filter, and ValidationReport to RFC 7807 ValidationProblemDetails helpers.</Description>
+    <PackageTags>validation;validator;aspnetcore;minimal-api;mvc;problem-details;rfc7807;fluentvalidation;dotthrow</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReleaseNotes>https://github.com/shanto462/DotThrow/blob/main/CHANGELOG.md</PackageReleaseNotes>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EnablePackageValidation>true</EnablePackageValidation>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- PrivateAssets none: the DotThrow analyzers (packed in the DotThrow package) reach apps that install only this package. -->
+    <ProjectReference Include="..\DotThrow\DotThrow.csproj" PrivateAssets="none" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="DotThrow.AspNetCore.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\assets\icon.png" Pack="true" PackagePath="\" Visible="false" />
+  </ItemGroup>
+
+</Project>
