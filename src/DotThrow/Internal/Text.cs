@@ -25,6 +25,7 @@ internal static class Text
     private static readonly SearchValues<char> WhiteSpace = SearchValues.Create(WhiteSpaceChars);
     private static readonly SearchValues<char> Controls = SearchValues.Create(ControlChars());
     private static readonly SearchValues<char> HexDigits = SearchValues.Create("0123456789ABCDEFabcdef");
+    private static readonly SearchValues<char> Digits = SearchValues.Create("0123456789");
     private static readonly SearchValues<char> Base64Digits = SearchValues.Create(Base64Alphabet);
     private static readonly SearchValues<char> SlugChars = SearchValues.Create("-0123456789abcdefghijklmnopqrstuvwxyz");
     private static readonly SearchValues<char> AsciiLettersOrDigits =
@@ -239,7 +240,9 @@ internal static class Text
         }
 
 #if NET8_0_OR_GREATER
-        return !value.AsSpan().ContainsAnyExceptInRange('0', '9');
+        // SearchValues, not ContainsAnyExceptInRange: on GitHub's Linux x64 runners the generic
+        // range search boxed its char limits (4 boxes, 96 B per call); SearchValues never does.
+        return !value.AsSpan().ContainsAnyExcept(Digits);
 #else
         foreach (var c in value)
         {
