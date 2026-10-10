@@ -14,6 +14,17 @@ updates:
       nuget-minor-patch:
         patterns: ['*']
         update-types: [minor, patch]
+    ignore:
+      # The analyzers build against an old Roslyn on purpose. A newer one raises the
+      # minimum compiler and breaks the analyzers for .NET 8 SDK users (CS8032), so these
+      # are bumped by hand only. The "Consumer (.NET 8 SDK)" CI job checks it.
+      - dependency-name: 'Microsoft.CodeAnalysis.*'
+      # The 8.0 line reaches every supported .NET. Only patch and minor updates.
+      - dependency-name: 'Microsoft.Extensions.*'
+        update-types: ['version-update:semver-major']
+      # Microsoft.AspNetCore.Mvc.Testing is pinned per target framework (8, 9 and 10).
+      - dependency-name: 'Microsoft.AspNetCore.*'
+        update-types: ['version-update:semver-major']
     open-pull-requests-limit: 10
 
   - package-ecosystem: github-actions

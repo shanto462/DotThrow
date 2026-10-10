@@ -1,0 +1,3 @@
+<Project>
+  <!-- Stops the repository's Directory.Build.targets from applying. -->
+</Project>

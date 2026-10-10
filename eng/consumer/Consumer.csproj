@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!--
+    A small app that uses the packed DotThrow packages the way a user does, built with the
+    oldest .NET 8 SDK feature band (global.json). eng/consumer/check.sh builds it and checks
+    the analyzer diagnostics. DotThrowVersion is passed on the command line.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DotThrow" Version="$(DotThrowVersion)" />
+    <PackageReference Include="DotThrow.DependencyInjection" Version="$(DotThrowVersion)" />
+    <PackageReference Include="DotThrow.AspNetCore" Version="$(DotThrowVersion)" />
+  </ItemGroup>
+
+</Project>

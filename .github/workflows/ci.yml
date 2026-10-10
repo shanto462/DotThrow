@@ -146,10 +146,38 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+  consumer:
+    name: Consumer (.NET 8 SDK)
+    needs: pack
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # Only the .NET 8 SDK, and its oldest feature band: 8.0.1xx has the oldest compiler
+      # (Roslyn 4.8) that the analyzers inside the DotThrow package must load in.
+      # eng/consumer/global.json selects it even if the runner has newer SDKs.
+      - name: Install the .NET 8.0.1xx SDK
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 8.0.1xx
+      - name: Download packages
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: nuget-packages
+          path: feed
+      # Builds eng/consumer against the packages, checks that the analyzers report the
+      # seeded DT0001 and DT0010, and fails on CS8032, CS8034 or AD0001.
+      - name: Build a consumer app with the .NET 8 SDK
+        run: bash eng/consumer/check.sh feed
+
   aot:
     name: Native AOT
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     permissions:
       contents: read
     steps:
@@ -189,6 +217,18 @@ jobs:
         run: |
           file aot/DotThrow.Samples
           ./aot/DotThrow.Samples
+      # A minimal API with DotThrow.AspNetCore and DotThrow.DependencyInjection (validator
+      # class, options validation, dynamic rules with a PropertyMap). See eng/aot-smoke.
+      - name: Publish the ASP.NET Core smoke app with Native AOT
+        run: |
+          dotnet publish eng/aot-smoke/AotSmoke.csproj \
+            -c Release -r linux-x64 -warnaserror -o aot-web 2>&1 | tee publish-web.log
+          if grep -Eq 'warning IL[23][0-9]{3}' publish-web.log; then
+            echo "::error::Native AOT publish of eng/aot-smoke reported trim or AOT warnings"
+            exit 1
+          fi
+      - name: Send valid and invalid requests to the native ASP.NET Core app
+        run: bash eng/aot-smoke/smoke.sh aot-web/AotSmoke
       - name: Write AOT summary
         run: |
           size="$(du -h aot/DotThrow.Samples | cut -f1)"
@@ -257,7 +297,7 @@ jobs:
   ci-result:
     name: CI result
     if: always()
-    needs: [format, test, pack, aot, coverage, benchmarks]
+    needs: [format, test, pack, consumer, aot, coverage, benchmarks]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions: {}

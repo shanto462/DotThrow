@@ -65,6 +65,19 @@ dotnet publish samples/DotThrow.Samples/DotThrow.Samples.csproj -c Release -r li
 ./aot/DotThrow.Samples
 ```
 
+The same job publishes `eng/aot-smoke`, a minimal API that uses `DotThrow.AspNetCore` and `DotThrow.DependencyInjection` (a validator class, options validation, and dynamic rules with a `PropertyMap`), and sends it valid and invalid requests:
+
+```sh
+dotnet publish eng/aot-smoke/AotSmoke.csproj -c Release -r linux-x64 -warnaserror -o aot-web
+bash eng/aot-smoke/smoke.sh aot-web/AotSmoke
+```
+
+The CI job "Consumer (.NET 8 SDK)" builds `eng/consumer`, a small app that uses the three packages from the pack job, with the oldest .NET 8 SDK feature band (8.0.1xx, Roslyn 4.8). It checks that the analyzers inside the `DotThrow` package load there and report the mistakes seeded in `eng/consumer/Seeded.cs`, with no CS8032, CS8034 or AD0001. With a .NET 8.0.1xx SDK installed, run it after `eng/pack.sh`:
+
+```sh
+bash eng/consumer/check.sh dist
+```
+
 To see test coverage, run the tests with the coverage collector. CI does the same on Linux and merges the results with [ReportGenerator](https://github.com/danielpalme/ReportGenerator):
 
 ```sh
@@ -132,7 +145,7 @@ Add `!` after the type for a breaking change, for example `feat!: rename IfCount
 ## Branch rules
 
 - `main` is protected. All changes go through a pull request.
-- A pull request can merge only when the **`CI result`** status check is green. This one check passes only when every CI job passes: format, tests on Linux, macOS and Windows, tests against the `netstandard2.0` and `netstandard2.1` builds, pack with package validation, Native AOT, coverage, and the benchmarks build. CodeQL must also report no new problems.
+- A pull request can merge only when the **`CI result`** status check is green. This one check passes only when every CI job passes: format, tests on Linux, macOS and Windows, tests against the `netstandard2.0` and `netstandard2.1` builds, pack with package validation and package checks, the .NET 8 SDK consumer build, Native AOT (sample app and ASP.NET Core app), coverage, and the benchmarks build. CodeQL must also report no new problems.
 - Pull requests are merged with squash or rebase only, so the history of `main` stays linear. There are no merge commits.
 - Keep pull requests small and focused. One topic per pull request is easier to review.
 
@@ -147,4 +160,20 @@ Releases are made by the maintainer:
 
 The release workflow then checks that the tag matches the version, runs every test project, packs every package with `eng/pack.sh`, writes `SHA256SUMS` for all files, and creates a signed build provenance attestation for them. It pushes the packages to NuGet.org (the core `DotThrow` package first) with [trusted publishing](https://learn.microsoft.com/nuget/nuget-org/trusted-publishing), so no long-lived API key is stored anywhere, and creates the GitHub Release with the notes from `CHANGELOG.md`. A version with a dash, for example `2.1.0-preview.1`, is published as a prerelease.
 
+The tag must point to a commit on `main`; the workflow fails otherwise. Only admins can create `v*` tags (tag ruleset).
+
 A pull request that changes the release workflow or the build inputs, and a manual run of the workflow, do a dry run: they test and pack but publish nothing.
+
+### Rehearse a release with a prerelease
+
+Before the first stable release, and whenever a new package joins the set, rehearse the whole flow with a release candidate. Publishing a new package ID with trusted publishing is the step most likely to fail, and a prerelease does not reach users who install stable versions.
+
+1. Next to `<VersionPrefix>` in `Directory.Build.props`, add `<VersionSuffix>rc.1</VersionSuffix>`. The version is then `2.0.0-rc.1` for every package.
+2. Add a `## [2.0.0-rc.1] - YYYY-MM-DD` section to `CHANGELOG.md`. One line is enough, but the release fails without it.
+3. Merge to `main`, tag the merged commit `v2.0.0-rc.1`, and push the tag.
+4. Check the result:
+   - On NuGet.org, every package has version `2.0.0-rc.1`, marked as prerelease. A version with a dash is always a prerelease on NuGet.
+   - Every package has its symbols. `dotnet nuget push` sends the `.snupkg` next to each `.nupkg` on its own, and the job summary lists every pushed package.
+   - The GitHub Release `v2.0.0-rc.1` is marked as a pre-release (the workflow passes `--prerelease` for a version with a dash) and has every `.nupkg`, `.snupkg` and `SHA256SUMS`.
+   - `gh attestation verify` works for a package from the GitHub Release (see [SECURITY.md](SECURITY.md)).
+5. Raise the suffix for the next candidate (`rc.2`), or remove `<VersionSuffix>` for the stable release.

@@ -9,21 +9,24 @@
 #
 # Environment:
 #   EXPECTED_VERSION  fail unless every package has this version (the release tag)
+#   SKIP_PACK         "true" only checks the packages already in OUTPUT_DIR (no pack)
 #
 # Checks:
 #   - every packable project has a .nupkg, and a .snupkg when IncludeSymbols is true
 #   - every package has lib/<tfm>/<AssemblyName>.dll for each target framework
 #   - all packages share one version (lockstep, set in Directory.Build.props)
 #   - the core DotThrow package has no dependencies (decision D21)
-#   - the core package carries the analyzers in analyzers/dotnet/cs. Until the analyzers
-#     project is packed into it, a missing folder is only a warning.
+#   - the core package has exactly the analyzer files below in analyzers/, and no other
+#     package has an analyzers/ folder
 #
 # Works with the bash 3.2 that ships with macOS.
 
 set -euo pipefail
 
 core_id=DotThrow
-analyzers_project=src/DotThrow.Analyzers/DotThrow.Analyzers.csproj
+# Every file the core package must have under analyzers/, and nothing else.
+core_analyzer_files="analyzers/dotnet/cs/DotThrow.Analyzers.CodeFixes.dll
+analyzers/dotnet/cs/DotThrow.Analyzers.dll"
 
 die() {
   echo "error: $*" >&2
@@ -34,9 +37,6 @@ errors=0
 error() {
   if [ "${GITHUB_ACTIONS:-}" = true ]; then echo "::error::$*"; else echo "error: $*" >&2; fi
   errors=$((errors + 1))
-}
-warning() {
-  if [ "${GITHUB_ACTIONS:-}" = true ]; then echo "::warning::$*"; else echo "warning: $*" >&2; fi
 }
 
 [ $# -ge 1 ] || die "usage: eng/pack.sh OUTPUT_DIR [dotnet pack arguments...]"
@@ -88,11 +88,15 @@ if [ -n "${EXPECTED_VERSION:-}" ] && [ "$version" != "$EXPECTED_VERSION" ]; then
 fi
 [ "$errors" -eq 0 ] || exit 1
 
-echo "==> Packing ${#projects[@]} project(s), version $version"
-for project in "${projects[@]}"; do
-  echo "    $project"
-  dotnet pack "$project" -c Release -o "$out" ${1+"$@"}
-done
+if [ "${SKIP_PACK:-}" = true ]; then
+  echo "==> Checking the packages in $out (SKIP_PACK=true), version $version"
+else
+  echo "==> Packing ${#projects[@]} project(s), version $version"
+  for project in "${projects[@]}"; do
+    echo "    $project"
+    dotnet pack "$project" -c Release -o "$out" ${1+"$@"}
+  done
+fi
 
 # Check each package and build the summary.
 summary="| Package | Version | Target frameworks | Dependencies | Symbols |
@@ -126,14 +130,15 @@ while [ "$i" -lt ${#projects[@]} ]; do
   dependencies="${dependencies%,}"
   dependencies="${dependencies//,/, }"
 
+  # The file names under analyzers/ (folder entries end with "/" and are left out).
+  analyzer_files="$(awk '$4 ~ /^analyzers\// && $4 !~ /\/$/ { print $4 }' <<< "$listing" | sort)"
   if [ "$id" = "$core_id" ]; then
     [ -z "$dependencies" ] || error "$id must not have dependencies (decision D21). Found: $dependencies"
-    if grep -q ' analyzers/' <<< "$listing"; then
-      grep -q ' analyzers/dotnet/cs/[^ ]*\.dll$' <<< "$listing" ||
-        error "$id: the analyzers must be in analyzers/dotnet/cs"
-    elif [ -f "$analyzers_project" ]; then
-      warning "$id: no analyzers/dotnet/cs folder yet, although $analyzers_project exists"
+    if [ "$analyzer_files" != "$core_analyzer_files" ]; then
+      error "$id: analyzers/ must contain exactly: $(tr '\n' ' ' <<< "$core_analyzer_files")Found: $(tr '\n' ' ' <<< "${analyzer_files:-nothing}")"
     fi
+  elif [ -n "$analyzer_files" ]; then
+    error "$id: only the $core_id package may contain analyzers. Found: $(tr '\n' ' ' <<< "$analyzer_files")"
   fi
 
   summary="$summary
