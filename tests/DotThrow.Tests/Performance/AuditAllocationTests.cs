@@ -18,20 +18,38 @@ public sealed class AuditAllocationTests
     private static readonly int[] Numbers = [1, 2, 3, 4, 5, 6, 7, 8];
     private static readonly List<int> NumberList = [1, 2, 3, 4, 5, 6, 7, 8];
     private static readonly HashSet<int> NumberSet = [1, 2, 3];
+#if !NET9_0_OR_GREATER
+    private static readonly char[] XY = ['x', 'y'];
+    private static readonly char[] Abc = ['a', 'b', 'c'];
+    private static readonly int[] OneToSix = [1, 2, 3, 4, 5, 6];
+    private static readonly int[] NineToThirteen = [9, 10, 11, 12, 13];
+#endif
     private static readonly Dictionary<string, int> Stock = new() { ["apple"] = 1 };
 
     [Fact]
     public void Ad_hoc_character_sets_do_not_allocate() => AssertNoAllocations(static () =>
     {
         string a = "hello world".Throw().IfContainsAny(Markup).IfContainsAnyExcept("abcdefghijklmnopqrstuvwxyz éü");
+#if NET9_0_OR_GREATER
         string b = "abc".Throw().IfContainsAny('x', 'y').IfContainsAnyExcept('a', 'b', 'c');
+#else
+        // On .NET 8 the caller's not yet optimized code allocates a RuntimeFieldInfoStub for the
+        // compiler's RuntimeHelpers.CreateSpan of constant params values (seen on loaded CI
+        // runners). That cost is in the calling test, not in DotThrow, so pass the same values
+        // as spans over static arrays.
+        string b = "abc".Throw().IfContainsAny(XY.AsSpan()).IfContainsAnyExcept(Abc.AsSpan());
+#endif
         return a.Length + b.Length;
     });
 
     [Fact]
     public void Value_searches_and_enums_do_not_allocate() => AssertNoAllocations(static () =>
     {
+#if NET9_0_OR_GREATER
         int a = 9.Throw().IfOneOf(1, 2, 3, 4, 5, 6).IfNotOneOf(9, 10, 11, 12, 13);
+#else
+        int a = 9.Throw().IfOneOf(OneToSix.AsSpan()).IfNotOneOf(NineToThirteen.AsSpan());
+#endif
         var b = Numbers.Throw().IfContains(42).Value.Length;
         var c = NumberList.Throw().IfContains(42).IfNotContains(8).Value.Count;
         var d = DayOfWeek.Friday.Throw().IfNotDefined().Value;

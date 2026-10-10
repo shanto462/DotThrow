@@ -15,6 +15,12 @@ namespace DotThrow.Tests.Performance;
 public sealed class NewCheckAllocationTests
 {
     private const int Iterations = 2000;
+#if !NET9_0_OR_GREATER
+    private static readonly int[] OneTwoThree = [1, 2, 3];
+    private static readonly int[] SixtyFourAnd128 = [64, 128];
+    private static readonly char[] AngleBrackets = ['<', '>'];
+    private static readonly char[] Hello = ['h', 'e', 'l', 'o'];
+#endif
 
     private static readonly List<int> Numbers = [1, 2, 3];
     private static readonly HashSet<int> Set = [1, 2, 3];
@@ -109,8 +115,15 @@ public sealed class NewCheckAllocationTests
         // constant params values. Allocations.Measure now waits for optimized code.
         AssertNoAllocations(static () =>
         {
+#if NET9_0_OR_GREATER
             int a = 64.Throw().IfOneOf(1, 2, 3).IfNotOneOf(64, 128);
             string b = "hello".Throw().IfContainsAny('<', '>').IfContainsAnyExcept('h', 'e', 'l', 'o');
+#else
+            // On .NET 8 the waiting is not always enough on loaded CI runners, so the constant
+            // values come from static arrays (the RuntimeFieldInfoStub is the caller's cost).
+            int a = 64.Throw().IfOneOf(OneTwoThree.AsSpan()).IfNotOneOf(SixtyFourAnd128.AsSpan());
+            string b = "hello".Throw().IfContainsAny(AngleBrackets.AsSpan()).IfContainsAnyExcept(Hello.AsSpan());
+#endif
             return a + b.Length;
         });
     }
