@@ -7,9 +7,9 @@ using System.Linq;
 using DotThrow.Tests.Validation.Models;
 using FluentValidation;
 using FluentValidation.Internal;
+using Xunit;
 using FV = FluentValidation;
 using FVResults = FluentValidation.Results;
-using Xunit;
 
 namespace DotThrow.Tests.Validation.Parity;
 

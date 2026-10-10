@@ -9,9 +9,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using DotThrow.Tests.Validation.Models;
 using FluentValidation;
+using Xunit;
 using FV = FluentValidation;
 using FVResults = FluentValidation.Results;
-using Xunit;
 
 namespace DotThrow.Tests.Validation.Parity;
 

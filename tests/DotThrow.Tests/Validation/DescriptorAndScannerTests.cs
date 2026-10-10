@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
-using DotThrow.Tests.Validation.Models;
 using DotThrow.Scanning;
+using DotThrow.Tests.Validation.Models;
 using Xunit;
 
 namespace DotThrow.Tests.Validation;

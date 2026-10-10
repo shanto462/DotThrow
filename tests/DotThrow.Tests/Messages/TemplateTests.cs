@@ -4,8 +4,8 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using DotThrow.Tests.Support;
 using DotThrow.Internal;
+using DotThrow.Tests.Support;
 using Xunit;
 
 namespace DotThrow.Tests.Messages;

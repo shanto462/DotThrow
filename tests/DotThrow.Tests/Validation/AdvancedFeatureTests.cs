@@ -1,8 +1,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using DotThrow.Tests.Validation.Models;
 using DotThrow.Testing;
+using DotThrow.Tests.Validation.Models;
 using Xunit;
 
 namespace DotThrow.Tests.Validation;
