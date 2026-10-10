@@ -134,7 +134,7 @@ public sealed class AddressValidator : Validator<Address>
     {
         For(x => x.Street, street => street.IfNullOrWhiteSpace().IfLongerThan(100));
         For(x => x.City, city => city.IfNullOrWhiteSpace());
-        For(x => x.PostalCode, code => code.AllowNull().IfNotDigits().IfLengthNotEqualTo(5));
+        For(x => x.PostalCode, code => code.WhenPresent().IfNotDigits().IfLengthNotEqualTo(5));
     }
 }
 
@@ -160,7 +160,7 @@ public sealed class OrderValidator : Validator<Order>
         ForEach(x => x.Lines, new OrderLineValidator());
         ForEach(x => x.Tags, tag => tag.IfNullOrWhiteSpace().IfLongerThan(20));
         For(x => x.GiftMessage, message => message.IfNullOrWhiteSpace(), rule => rule.When(x => x.IsGift));
-        For(x => x.DeliveryDate, (date, x) => date.AllowNull().IfNull().IfBefore(x.OrderDate));
+        For(x => x.DeliveryDate, (date, x) => date.WhenPresent().IfBefore(x.OrderDate));
     }
 }
 ```
@@ -207,9 +207,10 @@ most one failure, the first failed check of its chain (see [Cascade](#cascade)).
 
 - The failure name is the property path from the selector: `x => x.Address.City` gives
   `Address.City`. The message uses the same name, quoted.
-- A nullable property works like any other: `For(x => x.MiddleName, m => m.AllowNull().IfLongerThan(50))`
-  for a `string?` property, and `For(x => x.Age, a => a.AllowNull().IfNull().IfNegative())`
-  for an `int?` property.
+- An optional property starts its chain with `WhenPresent()`, which skips a null value:
+  `For(x => x.MiddleName, m => m.WhenPresent().IfLongerThan(50))` for a `string?`, and
+  `For(x => x.Age, a => a.WhenPresent().IfNegative())` for an `int?` (it also unwraps the
+  value).
 - The selector may compute a value, such as `x => x.Name.Trim()`. Name such a rule with
   `rule => rule.OverridePropertyName("Name")`.
 

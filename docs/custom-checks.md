@@ -19,7 +19,7 @@ public static class SkuChecks
 {
     public static Guard<string> IfNotSku(this Guard<string> guard, string? message = null)
     {
-        // 1. Do nothing when an earlier check failed (collect mode) or AllowNull() saw null.
+        // 1. Do nothing when an earlier check failed (collect mode) or WhenPresent() skipped a null.
         if (!guard.IsActive)
         {
             return guard;
@@ -80,8 +80,8 @@ sku.Throw().IfNullOrWhiteSpace().IfNotSku();
 
 1. **Return the guard unchanged when `guard.IsActive` is `false`.** That happens after a
    failed check in collect mode (so each value reports one failure; with the rule cascade
-   `Continue` of a validator the guard stays active) and after `AllowNull()` found a null
-   value.
+   `Continue` of a validator the guard stays active) and after `WhenPresent()` or
+   `AllowNull()` skipped a null value.
 2. **Fail a null value with `guard.FailNull(message)`**, unless null is a normal value for
    your check. This keeps the [null rule](guards.md#null-values) of the built-in checks.
 3. **Report a failure with `Fail` or `FailOutOfRange`**, and return what they return.
@@ -181,7 +181,7 @@ public sealed class OrderLineValidator : Validator<OrderLine>
 | --- | --- |
 | `guard.Value` | The checked value. |
 | `guard.Name` | The name for messages: a parameter name, a property path, or an expression. |
-| `guard.IsActive` | `false` after a failure in collect mode (unless the rule cascade is `Continue`) or after `AllowNull()` saw null. Return the guard unchanged then. |
+| `guard.IsActive` | `false` after a failure in collect mode (unless the rule cascade is `Continue`) or after `WhenPresent()` or `AllowNull()` skipped a null. Return the guard unchanged then. |
 | `guard.HasFailed` | `true` after a failure in collect mode. |
 | `guard.Fail(code, message)` | Reports a failure. Default exception: `ArgumentException`. |
 | `guard.FailOutOfRange(code, message)` | Reports a failure. Default exception: `ArgumentOutOfRangeException` with the value. |

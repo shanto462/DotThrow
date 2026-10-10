@@ -85,7 +85,7 @@ the same, and a check without arguments can be written as its name alone (`"NotE
 | --- | --- |
 | `property` | The property path: `"Email"`, `"Address.City"`. A null part on the way reads as null, like `?.`. `"Lines[].Sku"` checks a property of every item (failures named `Lines[2].Sku`); `"Tags[]"` checks every item (`Tags[1]`). Paths nest: `"Lines[].Notes[]"`. Empty means the object itself. Names ignore case. |
 | `each` | `true` runs the checks on every item, like `"Tags[]"`. |
-| `allowNull` | `true` lets a null value pass, like `AllowNull()`. |
+| `allowNull` | `true` lets a null value pass, like `WhenPresent()`. |
 | `group`, `groups` | The [groups](validation.md#groups) of the rule. |
 | `when`, `unless` | A condition, see below. |
 | `severity` | `"Error"` (default), `"Warning"` or `"Info"`. |

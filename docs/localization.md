@@ -112,9 +112,11 @@ set a variant as well. The table at the end lists every variant.
 
 Values are written with the invariant culture, so a message does not change with the
 machine: strings in single quotes, `null` as `null`, `double` and `float` in the shortest
-form that reads back to the same number, and dates in the round-trip format (`"O"`): a
-`DateOnly` as `2026-05-02`, a `DateTime` as `2026-05-02T00:00:00.0000000`. To show a
-date in another way, use a format in your template, such as `{ComparisonValue:yyyy-MM-dd}`. A placeholder can carry a format: `{From:N2}`. A placeholder without a
+form that reads back to the same number, and dates and times for people: `2026-05-02`
+(a `DateOnly`, or a `DateTime` at midnight), `2026-05-02 14:30:00`, `2026-05-02 14:30:00Z`
+(a UTC `DateTime`), `2026-05-02 14:30:00 +02:00` (a `DateTimeOffset`) and `14:30:00`
+(a `TimeOnly`). Fractions of a second appear only when they are not zero. To show a date
+in another way, use a format in your template, such as `{ComparisonValue:dd.MM.yyyy}`. A placeholder can carry a format: `{From:N2}`. A placeholder without a
 value, and any other text in braces, stays as written.
 
 ## Messages for one check or one rule

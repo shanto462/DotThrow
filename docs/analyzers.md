@@ -17,6 +17,7 @@ DotThrow, on every target framework. They need the .NET 8 SDK or later (Visual S
 | [DT0008](#dt0008) | Use IfInPast or IfInFuture to compare with the current time | Info | Style | Yes |
 | [DT0009](#dt0009) | Null check on a value that cannot be null | Warning | Usage | Yes (IfNull, AllowNull) |
 | [DT0010](#dt0010) | Validation result is not used | Warning | Usage | Yes (most cases) |
+| [DT0011](#dt0011) | Unwrapped nullable value is converted back to a nullable | Warning | Usage | Yes (simple values) |
 
 Info diagnostics show in the IDE as suggestions; `dotnet build` prints warnings and errors.
 The code fixes run from the light bulb in the IDE, one place at a time or for the whole
@@ -349,6 +350,35 @@ public sealed record Order(string Number);
 
 Calls with options or an options callback are not reported, because `ThrowOnFailures`
 may be set. Code fix: calls `ValidateAndThrow` or `ValidateAndThrowAsync`.
+
+## DT0011
+
+**Unwrapped nullable value is converted back to a nullable** (Warning)
+
+`WhenPresent()` on an `int?` (and `AllowNull()` followed by `IfNull()`) unwraps the value
+to `int` and skips the rest of the chain when there is no value. The guard then holds
+`default(int)`, so converting the chain back to `int?` turns a missing value into `0`,
+not `null`.
+
+```csharp
+void Examples(AgeRequest request)
+{
+    int? age = request.Age.Throw().WhenPresent().IfOutOfRange(0, 150);   // DT0011: null becomes 0
+
+    request.Age.Throw().WhenPresent().IfOutOfRange(0, 150);              // fine: check...
+    int? checkedAge = request.Age;                                       // ...then use the value
+}
+
+public sealed record AgeRequest(int? Age);
+```
+
+The rule fires when the result goes to an `int?` (or any `T?`) through an assignment, a
+variable, a return value or an argument. `WhenPresent()` on a reference type keeps `null`,
+so it is not reported.
+
+Code fix: splits the statement into the check and an assignment of the original value, as
+above, for a variable declaration, an assignment or a return whose checked value is a
+variable, field or property. Otherwise there is no fix.
 
 ## Not covered yet
 

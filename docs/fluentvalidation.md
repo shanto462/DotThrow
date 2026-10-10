@@ -149,8 +149,8 @@ Each difference has a test that runs both libraries.
 
 FluentValidation's `MaximumLength` passes a null value; DotThrow's `IfLongerThan`
 reports it with the code `Null`. A guard clause must not let null through. To get the
-FluentValidation result, start the chain with `AllowNull()`:
-`For(x => x.MiddleName, m => m.AllowNull().IfLongerThan(50))`.
+FluentValidation result, start the chain with `WhenPresent()`:
+`For(x => x.MiddleName, m => m.WhenPresent().IfLongerThan(50))`.
 
 ### 2. Default rule cascade is Stop
 
@@ -257,7 +257,7 @@ public sealed class OrderValidator : Validator<Order>
             .When(x => x.IsGift));
 
         Group("Admin", admin => admin
-            .For(x => x.InternalNote, note => note.AllowNull().IfLongerThan(500)));
+            .For(x => x.InternalNote, note => note.WhenPresent().IfLongerThan(500)));
     }
 }
 
@@ -298,7 +298,7 @@ Steps:
    `Validate(x, "Admin")`.
 6. Most FluentValidation validators, such as `MaximumLength` and `EmailAddress`, let a
    null value pass; DotThrow's content checks fail it. Where null should pass, add
-   `AllowNull()` at the start of the chain.
+   `WhenPresent()` at the start of the chain.
 7. Read results from `report.Failures` (`Name`, `Message`, `ErrorCode`) instead of
    `result.Errors` (`PropertyName`, `ErrorMessage`, `ErrorCode`).
 8. In tests, replace `using FluentValidation.TestHelper;` with `using DotThrow.Testing;`.

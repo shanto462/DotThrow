@@ -12,7 +12,7 @@ The examples assume `using DotThrow;`.
 - [Names and messages](#names-and-messages)
 - [Custom exceptions](#custom-exceptions)
 - [Null values](#null-values)
-- [AllowNull for optional values](#allownull-for-optional-values)
+- [Optional values](#optional-values)
 - [NaN](#nan)
 - [Wrong arguments to a check](#wrong-arguments-to-a-check)
 - [Checks by family](#checks-by-family)
@@ -148,24 +148,28 @@ int? maybeCount = 3;
 int count = maybeCount.Throw().IfNull().IfNegative();
 ```
 
-## AllowNull for optional values
+## Optional values
 
-`AllowNull()` lets a null value skip every later check in the chain. A value that is not
-null is checked as usual.
+`WhenPresent()` makes the rest of the chain optional: when the value is null, every later
+check is skipped; a value that is not null is checked as usual. It never fails.
 
 ```csharp
 string? middleName = null;
-middleName.Throw().AllowNull().IfLongerThan(50);   // passes
-```
+middleName.Throw().WhenPresent().IfLongerThan(50);      // passes
 
-Checks before `AllowNull()` still run. For an optional nullable value type, add
-`IfNull()` after `AllowNull()` to unwrap it. `AllowNull()` already stopped the chain for
-null, so `IfNull()` cannot fail here:
-
-```csharp
 int? quantity = null;
-quantity.Throw().AllowNull().IfNull().IfOutOfRange(1, 100);   // passes
+quantity.Throw().WhenPresent().IfOutOfRange(1, 100);    // passes
 ```
+
+On a nullable value type such as `int?`, `WhenPresent()` also unwraps the value, so the
+number checks become available. `IfNull()` is the required form: it fails on null and
+unwraps too. Checks before `WhenPresent()` still run.
+
+`AllowNull()` does the same as `WhenPresent()` for reference types such as `string?`, but
+on an `int?` it does not unwrap, so prefer `WhenPresent()`. When there is no value, an
+unwrapped chain holds `default` (`0`), so do not assign `quantity.Throw().WhenPresent()...`
+back to an `int?`; check it as a statement. The [DT0011 analyzer](analyzers.md#dt0011)
+warns about this.
 
 ## NaN
 
@@ -197,7 +201,7 @@ mistake as a build error.
 
 So that a passing check costs nothing extra, most argument mistakes that make every value
 fail (such as `IfOutOfRange(150, 0)`) are detected only when the check fails. So they are
-not reported when an earlier check already stopped the chain, or when `AllowNull()`
+not reported when an earlier check already stopped the chain, or when `WhenPresent()`
 skipped a null value. A few are checked on every call, for example a negative minimum of
 `IfShorterThan`, `IfLengthOutOfRange` or `IfCountLessThan`, and the arguments of
 `IfInRange` and `IfPrecisionScaleExceeded`.

@@ -11,7 +11,7 @@ public static class CustomChecks
     /// <summary>Fails when the string is not a stock keeping unit like "SKU-1234".</summary>
     public static Guard<string> IfNotSku(this Guard<string> guard, string? message = null)
     {
-        // 1. Do nothing when an earlier check failed (collect mode) or AllowNull() saw null.
+        // 1. Do nothing when an earlier check failed (collect mode) or WhenPresent() skipped a null.
         if (!guard.IsActive)
         {
             return guard;

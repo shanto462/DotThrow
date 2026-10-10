@@ -42,7 +42,7 @@ DotThrow is MIT licensed, has no dependencies, runs on every .NET from .NET Fram
   Validot (archived in 2025), and Throw (last release in September 2023, .NET 6 only).
 - **No dependencies, every .NET version.** One package for netstandard2.0,
   netstandard2.1, .NET Framework 4.6.2 and .NET 8, 9 and 10.
-- **Mistakes found at build time.** Ten analyzers, most with code fixes, ship inside the
+- **Mistakes found at build time.** Eleven analyzers, most with code fixes, ship inside the
   package: a chain without checks, an invalid regex, a range whose minimum is above its
   maximum, an async validator run synchronously, and more.
 - **Rules as data.** Load rules from JSON or `IConfiguration`, update them at run time,
@@ -183,7 +183,7 @@ Number: 'Number' must start with 'ORD-'. [NotStartsWith]
 ShippingAddress.City: 'City' must not be empty or white space. [WhiteSpace]
 Tags[1]: 'Tags' must not be empty or white space. [WhiteSpace]
 GiftMessage: 'GiftMessage' must not be null. [Null]
-DeliveryDate: 'DeliveryDate' must not be before 2026-05-02T00:00:00.0000000. [Before]
+DeliveryDate: 'DeliveryDate' must not be before 2026-05-02. [Before]
 ```
 
 Validators also have rule options (`WithMessage`, `WithName`, `WithSeverity`,
@@ -215,8 +215,8 @@ thrown, the error code, the placeholders, and which checks need .NET 8.
 | [Streams](docs/guards.md#streams) | `IfNotReadable`, `IfNotWritable`, `IfNotSeekable` (and `IfEmpty`) |
 | [Types](docs/guards.md#types) | `IfNotAssignableTo`, `IfAbstract`, `IfInterface` |
 
-Optional values: `AllowNull()` lets a null skip the rest of the chain, as in
-`middleName.Throw().AllowNull().IfLongerThan(50)`. Your own checks are small extension
+Optional values: `WhenPresent()` lets a null skip the rest of the chain, and unwraps an
+`int?`, as in `age.Throw().WhenPresent().IfOutOfRange(0, 150)`. Your own checks are small extension
 methods that work in every mode: see [custom-checks.md](docs/custom-checks.md).
 
 Custom exceptions come from a factory:
@@ -284,7 +284,7 @@ and reloads them when the file changes. See [dynamic-rules.md](docs/dynamic-rule
 
 ## Analyzers
 
-The DotThrow package includes ten Roslyn analyzers, and code fixes for eight of them.
+The DotThrow package includes eleven Roslyn analyzers, and code fixes for nine of them.
 They run in `dotnet build` and in the IDE, with nothing else to install (.NET 8 SDK or
 later).
 
@@ -300,6 +300,7 @@ later).
 | DT0008 | `IfBefore(DateTime.Now)` that should be `IfInPast()` | Info |
 | DT0009 | `IfNull()` on a value that cannot be null | Warning |
 | DT0010 | A validation report that is never read | Warning |
+| DT0011 | An unwrapped `int?` chain assigned back to an `int?`, which turns null into 0 | Warning |
 
 Change a severity in `.editorconfig`, for example `dotnet_diagnostic.DT0002.severity = warning`.
 See [analyzers.md](docs/analyzers.md).
@@ -353,7 +354,7 @@ where noted.
 | Int in 0..150 | 0.25 ns | 0.32 ns | **0.27 ns** | 0.54 ns | 0.27 ns | 0.56 ns |
 | String not blank, max 50 | 0.69 ns | 0.73 ns | **0.70 ns** | 3.29 ns, 24 B | 0.68 ns | 9.39 ns, 96 B |
 | List not null or empty, max 10 | 0.41 ns | 0.49 ns | **0.51 ns** | 2.06 ns | 0.44 ns | 3.04 ns |
-| HashSet&lt;int&gt; not null or empty, max 10 | 0.42 ns | 0.51 ns | **1.04 ns** | 2.05 ns | 1.74 ns | 23.07 ns, 80 B |
+| HashSet&lt;int&gt; not null or empty, max 10 | 0.40 ns | 0.51 ns | **0.45 ns** | 1.46 ns | 1.75 ns | 23.65 ns, 80 B |
 
 **Validation**, time and memory per validated object.
 
@@ -366,9 +367,8 @@ where noted.
 | Small model, `ValidateAsync`, valid | 298.60 ns, 776 B | **91.55 ns, 112 B** |
 | Small model and an async rule, valid | 462.26 ns, 1,336 B | **114.23 ns, 208 B** |
 
-A DotThrow guard chain for an `int`, a string or a `List<T>` costs about as much as the
-hand-written `if`; the `HashSet<int>` chain costs more (1.04 ns against 0.42 ns). None of
-them allocates. `Validator<T>` was 2.7 to 7 times faster than FluentValidation and allocated 6%
+A DotThrow guard chain costs about as much as the hand-written `if` (at most 0.1 ns more
+in these cases) and allocates nothing. `Validator<T>` was 2.7 to 7 times faster than FluentValidation and allocated 6%
 to 16% of its memory. Other work was running on the machine, so absolute times may be a
 little high.
 

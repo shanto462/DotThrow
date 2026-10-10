@@ -54,22 +54,22 @@ var balance = -25m;
 Show.Error(() => balance.Throw(failure => new DomainException(failure.ErrorCode, failure.Message)).IfNegative());
 
 // ----------------------------------------------------------------------------------------
-Show.Title("4. AllowNull for optional values");
+Show.Title("4. WhenPresent for optional values");
 
 string? middleName = null;
-middleName.Throw().AllowNull().IfLongerThan(20);
+middleName.Throw().WhenPresent().IfLongerThan(20);
 Show.Line("A null middle name passes.");
 
 middleName = "Augusta Ada Byron King";
-Show.Error(() => middleName.Throw().AllowNull().IfLongerThan(20));
+Show.Error(() => middleName.Throw().WhenPresent().IfLongerThan(20));
 
-// Without AllowNull, every content check fails a null value with the "Null" code.
+// Without WhenPresent, every content check fails a null value with the "Null" code.
 string? nickname = null;
 Show.Error(() => nickname.Throw().IfLongerThan(20));
 
-// An optional number: AllowNull() skips null, IfNull() unwraps int? to int for the range check.
+// An optional number: WhenPresent() skips null and unwraps int? to int for the range check.
 int? age = 200;
-Show.Error(() => age.Throw().AllowNull().IfNull().IfOutOfRange(0, 150));
+Show.Error(() => { age.Throw().WhenPresent().IfOutOfRange(0, 150); });
 
 // ----------------------------------------------------------------------------------------
 Show.Title("5. Collect mode: every failure, no exceptions");
@@ -80,8 +80,8 @@ var form = new SignUpRequest(Name: "", Email: "ada.example.com", MiddleName: "Au
 var report = new ValidationReport();
 report.Check(form, f => f.Name).IfNullOrWhiteSpace();
 report.Check(form, f => f.Email).IfNullOrWhiteSpace().IfNotEmailAddress();
-report.Check(form, f => f.MiddleName).AllowNull().IfLongerThan(20);
-report.Check(form, f => f.Age).AllowNull().IfNull().IfLessThan(13, "You must be 13 or older to sign up.");
+report.Check(form, f => f.MiddleName).WhenPresent().IfLongerThan(20);
+report.Check(form, f => f.Age).WhenPresent().IfLessThan(13, "You must be 13 or older to sign up.");
 
 // Each chain reports at most one failure: the first check that failed.
 Show.Report(report);

@@ -137,12 +137,15 @@ Mean time per check, with valid input. "Allocated" is memory per check; `-` mean
 | | Ardalis.GuardClauses | 2.06 ns | 5.03 | - |
 | | CommunityToolkit.Diagnostics | 0.44 ns | 1.07 | - |
 | | Throw | 3.04 ns | 7.41 | - |
-| HashSet&lt;int&gt; not null or empty, max 10 | Hand-written `if` | 0.42 ns | 1.00 | - |
-| | .NET built-in | 0.51 ns | 1.24 | - |
-| | **DotThrow** | **1.04 ns** | **2.49** | **-** |
-| | Ardalis.GuardClauses | 2.05 ns | 4.93 | - |
-| | CommunityToolkit.Diagnostics | 1.74 ns | 4.19 | - |
-| | Throw | 23.07 ns | 55.45 | 80 B |
+| HashSet&lt;int&gt; not null or empty, max 10 | Hand-written `if` | 0.40 ns | 1.00 | - |
+| | .NET built-in | 0.51 ns | 1.26 | - |
+| | **DotThrow** | **0.45 ns** | **1.13** | **-** |
+| | Ardalis.GuardClauses | 1.46 ns | 3.65 | - |
+| | CommunityToolkit.Diagnostics | 1.75 ns | 4.35 | - |
+| | Throw | 23.65 ns | 58.90 | 80 B |
+
+The `HashSet<int>` rows come from a second run of that category, after a later
+optimization of the count checks (same machine and settings).
 
 ## Validation
 
@@ -166,18 +169,17 @@ Mean time per check, with valid input. The .NET code is the baseline.
 | IPv4 text | `IPAddress.TryParse`: 16.23 ns, 40 B | `IfNotIPAddress()`: **10.40 ns, 0 B** |
 | IPv6 text | `IPAddress.TryParse`: 107.76 ns, 80 B | `IfNotIPAddress()`: **20.90 ns, 0 B** |
 | Enum value is defined | `Enum.IsDefined`: 1.04 ns | `IfNotDefined()`: **0.93 ns** |
-| Int is one of 1, 2, 3 | `is 1 or 2 or 3`: 0.26 ns | `IfNotOneOf(1, 2, 3)`: **0.75 ns, 0 B** |
+| Int is one of 1, 2, 3 | `is 1 or 2 or 3`: 0.26 ns | `IfNotOneOf(1, 2, 3)`: **0.35 ns, 0 B** |
 
 ## Reading the numbers
 
-- A DotThrow chain checking an `int` range, a string or a `List<T>` costs about the same
-  as the hand-written `if` (0.27, 0.70 and 0.51 ns against 0.25, 0.69 and 0.41 ns) and
-  allocated nothing. The .NET built-ins and CommunityToolkit.Diagnostics are as fast.
-  Ardalis.GuardClauses and Throw took 2 to 55 times as long as the hand-written code, and
+- A DotThrow chain costs about the same as the hand-written `if` (0.27, 0.70, 0.51 and
+  0.45 ns against 0.25, 0.69, 0.41 and 0.40 ns) and allocated nothing. The .NET built-ins
+  and CommunityToolkit.Diagnostics are about as fast for the int, string and list.
+  Ardalis.GuardClauses and Throw took 2 to 59 times as long as the hand-written code, and
   allocated in some cases.
-- The `HashSet<int>` chain cost 1.04 ns against 0.42 ns by hand, still without
-  allocation. CommunityToolkit.Diagnostics needs a cast to an interface for a `HashSet`
-  and took 1.74 ns.
+- CommunityToolkit.Diagnostics needs a cast to an interface for a `HashSet` and took
+  1.75 ns there.
 - DotThrow's `Validator<T>` was 2.7 times (small model, valid) to 7 times (nested model
   with failures) faster than FluentValidation, and allocated 6% to 16% of its memory. A
   valid run of the small model allocated only the 40 B report.

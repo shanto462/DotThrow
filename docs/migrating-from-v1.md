@@ -191,7 +191,7 @@ For a null value, v1 collection checks threw `NullReferenceException`, and other
 threw exceptions without your parameter name. In v2 every string, collection and
 comparison check fails a null value with `ArgumentNullException` and your parameter
 name. To let
-null through, call `AllowNull()` first. See [guards.md](guards.md#null-values).
+null through, call `WhenPresent()` first. See [guards.md](guards.md#null-values).
 
 ### JSON and XML
 
