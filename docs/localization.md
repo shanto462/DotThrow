@@ -171,8 +171,9 @@ FluentValidation ships: `ar`, `az`, `be`, `bg`, `bn`, `bs`, `ca`, `cs`, `cy`, `d
 serves `de-AT` and `de-CH`.
 
 The translations are machine-assisted; native review is welcome. They are step 3 of the
-[lookup order](#which-template-is-used), so templates you set always win. A language is
-loaded the first time a message needs it, and only then.
+[lookup order](#which-template-is-used), so templates you set always win. They are plain
+text files in the repository, compressed into the DLL when it is built. A language is
+read the first time a message needs it, and only then.
 
 ```csharp
 MessageTemplates.Culture = new CultureInfo("fr-FR");
@@ -180,10 +181,15 @@ var title = "A very long title for a short field";
 title.Throw().IfLongerThan(20);   // the message is in French
 ```
 
-To improve or add a translation, edit `src/DotThrow/Translations/<culture>.txt`: one
-`Key<TAB>Template` line for every key in the table below. Keep every placeholder of the
-English text, and do not add `{PropertyValue}`. [CONTRIBUTING.md](../CONTRIBUTING.md)
-explains how to send a change.
+To fix a translation, edit `src/DotThrow/Translations/<culture>.txt`. Each line is one
+key, a tab, and the template, for every key in the table below. Keep every placeholder of
+the English text, and do not add `{PropertyValue}`.
+
+To add a language, add a new `<culture>.txt` file with every key, and add the culture name
+to the list in `src/DotThrow/Internal/Translations.cs`. Use the neutral culture name
+(`de`); add a specific one (`pt-BR`) only when it differs. The tests check that every
+language has every key and the same placeholders as English.
+[CONTRIBUTING.md](../CONTRIBUTING.md) explains how to send a change.
 
 ## Every default template
 

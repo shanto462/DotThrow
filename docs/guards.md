@@ -192,6 +192,9 @@ System.ArgumentOutOfRangeException: The maximum must be greater than or equal to
 Actual value was 0.
 ```
 
+With constant arguments like these, the [DT0007 analyzer](analyzers.md#dt0007) reports the
+mistake as a build error.
+
 So that a passing check costs nothing extra, most argument mistakes that make every value
 fail (such as `IfOutOfRange(150, 0)`) are detected only when the check fails. So they are
 not reported when an earlier check already stopped the chain, or when `AllowNull()`
@@ -299,7 +302,7 @@ A null string fails every check here with the code `Null`, except `IfEqualTo` an
 | `IfNotEndsWith(value, comparison?)` | `string` | the string does not end with `value`. | Argument | `NotEndsWith` | fails, `Null` | `{Value}` |
 | `IfMatches(pattern, options?)`<br>`IfMatches(regex)` | `string` | the string matches the regular expression `pattern`. | Argument | `Matches` | fails, `Null` | `{Pattern}` |
 | `IfNotMatches(pattern, options?)`<br>`IfNotMatches(regex)` | `string` | the string does not match the regular expression `pattern`. | Argument | `NotMatches` | fails, `Null` | `{Pattern}` |
-| `IfNotEmailAddress()` | `string` | the string is not a plausible email address: one `@` with text on both sides, no white space, and no dot at the start or end of either side. This is a format check only. Send a confirmation email to prove that an address exists. | Argument | `NotEmailAddress` | fails, `Null` | - |
+| `IfNotEmailAddress()` | `string` | the string is not a plausible email address: exactly one `@` with text on both sides; no white-space or control characters anywhere; and on each side of the `@`, no dot at the start or end and no two dots in a row. This is a format check only. Send a confirmation email to prove that an address exists. | Argument | `NotEmailAddress` | fails, `Null` | - |
 | `IfNotJson()` | `string` | the string is not valid JSON (RFC 8259). Any JSON value passes, including `42`, `"text"` and `null`. The check does not allocate. | Argument | `NotJson` | fails, `Null` | - |
 | `IfNotXml()` | `string` | the string is not a well-formed XML document. DTDs are rejected and external entities are never resolved, so the check is safe for untrusted input. | Argument | `NotXml` | fails, `Null` | - |
 | `IfNotUri(kind?)` | `string` | the string is not a URI of the given kind. A bare file path such as `/etc/hosts` or `C:\temp` is not treated as an absolute URI. Write `file:///etc/hosts` for a file URI. | Argument | `NotUri` | fails, `Null` | - |
@@ -307,8 +310,6 @@ A null string fails every check here with the code `Null`, except `IfEqualTo` an
 | `IfNotParsable<T>(provider?)` (.NET 8+) | `string` | the string cannot be parsed into `TResult`, for example `int`, `decimal`, `Guid` or `DateOnly`. | Argument | `NotParsable` | fails, `Null` | `{Type}` |
 | `IfAllUpperCase()` | `string` | the string has at least one letter and every letter is uppercase. Digits and symbols are ignored. | Argument | `AllUpperCase` | fails, `Null` | - |
 | `IfAllLowerCase()` | `string` | the string has at least one letter and every letter is lowercase. Digits and symbols are ignored. | Argument | `AllLowerCase` | fails, `Null` | - |
-
-`IfNotEmailAddress` also fails a control character and two dots in a row. It checks the format only; send a confirmation email to prove that an address exists.
 
 ### String formats and characters
 

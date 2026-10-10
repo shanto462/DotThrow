@@ -517,7 +517,7 @@ cancellationToken)`. The short forms, such as `validator.Validate(value)` and
 `DotThrow.Scanning.AssemblyScanner` finds every validator in an assembly. It uses
 reflection, so it is not trimming safe.
 
-Two companion packages do the wiring for you:
+Two companion packages do the wiring for you ([integrations.md](integrations.md) has the details):
 
 - [DotThrow.DependencyInjection](../src/DotThrow.DependencyInjection/README.md):
   `services.AddValidatorsFromAssemblyContaining<Program>()` (assembly scanning),

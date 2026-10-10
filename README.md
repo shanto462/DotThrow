@@ -13,12 +13,15 @@ Guard clauses and validation for .NET, with one set of checks. As a guard clause
 of checks throws the right exception (`ArgumentNullException`,
 `ArgumentOutOfRangeException` or `ArgumentException`) with the parameter name filled in.
 In collect mode, the same checks record the errors of every value in a report that you
-can return from an API. `Validator<T>` has the features of FluentValidation 12. DotThrow
-is MIT licensed, has no dependencies, runs on every .NET from .NET Framework 4.6.2 to
-.NET 10, and is safe for trimming and Native AOT.
+can return from an API. `Validator<T>` has the features of FluentValidation 12, rules can
+also come from JSON or configuration, and Roslyn analyzers catch mistakes while you type.
+DotThrow is MIT licensed, has no dependencies, runs on every .NET from .NET Framework
+4.6.2 to .NET 10, and is safe for trimming and Native AOT.
 
 **Contents:** [Why DotThrow](#why-dotthrow) · [Install](#install) ·
 [Quick start](#quick-start) · [Checks at a glance](#checks-at-a-glance) ·
+[ASP.NET Core and dependency injection](#aspnet-core-and-dependency-injection) ·
+[Dynamic rules](#dynamic-rules) · [Analyzers](#analyzers) ·
 [Coming from FluentValidation](#coming-from-fluentvalidation) ·
 [Messages and languages](#messages-and-languages) · [Performance](#performance) ·
 [Supported frameworks](#supported-frameworks) · [Trimming and Native AOT](#trimming-and-native-aot) ·
@@ -37,8 +40,13 @@ is MIT licensed, has no dependencies, runs on every .NET from .NET Framework 4.6
 - **Maintained.** Some guard and validation libraries are no longer maintained: Dawn.Guard
   (archived, NuGet package deprecated), Ensure.That (no activity since 2021 to 2022),
   Validot (archived in 2025), and Throw (last release in September 2023, .NET 6 only).
-- **No dependencies, every .NET version.** One small package for netstandard2.0,
+- **No dependencies, every .NET version.** One package for netstandard2.0,
   netstandard2.1, .NET Framework 4.6.2 and .NET 8, 9 and 10.
+- **Mistakes found at build time.** Ten analyzers, most with code fixes, ship inside the
+  package: a chain without checks, an invalid regex, a range whose minimum is above its
+  maximum, an async validator run synchronously, and more.
+- **Rules as data.** Load rules from JSON or `IConfiguration`, update them at run time,
+  and get the same failures as from code.
 - **Fast.** A passing guard chain compiles to about the same code as a hand-written `if`
   and allocates nothing, and `Validator<T>` was 2.7 to 7 times faster than
   FluentValidation in [our benchmarks](#performance).
@@ -53,7 +61,7 @@ dotnet add package DotThrow
 
 | Package | What it has | Targets |
 | --- | --- | --- |
-| `DotThrow` | Guard clauses, collect mode, `Validator<T>`, message templates with 58 built-in languages, test helpers (`DotThrow.Testing`) and an assembly scanner (`DotThrow.Scanning`). No dependencies. | netstandard2.0, netstandard2.1, net462, net8.0, net9.0, net10.0 |
+| `DotThrow` | Guard clauses, collect mode, `Validator<T>`, dynamic rules (`DotThrow.Dynamic`), message templates with 58 built-in languages, test helpers (`DotThrow.Testing`), an assembly scanner (`DotThrow.Scanning`), and Roslyn analyzers with code fixes. No dependencies. | netstandard2.0, netstandard2.1, net462, net8.0, net9.0, net10.0 |
 | [`DotThrow.DependencyInjection`](src/DotThrow.DependencyInjection/README.md) | `AddValidatorsFromAssemblyContaining<T>()`, `AddValidator<TModel, TValidator>()` (trimming safe), and options validation with `ValidateOnStart`. | netstandard2.0, net462, net8.0, net9.0, net10.0 |
 | [`DotThrow.AspNetCore`](src/DotThrow.AspNetCore/README.md) | `.WithValidation<T>()` for minimal API endpoints and route groups, an MVC filter and `[ValidateWithDotThrow]`, and validation problem helpers. | net8.0, net9.0, net10.0 |
 
@@ -214,6 +222,86 @@ methods that work in every mode: see [custom-checks.md](docs/custom-checks.md).
 Custom exceptions come from a factory:
 `amount.Throw(f => new DomainException(f.ErrorCode, f.Message)).IfNegativeOrZero()`.
 
+## ASP.NET Core and dependency injection
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddProblemDetails();
+builder.Services.AddValidator<SignUp, SignUpValidator>();   // or AddValidatorsFromAssemblyContaining<Program>()
+
+var app = builder.Build();
+app.MapPost("/sign-up", (SignUp request) => TypedResults.Ok())
+    .WithValidation<SignUp>();   // an invalid request gets a 400 validation problem
+app.Run();
+
+public sealed record SignUp(string? Name, string? Email);
+
+public sealed class SignUpValidator : Validator<SignUp>
+{
+    public SignUpValidator()
+    {
+        For(x => x.Name, name => name.IfNullOrWhiteSpace());
+        For(x => x.Email, email => email.IfNullOrWhiteSpace().IfNotEmailAddress());
+    }
+}
+```
+
+`DotThrow.DependencyInjection` registers validators (by assembly scanning, or one by one
+for trimmed and Native AOT apps) and validates options classes with `ValidateOnStart`.
+`DotThrow.AspNetCore` validates minimal API endpoints and route groups, and MVC actions
+through a filter or `[ValidateWithDotThrow]`. See [integrations.md](docs/integrations.md).
+
+## Dynamic rules
+
+Rules can be data: JSON, a section of `IConfiguration`, or objects from a database. They
+compile once into a normal validator that calls the same checks, so the failures are the
+same as from code.
+
+```csharp
+using DotThrow.Dynamic;
+
+var definition = RuleSetDefinition.FromJson("""
+    {
+      "rules": [
+        { "property": "Name", "checks": [ "NullOrWhiteSpace", { "check": "LongerThan", "value": 100 } ] },
+        { "property": "Age", "checks": [ { "check": "OutOfRange", "min": 18, "max": 130 } ] }
+      ]
+    }
+    """);
+
+var validator = new DynamicValidator<Person>(definition);
+var report = validator.Validate(new Person("Ada Lovelace", 16));   // Age: 'Age' must be between 18 and 130.
+
+public sealed record Person(string Name, int Age);
+```
+
+Every error in a definition is reported at once, with hints for misspelled names.
+`Update` swaps the rules at run time and keeps the old ones when the new ones have errors.
+A `PropertyMap<T>` makes it work with Native AOT, and a `CheckRegistry` adds your own
+checks by name. See [dynamic-rules.md](docs/dynamic-rules.md).
+
+## Analyzers
+
+The DotThrow package includes ten Roslyn analyzers, and code fixes for eight of them.
+They run in `dotnet build` and in the IDE, with nothing else to install (.NET 8 SDK or
+later).
+
+| ID | Finds | Severity |
+| --- | --- | --- |
+| DT0001 | A guard chain with no checks: `name.Throw();` | Warning |
+| DT0002 | A manual `if (...) throw` guard that can be one DotThrow check | Info |
+| DT0003 | A name argument the compiler fills in anyway | Info |
+| DT0004 | A validator with async rules run with `Validate` | Warning |
+| DT0005 | An invalid constant regex pattern | Error |
+| DT0006 | A constant pattern that can use the regex source generator | Info |
+| DT0007 | A check argument that is never valid, such as `IfOutOfRange(10, 5)` | Error |
+| DT0008 | `IfBefore(DateTime.Now)` that should be `IfInPast()` | Info |
+| DT0009 | `IfNull()` on a value that cannot be null | Warning |
+| DT0010 | A validation report that is never read | Warning |
+
+Change a severity in `.editorconfig`, for example `dotnet_diagnostic.DT0002.severity = warning`.
+See [analyzers.md](docs/analyzers.md).
+
 ## Coming from FluentValidation
 
 | FluentValidation | DotThrow |
@@ -298,6 +386,8 @@ Facts checked on 2026-10-10 against the latest stable NuGet packages.
 | Async rules | Yes | `InvalidInputAsync` only | No | No | Yes | No |
 | Error codes | Yes | No | No | No | Yes | No |
 | Message templates per culture | Yes | No | No | No | Yes | No |
+| Rules from JSON or configuration | Yes | No | No | No | No | No |
+| Analyzers in the package | Yes | No | No | No | No | No |
 | Declares Native AOT compatibility | Yes | No | No | Trimming only | No | Part of .NET |
 | Dependencies | None | None | OneOf | None on net8.0; System.Memory or Unsafe on netstandard | None | None |
 | Targets | netstandard2.0, netstandard2.1, net462, net8.0, net9.0, net10.0 | netstandard2.0, netstandard2.1, net8.0 | net6.0 | netstandard2.0, netstandard2.1, net8.0 | net8.0 | .NET 6 and later |
@@ -319,16 +409,22 @@ style.
 | net9.0 | .NET 9 | The same API as net8.0. |
 | net10.0 | .NET 10 | The same API as net8.0. |
 
-The tests run on .NET 8, 9 and 10 on Linux, macOS and Windows, on .NET Framework 4.7.2
-and 4.8.1, and against the netstandard2.0 and netstandard2.1 builds.
+The 5,725 tests of the core package run on .NET 8, 9 and 10 on Linux, macOS and Windows,
+on .NET Framework 4.7.2 and 4.8.1, and against the netstandard2.0 and netstandard2.1
+builds.
 
 ## Trimming and Native AOT
 
 On .NET 8 and later DotThrow is marked `IsAotCompatible`. The checks use no reflection
-that trimming or Native AOT cannot handle, validators read property names from the compiler (`[CallerArgumentExpression]`) instead
-of expression trees, and the [samples app](samples/DotThrow.Samples) is published as a
-Native AOT binary in CI with zero trimming or AOT warnings. The one exception is
-`DotThrow.Scanning.AssemblyScanner`, which is marked `[RequiresUnreferencedCode]`.
+that trimming or Native AOT cannot handle, validators read property names from the
+compiler (`[CallerArgumentExpression]`) instead of expression trees, and the
+[samples app](samples/DotThrow.Samples) is published as a Native AOT binary in CI with zero
+trimming or AOT warnings.
+
+The APIs that need reflection are marked `[RequiresUnreferencedCode]`, so the compiler
+warns where you call them: assembly scanning (`DotThrow.Scanning.AssemblyScanner` and
+`AddValidatorsFromAssembly...`) and the reflection constructor of `DynamicValidator<T>`.
+In trimmed and Native AOT apps, use `AddValidator` and a `PropertyMap<T>` instead.
 
 ## Security
 
@@ -354,6 +450,9 @@ To report a security problem, see [SECURITY.md](SECURITY.md).
 - [Validation: collect mode and `Validator<T>`](docs/validation.md)
 - [DotThrow for FluentValidation users](docs/fluentvalidation.md)
 - [Messages and localization](docs/localization.md)
+- [Dynamic rules from JSON and configuration](docs/dynamic-rules.md)
+- [Dependency injection and ASP.NET Core](docs/integrations.md)
+- [Analyzers](docs/analyzers.md)
 - [Writing your own checks](docs/custom-checks.md)
 - [Performance](docs/performance.md)
 - [Migrating from DotThrow 1.x](docs/migrating-from-v1.md)

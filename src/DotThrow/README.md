@@ -9,7 +9,9 @@ the same checks record every error in a report that you can return from an API.
   IP addresses, streams and types.
 - MIT licensed, no dependencies.
 - The common checks allocate nothing when they pass.
-- Message templates with placeholders, per culture.
+- Message templates with placeholders, and translations for 58 languages.
+- Rules from JSON or `IConfiguration` (`DotThrow.Dynamic`), updated at run time.
+- Roslyn analyzers and code fixes in the package, for example for a chain without checks.
 - Targets netstandard2.0, netstandard2.1, net462, net8.0, net9.0 and net10.0. Trimming
   and Native AOT safe on .NET 8 and later.
 
@@ -104,6 +106,9 @@ FluentValidation's `TestHelper`.
 - [Validation](https://github.com/shanto462/DotThrow/blob/main/docs/validation.md)
 - [DotThrow for FluentValidation users](https://github.com/shanto462/DotThrow/blob/main/docs/fluentvalidation.md)
 - [Messages and localization](https://github.com/shanto462/DotThrow/blob/main/docs/localization.md)
+- [Dynamic rules](https://github.com/shanto462/DotThrow/blob/main/docs/dynamic-rules.md)
+- [Dependency injection and ASP.NET Core](https://github.com/shanto462/DotThrow/blob/main/docs/integrations.md)
+- [Analyzers](https://github.com/shanto462/DotThrow/blob/main/docs/analyzers.md)
 - [Writing your own checks](https://github.com/shanto462/DotThrow/blob/main/docs/custom-checks.md)
 - [Performance](https://github.com/shanto462/DotThrow/blob/main/docs/performance.md)
 - [Migrating from DotThrow 1.x](https://github.com/shanto462/DotThrow/blob/main/docs/migrating-from-v1.md)
