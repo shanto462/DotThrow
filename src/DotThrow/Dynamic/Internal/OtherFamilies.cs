@@ -404,7 +404,7 @@ internal class CollectionFamily<TValue>(Func<string, TValue>? parser, Type? decl
         }
 
         var keyType = KeyType(type);
-        if (!args.TryParse(Arg.Value, text => ValueText.ParseObject(keyType, text)!, out var key))
+        if (!args.TryParse(Arg.Value, text => ValueText.ParseObject(keyType, text)!, out var key, keyType))
         {
             return null;
         }

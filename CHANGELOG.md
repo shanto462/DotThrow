@@ -6,6 +6,14 @@ and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Dynamic rules: when the key of a `ContainsKey` or `NotContainsKey` check
+  could not be converted, the definition error named the type `object`
+  instead of the key type of the dictionary, for example
+  `'Value' value 'abc' is not a valid object` for a `Dictionary<int, string>`.
+  It now names the key type (`int`).
+
 ## [2.0.2] - 2026-10-11
 
 ### Fixed
@@ -13,18 +21,19 @@ and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `IfNotUri` and `IfNotHttpUrl` passed text with a lone surrogate (half of a
   surrogate pair), which `Uri` silently replaces with U+FFFD, and text with a
   format character outside the Basic Multilingual Plane, such as the invisible
-  tag characters U+E0000 to U+E007F. Both now fail, like the other control and
-  format characters. Found by the new fuzz tests.
+  tag characters U+E0001 and U+E0020 to U+E007F. Both now fail, like the other
+  control and format characters. Found by the new fuzz tests.
 - Dynamic rules: a `Uri` argument or condition value that `Uri` cannot read
   because of a runtime bug, such as `file://` followed only by a bidi control
   character, threw `IndexOutOfRangeException` from the `DynamicValidator<T>`
-  constructor, `Update` and `CheckArguments.Parse<Uri>`. It is now a normal
-  definition error (`FormatException` from `CheckArguments.Parse`). Found by
-  the new fuzz tests.
-- On .NET Framework, `IfNotGuid` threw `FormatException` for some text in the
-  hexadecimal GUID format, for example `{0xa,0xa,0xa,{0xz,`, because .NET
-  Framework's `Guid.TryParse` throws for it. The check now fails as documented.
-  Found by the fuzz tests.
+  constructor, `Update`, `TryUpdate`, `FindErrors` and
+  `CheckArguments.Parse<Uri>`. It is now a normal definition error, and
+  `CheckArguments.Parse<Uri>` throws `FormatException`. Found by the new fuzz
+  tests.
+- On .NET Framework, `IfNotGuid` threw `FormatException` or `OverflowException`
+  for some text in the hexadecimal GUID format, for example
+  `{0xa,0xa,0xa,{0xz,`, because .NET Framework's `Guid.TryParse` throws for it.
+  The check now fails as documented. Found by the fuzz tests.
 
 ## [2.0.1] - 2026-10-10
 

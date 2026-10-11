@@ -373,8 +373,9 @@ internal static class Text
 #else
         // .NET Framework's Guid.TryParse throws instead of returning false for some text in the
         // hexadecimal format, such as "{0xa,0xa,0xa,{0xz,": it reads the last eight numbers with
-        // Convert.ToInt32(text, 16), which throws FormatException, OverflowException or
-        // ArgumentException. Such text is not a GUID.
+        // Convert.ToInt32(text, 16), and a FormatException or OverflowException from it escapes
+        // (it turns an ArgumentException into false itself; the filter keeps that type to be
+        // safe). Such text is not a GUID.
         try
         {
             return Guid.TryParse(value, out _);

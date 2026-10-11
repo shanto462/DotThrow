@@ -173,4 +173,30 @@ public sealed class DefinitionErrorTests
         Assert.Equal("'file://\u202E' is not a valid Uri.", Assert.IsType<FormatException>(parse).Message);
 #endif
     }
+
+    // Review fix: a ContainsKey key that does not convert named the type "object" in the error
+    // instead of the key type of the dictionary.
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void A_dictionary_key_error_names_the_key_type(bool reflection)
+    {
+        var definition = RuleSetDefinition.FromJson("""
+            { "rules": [ { "property": "Names", "checks": [ { "check": "ContainsKey", "value": "abc" }, { "check": "NotContainsKey", "value": "1.5" } ] } ] }
+            """);
+        var errors = Assert.Throws<RuleDefinitionException>(() => reflection
+            ? new DynamicValidator<NumberKeys>(definition)
+            : new DynamicValidator<NumberKeys>(definition, new PropertyMap<NumberKeys>().Add(x => x.Names))).Errors;
+        Assert.Equal(
+            [
+                "Rules[0].Checks[0]: check 'ContainsKey' on 'Names': 'Value' value 'abc' is not a valid int",
+                "Rules[0].Checks[1]: check 'NotContainsKey' on 'Names': 'Value' value '1.5' is not a valid int",
+            ],
+            errors);
+
+        var valid = RuleSetDefinition.FromJson("""{ "rules": [ { "property": "Names", "checks": [ { "check": "ContainsKey", "value": "2" } ] } ] }""");
+        var validator = reflection ? new DynamicValidator<NumberKeys>(valid) : new DynamicValidator<NumberKeys>(valid, new PropertyMap<NumberKeys>().Add(x => x.Names));
+        Assert.True(validator.Validate(new NumberKeys()).IsValid);
+        Assert.Equal(ErrorCodes.ContainsKey, Assert.Single(validator.Validate(new NumberKeys { Names = new() { [2] = "Ada" } }).Failures).ErrorCode);
+    }
 }

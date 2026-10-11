@@ -186,10 +186,11 @@ public sealed class TextCheckTests
         }
     }
 
-    // Fuzzing fix: .NET Framework's Guid.TryParse throws (FormatException, OverflowException or
-    // ArgumentException) instead of returning false for some text in the hexadecimal format, so
-    // IfNotGuid threw there. On .NET Framework these inputs take that path; on every framework
-    // they must fail the check with its code and an ArgumentException.
+    // Fuzzing fix: .NET Framework's Guid.TryParse throws FormatException or OverflowException
+    // instead of returning false for some text in the hexadecimal format, so IfNotGuid threw
+    // there. "0xz", "0x1ffffffff" and "0xg" take that path on .NET Framework; "0x-1" makes an
+    // ArgumentException, which Guid.TryParse turns into false itself, and stays as a neighbor
+    // case. On every framework they must fail the check with its code and an ArgumentException.
     [Theory]
     [InlineData("{0xa,0xa,0xa,{0xz,")]
     [InlineData("{0xa,0xa,0xa,{0x1ffffffff,0xa,0xa,0xa,0xa,0xa,0xa,0xa}}")]
