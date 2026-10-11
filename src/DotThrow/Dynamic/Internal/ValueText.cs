@@ -122,6 +122,21 @@ internal static class ValueText
         };
     }
 
+    // Uri throws IndexOutOfRangeException instead of UriFormatException for some text, for
+    // example a file or UNC host made only of bidi control characters ("file://\u202E" or
+    // "\\\\\u200F" on .NET 10). Such text is not a valid URI either way.
+    private static Uri ParseUri(string text)
+    {
+        try
+        {
+            return new Uri(text, UriKind.RelativeOrAbsolute);
+        }
+        catch (IndexOutOfRangeException)
+        {
+            throw new FormatException("The text is not a valid URI.");
+        }
+    }
+
     private static object? Scalar(Type type) => Scalars.TryGetValue(type, out var parser) ? parser : null;
 
     // The built-in text forms. Numbers allow a sign, decimals and exponents where the type
@@ -147,7 +162,7 @@ internal static class ValueText
         [typeof(TimeSpan)] = (Func<string, TimeSpan>)(static text => TimeSpan.Parse(text, Invariant)),
         [typeof(Guid)] = (Func<string, Guid>)(static text => Guid.Parse(text)),
         [typeof(Version)] = (Func<string, Version>)(static text => Version.Parse(text)),
-        [typeof(Uri)] = (Func<string, Uri>)(static text => new Uri(text, UriKind.RelativeOrAbsolute)),
+        [typeof(Uri)] = (Func<string, Uri>)ParseUri,
         [typeof(IPAddress)] = (Func<string, IPAddress>)(static text => IPAddress.Parse(text)),
         [typeof(BigInteger)] = (Func<string, BigInteger>)(static text => BigInteger.Parse(text, NumberStyles.Integer, Invariant)),
 #if NET8_0_OR_GREATER

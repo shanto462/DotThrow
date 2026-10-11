@@ -1,0 +1,55 @@
+name: Fuzz
+
+# The property-based fuzz tests (FsCheck, tests/DotThrow.Tests/Fuzzing) with many more cases
+# than a normal test run. A failure prints the seed and the shrunk input; CONTRIBUTING.md
+# ("Fuzz tests") says how to replay it.
+on:
+  schedule:
+    - cron: '41 3 * * 3'
+  workflow_dispatch:
+    inputs:
+      iterations:
+        description: Cases per property (DOTTHROW_FUZZ_ITERATIONS)
+        required: false
+        default: '300000'
+        type: string
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+# Explicit bash adds pipefail, the same as in ci.yml.
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  fuzz:
+    name: Fuzz
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    env:
+      # A scheduled run has no inputs, so it uses the default. 200000 cases took under 4 minutes
+      # on a laptop; the default leaves room under the time-out on a slower hosted runner.
+      DOTTHROW_FUZZ_ITERATIONS: ${{ inputs.iterations || '300000' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+      - name: Run the fuzz tests (Release)
+        run: >-
+          dotnet test tests/DotThrow.Tests/DotThrow.Tests.csproj -c Release -f net10.0
+          --filter "Category=Fuzz" --logger "console;verbosity=normal"

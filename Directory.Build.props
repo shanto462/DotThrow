@@ -26,7 +26,7 @@
     VersionSuffix, for example <VersionSuffix>preview.1</VersionSuffix>.
   -->
   <PropertyGroup>
-    <VersionPrefix>2.0.1</VersionPrefix>
+    <VersionPrefix>2.0.2</VersionPrefix>
   </PropertyGroup>
 
   <!-- NuGet package metadata. -->

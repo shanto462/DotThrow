@@ -186,6 +186,18 @@ public sealed class TextCheckTests
         }
     }
 
+    // Fuzzing fix: .NET Framework's Guid.TryParse throws (FormatException, OverflowException or
+    // ArgumentException) instead of returning false for some text in the hexadecimal format, so
+    // IfNotGuid threw there. On .NET Framework these inputs take that path; on every framework
+    // they must fail the check with its code and an ArgumentException.
+    [Theory]
+    [InlineData("{0xa,0xa,0xa,{0xz,")]
+    [InlineData("{0xa,0xa,0xa,{0x1ffffffff,0xa,0xa,0xa,0xa,0xa,0xa,0xa}}")]
+    [InlineData("{0xa,0xa,0xa,{0x-1,0xa,0xa,0xa,0xa,0xa,0xa,0xa}}")]
+    [InlineData("{0xa,0xa,0xa,{0xa,0xa,0xa,0xa,0xa,0xa,0xa,0xg}}")]
+    public void IfNotGuid_fails_for_bad_hexadecimal_text(string text) =>
+        Check.Fails<ArgumentException, string>(text, g => g.IfNotGuid(), ErrorCodes.NotGuid, "'input' must be a valid GUID.");
+
     [Theory]
     [InlineData("192.168.0.1", true)]
     [InlineData("0.0.0.0", true)]

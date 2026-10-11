@@ -6,6 +6,26 @@ and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.2] - 2026-10-11
+
+### Fixed
+
+- `IfNotUri` and `IfNotHttpUrl` passed text with a lone surrogate (half of a
+  surrogate pair), which `Uri` silently replaces with U+FFFD, and text with a
+  format character outside the Basic Multilingual Plane, such as the invisible
+  tag characters U+E0000 to U+E007F. Both now fail, like the other control and
+  format characters. Found by the new fuzz tests.
+- Dynamic rules: a `Uri` argument or condition value that `Uri` cannot read
+  because of a runtime bug, such as `file://` followed only by a bidi control
+  character, threw `IndexOutOfRangeException` from the `DynamicValidator<T>`
+  constructor, `Update` and `CheckArguments.Parse<Uri>`. It is now a normal
+  definition error (`FormatException` from `CheckArguments.Parse`). Found by
+  the new fuzz tests.
+- On .NET Framework, `IfNotGuid` threw `FormatException` for some text in the
+  hexadecimal GUID format, for example `{0xa,0xa,0xa,{0xz,`, because .NET
+  Framework's `Guid.TryParse` throws for it. The check now fails as documented.
+  Found by the fuzz tests.
+
 ## [2.0.1] - 2026-10-10
 
 No code changes. The packages are the same as 2.0.0 apart from their README.
@@ -210,7 +230,8 @@ First release (.NET 6).
 - Grouped rules, so `Verify` and `VerifyNotThrow` can run only the rules of one
   group.
 
-[Unreleased]: https://github.com/shanto462/DotThrow/compare/v2.0.1...HEAD
+[Unreleased]: https://github.com/shanto462/DotThrow/compare/v2.0.2...HEAD
+[2.0.2]: https://github.com/shanto462/DotThrow/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/shanto462/DotThrow/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/shanto462/DotThrow/compare/v1.0.2...v2.0.0
 [2.0.0-rc.1]: https://github.com/shanto462/DotThrow/compare/v1.0.2...v2.0.0-rc.1

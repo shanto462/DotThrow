@@ -26,6 +26,8 @@
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="xunit.runner.visualstudio" />
     <PackageReference Include="coverlet.collector" />
+    <!-- Property-based fuzz tests (Fuzzing/). -->
+    <PackageReference Include="FsCheck" />
     <!-- Dynamic rule definitions bind from configuration. -->
     <PackageReference Include="Microsoft.Extensions.Configuration" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" />

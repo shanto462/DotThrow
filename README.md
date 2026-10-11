@@ -399,7 +399,7 @@ Facts checked on 2026-10-10 against the latest stable NuGet packages.
 | Declares Native AOT compatibility | Yes | No | No | Trimming only | No | Part of .NET |
 | Dependencies | None | None | OneOf | None on net8.0; System.Memory or Unsafe on netstandard | None | None |
 | Targets | netstandard2.0, netstandard2.1, net462, net8.0, net9.0, net10.0 | netstandard2.0, netstandard2.1, net8.0 | net6.0 | netstandard2.0, netstandard2.1, net8.0 | net8.0 | .NET 6 and later |
-| Latest release | 2.0.1 (this repository) | 5.0.0, Sep 2024 | 1.4.0, Sep 2023 | 8.4.2, Mar 2026 | 12.1.1, Dec 2025 | Ships with .NET |
+| Latest release | 2.0.2 (this repository) | 5.0.0, Sep 2024 | 1.4.0, Sep 2023 | 8.4.2, Mar 2026 | 12.1.1, Dec 2025 | Ships with .NET |
 
 The .NET built-in helpers (`ArgumentNullException.ThrowIfNull` and friends, .NET 6 to 8)
 cover the basics only: no collection checks, no custom messages, and no collect mode.
