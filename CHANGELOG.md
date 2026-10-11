@@ -6,6 +6,8 @@ and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.2] - 2026-10-11
+
 ### Fixed
 
 - `IfNotUri` and `IfNotHttpUrl` passed text with a lone surrogate (half of a
@@ -228,7 +230,8 @@ First release (.NET 6).
 - Grouped rules, so `Verify` and `VerifyNotThrow` can run only the rules of one
   group.
 
-[Unreleased]: https://github.com/shanto462/DotThrow/compare/v2.0.1...HEAD
+[Unreleased]: https://github.com/shanto462/DotThrow/compare/v2.0.2...HEAD
+[2.0.2]: https://github.com/shanto462/DotThrow/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/shanto462/DotThrow/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/shanto462/DotThrow/compare/v1.0.2...v2.0.0
 [2.0.0-rc.1]: https://github.com/shanto462/DotThrow/compare/v1.0.2...v2.0.0-rc.1
