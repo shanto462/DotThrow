@@ -277,7 +277,7 @@ internal static class Formats
             return false;
         }
 
-        if (!Uri.TryCreate(value, kind, out uri))
+        if (!TryCreateUri(value, kind, out uri))
         {
             return false;
         }
@@ -293,13 +293,30 @@ internal static class Formats
         return true;
     }
 
+    // Uri.TryCreate throws IndexOutOfRangeException instead of returning false for some text,
+    // for example a file or UNC host made only of bidi control characters ("file://\u202E" on
+    // .NET 10). HasOnlyUriCharacters already rejects that text; this catch is defense in depth
+    // against other inputs that hit the same runtime bug.
+    private static bool TryCreateUri(string value, UriKind kind, [NotNullWhen(true)] out Uri? uri)
+    {
+        try
+        {
+            return Uri.TryCreate(value, kind, out uri);
+        }
+        catch (IndexOutOfRangeException)
+        {
+            uri = null;
+            return false;
+        }
+    }
+
     // The text of the URI as written: RFC 3986 unreserved and reserved characters, '%' only
     // as the start of a %XX escape, at most one '#'. Non-ASCII letters, digits, marks and
     // symbols are allowed as in IRIs (RFC 3987, as browsers show addresses); white space,
     // control characters and format characters (such as bidi overrides) are not. A character
     // outside the Basic Multilingual Plane is one surrogate pair, judged as one character (so
-    // the invisible tag characters U+E0000 to U+E007F are format characters too); a surrogate
-    // that is not part of a pair is not a character, and Uri would replace it with U+FFFD.
+    // the invisible tag characters U+E0001 and U+E0020 to U+E007F are format characters too); a
+    // surrogate that is not part of a pair is not a character, and Uri would replace it with U+FFFD.
     private static bool HasOnlyUriCharacters(string value)
     {
         var fragments = 0;

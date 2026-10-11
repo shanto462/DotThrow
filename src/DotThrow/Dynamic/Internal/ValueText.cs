@@ -131,9 +131,9 @@ internal static class ValueText
         {
             return new Uri(text, UriKind.RelativeOrAbsolute);
         }
-        catch (IndexOutOfRangeException)
+        catch (IndexOutOfRangeException exception)
         {
-            throw new FormatException("The text is not a valid URI.");
+            throw new FormatException("The text is not a valid URI.", exception);
         }
     }
 

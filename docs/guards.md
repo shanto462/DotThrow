@@ -319,7 +319,7 @@ A null string fails every check here with the code `Null`, except `IfEqualTo` an
 | `IfAllUpperCase()` | `string` | the string has at least one letter and every letter is uppercase. Digits and symbols are ignored. | Argument | `AllUpperCase` | fails, `Null` | - |
 | `IfAllLowerCase()` | `string` | the string has at least one letter and every letter is lowercase. Digits and symbols are ignored. | Argument | `AllLowerCase` | fails, `Null` | - |
 
-`IfNotUri` and `IfNotHttpUrl` check the text as written: no white space around it, no control or format characters, only the characters RFC 3986 allows (and non-ASCII letters, as in IRIs), `%` only in valid escapes, and at most one `#`. `Uri.TryCreate` alone trims and escapes, so it accepts text that is not a URI. Give `IfMatches` and `IfNotMatches` a `matchTimeout` when the pattern runs on untrusted input: a match that times out fails the check with its normal code, and `RegexMatchTimeoutException` never escapes.
+`IfNotUri` and `IfNotHttpUrl` check the text as written: no white space around it, no control or format characters, only the characters RFC 3986 allows (and non-ASCII letters, as in IRIs), `%` only in valid escapes, and at most one `#`. `Uri.TryCreate` alone trims and escapes, so it accepts text that is not a URI. A lone surrogate (half of a surrogate pair) fails, and so do the invisible tag characters (U+E0001 and U+E0020 to U+E007F), so an emoji tag sequence such as the Scotland flag fails like any other format character. Give `IfMatches` and `IfNotMatches` a `matchTimeout` when the pattern runs on untrusted input: a match that times out fails the check with its normal code, and `RegexMatchTimeoutException` never escapes.
 
 ### String formats and characters
 

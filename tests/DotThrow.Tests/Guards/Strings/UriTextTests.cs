@@ -46,7 +46,7 @@ public sealed class UriTextTests
     [Fact]
     public void Lone_surrogates_and_supplementary_format_characters_fail()
     {
-        foreach (var text in new[] { "http://a.com/\uD800", "http://a.com/\uDC00x", "http://a.com/?q=\uDBFF", "http://a.com/#\uDFFF", "http://a.com/\U000E0001", "http://a.com/a\U000E0041b", "http://a.com/a\U0001D173b" })
+        foreach (var text in new[] { "http://a.com/\uD800", "http://a.com/\uDC00x", "http://a.com/?q=\uDBFF", "http://a.com/#\uDFFF", "http://a.com/\U000E0001", "http://a.com/a\U000E0041b", "http://a.com/a\U0001D173b", "http://a.com/\U0001F3F4\U000E0067\U000E0062\U000E0073\U000E0063\U000E0074\U000E007F" })
         {
             Check.Fails<ArgumentException, string>(text, g => g.IfNotUri(), ErrorCodes.NotUri);
             Check.Fails<ArgumentException, string>(text, g => g.IfNotHttpUrl(), ErrorCodes.NotHttpUrl);
