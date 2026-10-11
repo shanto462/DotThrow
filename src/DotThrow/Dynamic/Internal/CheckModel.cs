@@ -87,11 +87,13 @@ internal sealed class CheckArgs
         return Raw(arg);
     }
 
-    public bool TryParse<T>(Arg arg, Func<string, T>? parser, out T value)
+    // valueType: the type to name in errors when T is wider, for example object for a
+    // dictionary key that is converted to the key type at run time.
+    public bool TryParse<T>(Arg arg, Func<string, T>? parser, out T value, Type? valueType = null)
     {
         value = default!;
         var text = Text(arg);
-        return text is not null && TryConvert(arg.ToString(), text, parser, out value);
+        return text is not null && TryConvert(arg.ToString(), text, parser, out value, valueType);
     }
 
     public bool TryParseList<T>(Func<string, T>? parser, out T[] values)
@@ -205,12 +207,13 @@ internal sealed class CheckArgs
         }
     }
 
-    private bool TryConvert<T>(string name, string text, Func<string, T>? parser, out T value)
+    private bool TryConvert<T>(string name, string text, Func<string, T>? parser, out T value, Type? valueType = null)
     {
         value = default!;
+        var typeName = TypeText.Of(valueType ?? typeof(T));
         if (parser is null)
         {
-            Error($"'{name}' cannot be converted to {TypeText.Of(typeof(T))}");
+            Error($"'{name}' cannot be converted to {typeName}");
             return false;
         }
 
@@ -223,7 +226,7 @@ internal sealed class CheckArgs
         catch (Exception exception) when (exception is FormatException or OverflowException or ArgumentException)
 #pragma warning restore CA1031
         {
-            Error($"'{name}' value '{text}' is not a valid {TypeText.Of(typeof(T))}{TextFormatException.DetailOf(exception)}");
+            Error($"'{name}' value '{text}' is not a valid {typeName}{TextFormatException.DetailOf(exception)}");
             return false;
         }
     }

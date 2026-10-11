@@ -6,6 +6,14 @@ and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Dynamic rules: when the key of a `ContainsKey` or `NotContainsKey` check
+  could not be converted, the definition error named the type `object`
+  instead of the key type of the dictionary, for example
+  `'Value' value 'abc' is not a valid object` for a `Dictionary<int, string>`.
+  It now names the key type (`int`).
+
 ## [2.0.2] - 2026-10-11
 
 ### Fixed

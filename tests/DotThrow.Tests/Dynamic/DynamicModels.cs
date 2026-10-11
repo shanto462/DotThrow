@@ -132,6 +132,12 @@ public struct GeoPoint
     public double Latitude { get; set; }
 }
 
+// A dictionary whose keys are not strings, for key conversion errors.
+public sealed class NumberKeys
+{
+    public Dictionary<int, string> Names { get; set; } = new() { [1] = "Ada Lovelace" };
+}
+
 public sealed class Line
 {
     public string? Sku { get; set; }
