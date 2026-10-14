@@ -8,13 +8,13 @@
 # Microsoft.NETCore.App and Microsoft.AspNetCore.App.
 
 # aspnet:8.0 is .NET 8.0.31 on 2026-10-10
-FROM mcr.microsoft.com/dotnet/aspnet:8.0@sha256:a3cd573ac05cf88ca496e3309cb7f7c44aa16664352d1ee41eda93154f50cdbf AS dotnet8
+FROM mcr.microsoft.com/dotnet/aspnet:8.0@sha256:1601380775673021a23ea5985669f1daf03719faaa684f839da1752fb48cfc7f AS dotnet8
 
 # aspnet:9.0 is .NET 9.0.20 on 2026-10-10
-FROM mcr.microsoft.com/dotnet/aspnet:9.0@sha256:6b29f9d598b387b4b44653408d773cbdbf8f1d6b24289460b228a24f31a38b53 AS dotnet9
+FROM mcr.microsoft.com/dotnet/aspnet:9.0@sha256:4d94cf3204df98d321e8dbf8d6d06e0b34fd136aa75c945abf4390ee07eb30dd AS dotnet9
 
 # sdk:10.0 is SDK 10.0.401 with .NET 10.0.12 on 2026-10-10
-FROM mcr.microsoft.com/dotnet/sdk:10.0@sha256:e70cdb7f80b0348f5cb85f19a8f670fca061f033d57eed12fa003d58b0e06317
+FROM mcr.microsoft.com/dotnet/sdk:10.0@sha256:0d99ebf1ccad15037b5c98c9fe8979d6b8dbac23812feae2277a0b277b5c5ffa
 
 # Add the shared frameworks next to the ones of the SDK. The dotnet host of the
 # SDK image runs apps on any of them.
