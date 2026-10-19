@@ -22,7 +22,7 @@
     <!-- Benchmarks and parity tests only: the libraries DotThrow is compared with. Never referenced by src. -->
     <PackageVersion Include="Ardalis.GuardClauses" Version="5.0.0" />
     <PackageVersion Include="CommunityToolkit.Diagnostics" Version="8.4.2" />
-    <PackageVersion Include="FluentValidation" Version="12.1.1" />
+    <PackageVersion Include="FluentValidation" Version="12.2.0" />
     <PackageVersion Include="Throw" Version="1.4.0" />
   </ItemGroup>
 
