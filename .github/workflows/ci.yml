@@ -35,7 +35,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Install .NET
-        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
           global-json-file: global.json
       - name: Check formatting
@@ -78,7 +78,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Install .NET (SDK from global.json, plus the .NET 8 and 9 runtimes)
-        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
           global-json-file: global.json
           dotnet-version: |
@@ -128,7 +128,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Install .NET
-        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
           global-json-file: global.json
       # Packs every packable project under src/ (package validation runs on pack) and
@@ -161,7 +161,7 @@ jobs:
       # (Roslyn 4.8) that the analyzers inside the DotThrow package must load in.
       # eng/consumer/global.json selects it even if the runner has newer SDKs.
       - name: Install the .NET 8.0.1xx SDK
-        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
           dotnet-version: 8.0.1xx
       - name: Download packages
@@ -185,7 +185,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Install .NET
-        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
           global-json-file: global.json
       - name: Install Native AOT prerequisites
@@ -251,7 +251,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Install .NET
-        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
           global-json-file: global.json
       - name: Download coverage files
@@ -260,7 +260,7 @@ jobs:
           name: coverage-raw
           path: coverage
       - name: Merge coverage of every test project and framework
-        uses: danielpalme/ReportGenerator-GitHub-Action@d3ebf1f760f7d8ab92cc44d9bcfee7ad73722a31 # 5.5.11
+        uses: danielpalme/ReportGenerator-GitHub-Action@861674232075b2c6bd1405a04c4bb9b150653e81 # 5.5.12
         with:
           reports: coverage/**/coverage.cobertura.xml
           targetdir: coverage-report
@@ -288,7 +288,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Install .NET
-        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
           global-json-file: global.json
       - name: Build benchmarks
